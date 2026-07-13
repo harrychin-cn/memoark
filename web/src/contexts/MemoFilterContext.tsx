@@ -1,6 +1,6 @@
 import { uniqBy } from "lodash-es";
 import { createContext, type ReactNode, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 export type FilterFactor =
   | "tagSearch"
@@ -55,6 +55,7 @@ interface MemoFilterContextValue {
 const MemoFilterContext = createContext<MemoFilterContextValue | null>(null);
 
 export function MemoFilterProvider({ children }: { children: ReactNode }) {
+  const { state: locationState } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const lastSyncedUrlRef = useRef("");
   const lastSyncedStoreRef = useRef("");
@@ -87,10 +88,10 @@ export function MemoFilterProvider({ children }: { children: ReactNode }) {
       } else {
         newParams.delete("filter");
       }
-      setSearchParams(newParams, { replace: true });
+      setSearchParams(newParams, { replace: true, state: locationState });
       lastSyncedUrlRef.current = filters.length > 0 ? storeString : "";
     }
-  }, [filters, searchParams, setSearchParams]);
+  }, [filters, locationState, searchParams, setSearchParams]);
 
   const getFiltersByFactor = useCallback((factor: FilterFactor) => filters.filter((f) => f.factor === factor), [filters]);
 

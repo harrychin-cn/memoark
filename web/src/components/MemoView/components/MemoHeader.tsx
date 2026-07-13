@@ -1,6 +1,6 @@
 import { BookmarkIcon } from "lucide-react";
 import { useCallback, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import useNavigateTo from "@/hooks/useNavigateTo";
 import i18n from "@/i18n";
@@ -24,10 +24,12 @@ const MemoHeader: React.FC<MemoHeaderProps> = ({ showCreator, showVisibility, sh
   const { memo, creator, currentUser, parentPage, isArchived, readonly, openEditor } = useMemoViewContext();
   const { createTime, updateTime, displayTime: memoDisplayTime, isDisplayingUpdatedTime, relativeTimeFormat } = useMemoViewDerived();
 
+  const location = useLocation();
   const navigateTo = useNavigateTo();
   const handleGotoMemoDetailPage = useCallback(() => {
-    navigateTo(`/${memo.name}`, { state: { from: parentPage } });
-  }, [memo.name, parentPage, navigateTo]);
+    const from = location.pathname.startsWith("/memos/") ? parentPage : `${location.pathname}${location.search}${location.hash}`;
+    navigateTo(`/${memo.name}`, { state: { from } });
+  }, [location, memo.name, parentPage, navigateTo]);
 
   const { unpinMemo } = useMemoActions(memo);
 

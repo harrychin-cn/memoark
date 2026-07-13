@@ -1,7 +1,7 @@
 import type { Element } from "hast";
 import { useLocation } from "react-router-dom";
 import { useInstance } from "@/contexts/InstanceContext";
-import { type MemoFilter, stringifyFilters, useMemoFilterContext } from "@/contexts/MemoFilterContext";
+import { type MemoFilter, parseFilterQuery, stringifyFilters, useMemoFilterContext } from "@/contexts/MemoFilterContext";
 import useNavigateTo from "@/hooks/useNavigateTo";
 import { colorToHex } from "@/lib/color";
 import { findTagMetadata } from "@/lib/tag";
@@ -19,7 +19,7 @@ export const Tag: React.FC<TagProps> = ({ "data-tag": dataTag, children, classNa
   const { parentPage } = useMemoViewContext();
   const location = useLocation();
   const navigateTo = useNavigateTo();
-  const { getFiltersByFactor, removeFilter, addFilter } = useMemoFilterContext();
+  const { filters, getFiltersByFactor, removeFilter, addFilter } = useMemoFilterContext();
   const { tagsSetting } = useInstance();
 
   const tag = dataTag || "";
@@ -42,11 +42,26 @@ export const Tag: React.FC<TagProps> = ({ "data-tag": dataTag, children, classNa
 
     // If the tag is clicked in a memo detail page, we should navigate to the memo list page.
     if (location.pathname.startsWith("/m")) {
-      const pathname = parentPage || Routes.HOME;
-      const searchParams = new URLSearchParams();
+      const parentUrl = new URL(parentPage || Routes.HOME, window.location.origin);
+      const inheritedFilters = parseFilterQuery(parentUrl.searchParams.get("filter"));
+      const sourceFilters = [
+        ...inheritedFilters,
+        ...filters.filter(
+          (filter) =>
+            !inheritedFilters.some((inheritedFilter) => inheritedFilter.factor === filter.factor && inheritedFilter.value === filter.value),
+        ),
+      ];
+      const isActive = sourceFilters.some((filter) => filter.factor === "tagSearch" && filter.value === tag);
+      const nextFilters = isActive
+        ? sourceFilters.filter((filter) => !(filter.factor === "tagSearch" && filter.value === tag))
+        : [...sourceFilters, { factor: "tagSearch" as const, value: tag }];
 
-      searchParams.set("filter", stringifyFilters([{ factor: "tagSearch", value: tag }]));
-      navigateTo(`${pathname}?${searchParams.toString()}`);
+      if (nextFilters.length > 0) {
+        parentUrl.searchParams.set("filter", stringifyFilters(nextFilters));
+      } else {
+        parentUrl.searchParams.delete("filter");
+      }
+      navigateTo(`${parentUrl.pathname}${parentUrl.search}${parentUrl.hash}`);
       return;
     }
 
@@ -54,8 +69,6 @@ export const Tag: React.FC<TagProps> = ({ "data-tag": dataTag, children, classNa
     if (isActive) {
       removeFilter((f: MemoFilter) => f.factor === "tagSearch" && f.value === tag);
     } else {
-      // Remove all existing tag filters first, then add the new one
-      removeFilter((f: MemoFilter) => f.factor === "tagSearch");
       addFilter({
         factor: "tagSearch",
         value: tag,
