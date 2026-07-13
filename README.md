@@ -17,6 +17,9 @@ Markdown-first experience while focusing on the failure cases that make people l
 - **Portable export** — download normal and archived notes as versioned JSON.
 - **Self-hosted by default** — your database stays on infrastructure you control.
 
+Development priorities are tracked in the [MemoArk roadmap](ROADMAP.md), with the public upstream feedback behind each decision kept
+in [the research snapshot](docs/product/upstream-feedback-2026-07-13.md).
+
 ## Quick start
 
 Prerequisites: Git, Node.js 24+, pnpm 11+, and Docker.
