@@ -84,7 +84,7 @@ const AuthCallback = () => {
       try {
         if (flowMode === "link") {
           if (!currentUser?.name) {
-            throw new Error("Failed to link account. Please sign in to Memos again and retry.");
+            throw new Error("Failed to link account. Please sign in to MemoArk again and retry.");
           }
           if (linkingUserName && currentUser.name !== linkingUserName) {
             throw new Error("The signed-in user changed before the OAuth callback completed. Please retry linking from account settings.");

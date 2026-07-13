@@ -1,5 +1,5 @@
 {
-  "name": "memos",
+  "name": "memoark-web",
   "private": true,
   "packageManager": "pnpm@11.0.1",
   "engines": {

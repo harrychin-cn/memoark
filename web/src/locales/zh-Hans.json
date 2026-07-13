@@ -1,7 +1,7 @@
 {
   "about": {
     "blogs": "博客",
-    "description": "Memos 是一个隐私优先、轻量级的笔记解决方案，可以轻松捕捉和分享您的想法。",
+    "description": "MemoArk 是一个隐私优先、轻量级的笔记解决方案，可以轻松捕捉和分享您的想法。",
     "documents": "文档",
     "github-repository": "GitHub 仓库",
     "official-website": "官网"
@@ -17,8 +17,8 @@
   },
   "demo": {
     "banner-description": "这里的改动是临时的，可能会被重置。",
-    "banner-title": "Memos 演示站",
-    "deploy-link": "部署你的 Memos"
+    "banner-title": "MemoArk 演示站",
+    "deploy-link": "部署 MemoArk"
   },
   "common": {
     "about": "关于",
@@ -124,6 +124,14 @@
     "yourself": "您自己"
   },
   "editor": {
+    "draft-recovery": {
+      "conflict-description": "发现本机草稿，但服务器版本随后发生了变化。恢复后请先核对正文，再手动保存。",
+      "description": "上次未保存的正文已保存在本机，可恢复后继续编辑，也可直接丢弃。",
+      "discard": "丢弃",
+      "restore": "恢复",
+      "saved-at": "本机保存于 {{time}}",
+      "title": "发现未保存的本机修改"
+    },
     "add-your-comment-here": "请输入您的评论...",
     "any-thoughts": "此刻的想法...",
     "exit-focus-mode": "退出聚焦模式",
@@ -242,7 +250,7 @@
       "image-download": "下载 PNG",
       "image-download-failed": "导出图片失败",
       "image-downloaded": "图片已保存",
-      "image-footer": "由 Memos 生成分享图",
+      "image-footer": "由 MemoArk 生成分享图",
       "image-share": "分享图片",
       "image-share-failed": "分享图片失败",
       "image-title": "分享成图片",
@@ -358,10 +366,10 @@
       "add-provider": "添加 provider",
       "api-key": "API key",
       "api-key-required": "API key 不能为空。",
-      "byok-description": "使用你自己的 OpenAI 或 Gemini 账号 API key。Memos 会从本实例服务器直接调用 provider。",
-      "byok-key-note": "使用你在 provider 账号中创建的 key；Memos 不提供共享 AI 凭据。",
+      "byok-description": "使用你自己的 OpenAI 或 Gemini 账号 API key。MemoArk 会从本实例服务器直接调用 provider。",
+      "byok-key-note": "使用你在 provider 账号中创建的 key；MemoArk 不提供共享 AI 凭据。",
       "byok-label": "BYOK",
-      "byok-model-note": "Memos 会为音频转写等功能选择内置支持的模型。",
+      "byok-model-note": "MemoArk 会为音频转写等功能选择内置支持的模型。",
       "byok-storage-note": "Key 保存在本实例中，加载设置时只返回脱敏提示。",
       "byok-title": "使用你自己的 AI 账号",
       "configured": "已配置",
@@ -369,7 +377,7 @@
       "default-endpoint": "默认端点",
       "delete-provider": "删除 AI provider `{{title}}`？",
       "description": "Provider key 由实例所有者提供，并用于服务端 AI 功能。",
-      "dialog-description": "添加你自己的 provider 账号 key。Memos 会为每个 provider 使用内置模型；编辑时留空 API key 可保留已保存的 key。",
+      "dialog-description": "添加你自己的 provider 账号 key。MemoArk 会为每个 provider 使用内置模型；编辑时留空 API key 可保留已保存的 key。",
       "edit-provider": "编辑 provider",
       "endpoint": "端点",
       "endpoint-hint": "留空则使用官方 provider 端点。",
@@ -587,7 +595,12 @@
       "delete-account": "删除账号",
       "delete-account-description": "永久删除当前账号，并移除它在这个实例中的全部访问权限。此操作无法撤销。",
       "email-note": "可选",
+      "export-description": "下载当前账号全部普通与归档备忘录的 JSON 副本。",
+      "export-failed": "导出失败，请稍后重试。",
+      "export-limitations": "包含备忘录数据和附件元数据，不包含附件文件、评论和实例配置。",
       "export-memos": "导出备忘录",
+      "export-success": "已导出 {{count}} 条备忘录",
+      "exporting": "正在导出...",
       "nickname-note": "显示在横幅中",
       "openapi-reset": "重置 OpenAPI 密钥（Key）",
       "openapi-sample-post": "您好 #memos 来自 {{url}}",

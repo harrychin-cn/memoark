@@ -384,7 +384,7 @@ const Shortcuts = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Docs
+                  Upstream docs
                   <ExternalLinkIcon className="h-3.5 w-3.5" />
                 </a>
               </div>

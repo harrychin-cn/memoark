@@ -1,117 +1,81 @@
-<div align="center">
-  <p><b>Featured Sponsors</b></p>
-  <table>
-    <tr>
-      <td align="center" width="50%">
-        <a href="https://go.warp.dev/memos" target="_blank" rel="noopener">
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/warpdotdev/brand-assets/refs/heads/main/Logos/Warp-Wordmark-White.png" />
-            <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/warpdotdev/brand-assets/refs/heads/main/Logos/Warp-Wordmark-Black.png" />
-            <img alt="Warp" height="44" src="https://raw.githubusercontent.com/warpdotdev/brand-assets/refs/heads/main/Logos/Warp-Wordmark-Black.png" />
-          </picture>
-          <br/>
-          <span>Warp is an agentic development environment.</span>
-        </a>
-      </td>
-      <td align="center" width="50%">
-        <a href="https://coderabbit.link/usememos" target="_blank" rel="noopener">
-          <picture>
-            <source media="(prefers-color-scheme: dark)" srcset="https://victorious-bubble-f69a016683.media.strapiapp.com/White_Typemark_79b9189d19.svg" />
-            <source media="(prefers-color-scheme: light)" srcset="https://victorious-bubble-f69a016683.media.strapiapp.com/Orange_Typemark_43bf516c9d.svg" />
-            <img alt="CodeRabbit" height="44" src="https://victorious-bubble-f69a016683.media.strapiapp.com/Orange_Typemark_43bf516c9d.svg" />
-          </picture>
-          <br/>
-          <span>Cut code review time &amp; bugs in half, instantly.</span>
-        </a>
-      </td>
-    </tr>
-  </table>
-</div>
+# MemoArk
 
-# Memos
+<img align="right" height="96" src="web/public/memoark-logo.svg" alt="MemoArk logo" />
 
-<img align="right" height="96px" src="https://raw.githubusercontent.com/usememos/.github/refs/heads/main/assets/logo-rounded.png" alt="Memos" />
+**Reliable, self-hosted notes with draft safety and portable data.**
 
-Open-source, self-hosted note-taking tool built for quick capture. Markdown-native, lightweight, and fully yours.
+MemoArk is an independent open-source project based on [Memos](https://github.com/usememos/memos). It keeps the lightweight,
+Markdown-first experience while focusing on the failure cases that make people lose trust in note apps.
 
-[![Home](https://img.shields.io/badge/🏠-usememos.com-blue?style=flat-square)](https://usememos.com)
-[![Live Demo](https://img.shields.io/badge/✨-Try%20Demo-orange?style=flat-square)](https://demo.usememos.com/)
-[![Docs](https://img.shields.io/badge/📚-Documentation-green?style=flat-square)](https://usememos.com/docs)
-[![Discord](https://img.shields.io/badge/💬-Discord-5865f2?style=flat-square&logo=discord&logoColor=white)](https://discord.gg/tfPJa4UmAv)
-[![Docker Pulls](https://img.shields.io/docker/pulls/neosmemo/memos?style=flat-square&logo=docker)](https://hub.docker.com/r/neosmemo/memos)
+> **Project status:** early development. The current baseline is Memos `v0.29.1` at commit `5f194da`.
 
-<img src="https://raw.githubusercontent.com/usememos/.github/refs/heads/main/assets/demo.png" alt="Memos Demo Screenshot" height="512" />
+## What MemoArk adds
 
-## Features
+- **Edit draft protection** — unsaved edits are cached locally while you type.
+- **Visible recovery** — restore or discard a recovered draft instead of silently overwriting server content.
+- **Conflict awareness** — warns when the server copy changed after the local draft was created.
+- **Portable export** — download normal and archived notes as versioned JSON.
+- **Self-hosted by default** — your database stays on infrastructure you control.
 
-- **Instant Capture** — Timeline-first UI. Open, write, done — no folders to navigate.
-- **Total Data Ownership** — Self-hosted on your infrastructure. Notes stored in Markdown, always portable. Zero telemetry.
-- **Radical Simplicity** — Single Go binary, ~20MB Docker image. One command to deploy with SQLite, MySQL, or PostgreSQL.
-- **Open & Extensible** — MIT-licensed with full REST and gRPC APIs for integration.
+## Quick start
 
-## Quick Start
-
-### Docker (Recommended)
+Prerequisites: Git, Node.js 24+, pnpm 11+, and Docker.
 
 ```bash
-docker run -d \
-  --name memos \
-  -p 5230:5230 \
-  -v ~/.memos:/var/opt/memos \
-  neosmemo/memos:stable
+git clone https://github.com/harrychin-cn/memoark.git
+cd memoark
+
+cd web
+pnpm install --frozen-lockfile
+pnpm release
+cd ..
+
+docker compose -f scripts/compose.yaml up -d --build
 ```
 
-Open `http://localhost:5230` and start writing!
+Open [http://localhost:5230](http://localhost:5230). The default Compose file binds only to localhost, and runtime data is stored in
+the Docker volume `memoark-data`.
 
-### Native Binary
+Stop the instance without deleting its data:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/usememos/memos/main/scripts/install.sh | sh
+docker compose -f scripts/compose.yaml down
 ```
 
-### Try the Live Demo
+## Development
 
-Don't want to install yet? Try our [live demo](https://demo.usememos.com/) first!
+Frontend:
 
-### Other Installation Methods
+```bash
+cd web
+pnpm install --frozen-lockfile
+pnpm test
+pnpm lint
+pnpm dev
+```
 
-- **Docker Compose** - Recommended for production deployments
-- **Pre-built Binaries** - Available for Linux, macOS, and Windows
-- **Kubernetes** - Helm charts and manifests available
-- **Build from Source** - For development and customization
+Backend:
 
-See our [installation guide](https://usememos.com/docs/deploy) for detailed instructions.
+```bash
+go test ./...
+go run ./cmd/memos --port 8081
+```
 
-## Contributing
+The Go module path, API resource names, `MEMOS_*` environment variables, binary name, and data directory remain compatible with the
+upstream project for now. This is intentional and avoids a risky mass rename.
 
-Contributions are welcome — bug reports, feature suggestions, pull requests, documentation, and translations.
+## Reporting problems
 
-- [Report bugs](https://github.com/usememos/memos/issues/new?template=bug_report.md)
-- [Suggest features](https://github.com/usememos/memos/issues/new?template=feature_request.md)
-- [Submit pull requests](https://github.com/usememos/memos/pulls)
-- [Improve documentation](https://github.com/usememos/dotcom)
-- [Help with translations](https://github.com/usememos/memos/tree/main/web/src/locales)
+- [Bug reports](https://github.com/harrychin-cn/memoark/issues/new?template=bug_report.yml)
+- [Feature requests](https://github.com/harrychin-cn/memoark/issues/new?template=feature_request.yml)
+- [Security reports](https://github.com/harrychin-cn/memoark/security/advisories/new)
 
-## Sponsors
-* [**CodeRabbit** - Cut code review time & bugs in half, instantly](https://coderabbit.link/usememos)
-* [**Warp** - The agentic development environment](https://go.warp.dev/memos)
-* [**SSD Nodes** - Affordable VPS hosting for self-hosters](https://ssdnodes.com/?utm_source=memos&utm_medium=sponsor)
-* [**InstaPods** - Get your app online in seconds](https://instapods.com/?utm_source=memos&utm_medium=sponsor) • [Deploy Memos in 30 Seconds](https://instapods.com/apps/memos/?utm_source=memos&utm_medium=sponsor)
+Please include the MemoArk version, deployment method, database type, and clear reproduction steps.
 
-Love Memos? [Sponsor us on GitHub](https://github.com/sponsors/usememos) to help keep the project growing!
+## Upstream and license
 
-## Star History
+MemoArk is based on Memos and is not affiliated with or endorsed by the original Memos project. The full upstream Git history is kept
+so changes remain traceable and future security updates can be reviewed cleanly.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=usememos/memos&type=Date)](https://star-history.com/#usememos/memos&Date)
-
-## License
-
-Memos is open-source software licensed under the [MIT License](LICENSE). See our [Privacy Policy](https://usememos.com/privacy) for details on data handling.
-
----
-
-**[Website](https://usememos.com)** • **[Documentation](https://usememos.com/docs)** • **[Demo](https://demo.usememos.com/)** • **[Discord](https://discord.gg/tfPJa4UmAv)** • **[X/Twitter](https://x.com/usememos)**
-
-<a href="https://vercel.com/oss">
-  <img alt="Vercel OSS Program" src="https://vercel.com/oss/program-badge.svg" />
-</a>
+The original Memos copyright and MIT license are preserved in [LICENSE](LICENSE). MemoArk's attribution details are recorded in
+[NOTICE](NOTICE). Changes made for MemoArk are also distributed under the MIT License.

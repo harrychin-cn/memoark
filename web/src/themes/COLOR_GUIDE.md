@@ -1,6 +1,6 @@
 # Color System Guide
 
-This document explains the color system used in the Memos application, built with OKLCH color space for better perceptual uniformity and accessibility.
+This document explains the color system used in the MemoArk application, built with OKLCH color space for better perceptual uniformity and accessibility.
 
 ## Overview
 

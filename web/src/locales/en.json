@@ -18,8 +18,8 @@
   },
   "demo": {
     "banner-description": "Changes are temporary and may be reset.",
-    "banner-title": "Memos demo",
-    "deploy-link": "Deploy your Memos"
+    "banner-title": "MemoArk demo",
+    "deploy-link": "Deploy MemoArk"
   },
   "attachment-library": {
     "actions": {
@@ -157,6 +157,14 @@
     "yourself": "Yourself"
   },
   "editor": {
+    "draft-recovery": {
+      "conflict-description": "A local draft was found, but the server version changed afterward. Restore it, review the content, then save.",
+      "description": "Your last unsaved edits are stored on this device. Restore them to continue or discard them.",
+      "discard": "Discard",
+      "restore": "Restore",
+      "saved-at": "Saved locally at {{time}}",
+      "title": "Unsaved local edits found"
+    },
     "add-your-comment-here": "Add your comment here...",
     "any-thoughts": "Any thoughts...",
     "exit-focus-mode": "Exit Focus Mode",
@@ -271,7 +279,7 @@
       "image-download": "Download PNG",
       "image-download-failed": "Failed to export image",
       "image-downloaded": "Image saved",
-      "image-footer": "Shared from Memos",
+      "image-footer": "Shared from MemoArk",
       "image-share": "Share image",
       "image-share-failed": "Failed to share image",
       "image-title": "Share as image",
@@ -404,7 +412,12 @@
       "delete-account": "Delete account",
       "delete-account-description": "Permanently remove this account and all associated access from this instance. This action cannot be undone.",
       "email-note": "Optional",
+      "export-description": "Download a JSON copy of all normal and archived memos owned by this account.",
+      "export-failed": "Export failed. Please try again.",
+      "export-limitations": "Includes memo data and attachment metadata. Attachment files, comments, and instance settings are not included.",
       "export-memos": "Export Memos",
+      "export-success": "Exported {{count}} memos",
+      "exporting": "Exporting...",
       "nickname-note": "Displayed in the banner",
       "openapi-reset": "Reset OpenAPI Key",
       "openapi-sample-post": "Hello #memos from {{url}}",
@@ -418,10 +431,10 @@
       "add-provider": "Add provider",
       "api-key": "API key",
       "api-key-required": "API key is required.",
-      "byok-description": "Connect OpenAI or Gemini with an API key from your own account. Memos calls the provider directly from this server.",
-      "byok-key-note": "Use a key from your provider account; Memos does not bundle shared AI credentials.",
+      "byok-description": "Connect OpenAI or Gemini with an API key from your own account. MemoArk calls the provider directly from this server.",
+      "byok-key-note": "Use a key from your provider account; MemoArk does not bundle shared AI credentials.",
       "byok-label": "BYOK",
-      "byok-model-note": "Memos selects supported models for features like audio transcription.",
+      "byok-model-note": "MemoArk selects supported models for features like audio transcription.",
       "byok-storage-note": "Keys stay on this instance and are masked when settings are loaded.",
       "byok-title": "Use your own AI account",
       "configured": "Configured",
@@ -429,7 +442,7 @@
       "default-endpoint": "Default endpoint",
       "delete-provider": "Delete AI provider `{{title}}`?",
       "description": "Provider keys are supplied by the instance owner and used by server-side AI features.",
-      "dialog-description": "Add a key from your own provider account. Memos uses built-in models for each provider; leave the API key blank while editing to keep the stored key.",
+      "dialog-description": "Add a key from your own provider account. MemoArk uses built-in models for each provider; leave the API key blank while editing to keep the stored key.",
       "edit-provider": "Edit provider",
       "endpoint": "Endpoint",
       "endpoint-hint": "Leave empty to use the official provider endpoint.",

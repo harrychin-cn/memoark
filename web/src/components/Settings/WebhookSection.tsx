@@ -57,7 +57,7 @@ const WebhookSection = () => {
       title={
         <div className="flex items-center gap-2">
           <span>{t("setting.webhook.title")}</span>
-          <LearnMore url="https://usememos.com/docs/integrations/webhooks" />
+          <LearnMore url="https://usememos.com/docs/integrations/webhooks" title="Upstream Memos documentation" />
         </div>
       }
       actions={

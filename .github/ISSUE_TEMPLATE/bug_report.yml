@@ -7,7 +7,7 @@ body:
       value: |
         Thanks for reporting a bug. Please provide enough detail for maintainers to reproduce the issue.
 
-        **Before submitting**, please search [existing issues](https://github.com/usememos/memos/issues) to avoid duplicates.
+        **Before submitting**, please search [existing issues](https://github.com/harrychin-cn/memoark/issues) to avoid duplicates.
 
   - type: checkboxes
     id: pre-check
@@ -22,9 +22,9 @@ body:
   - type: input
     id: version
     attributes:
-      label: Memos Version
-      description: Use the version shown in **Settings > System**, the container image tag, the release binary version, or `memos --version`. Please do not write `latest` only.
-      placeholder: "v0.25.x, ghcr.io/usememos/memos:v0.25.x, main@abcdef, or demo site"
+      label: MemoArk Version
+      description: Use the version shown in **Settings > System**, the container image tag, the release binary version, or `memos version`. Please do not write `latest` only.
+      placeholder: "v0.1.x, memoark:dev, main@abcdef, or local source build"
     validations:
       required: true
 
@@ -32,7 +32,7 @@ body:
     id: environment
     attributes:
       label: Environment Details
-      description: Include anything relevant to where Memos is running.
+      description: Include anything relevant to where MemoArk is running.
       placeholder: |
         - Deployment: Docker / binary / source / demo site
         - Database: SQLite / PostgreSQL / MySQL

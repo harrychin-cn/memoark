@@ -1,8 +1,19 @@
 services:
-  memos:
-    image: neosmemo/memos:stable
-    container_name: memos
+  memoark:
+    build:
+      context: ..
+      dockerfile: scripts/Dockerfile
+      args:
+        VERSION: dev
+        COMMIT: local
+    image: memoark:dev
+    container_name: memoark
     volumes:
-      - ~/.memos/:/var/opt/memos
+      - memoark-data:/var/opt/memos
     ports:
-      - 5230:5230
+      - "127.0.0.1:5230:5230"
+    restart: unless-stopped
+
+volumes:
+  memoark-data:
+    name: memoark-data

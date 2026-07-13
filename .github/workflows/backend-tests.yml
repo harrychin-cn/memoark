@@ -1,8 +1,7 @@
 name: Backend Tests
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
   pull_request:
     branches: [main]
     paths:
@@ -81,11 +80,3 @@ jobs:
           esac
         env:
           DRIVER: ${{ matrix.test-group == 'store' && '' || 'sqlite' }}
-
-      - name: Upload coverage
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./coverage.out
-          flags: ${{ matrix.test-group }}
-          fail_ci_if_error: false

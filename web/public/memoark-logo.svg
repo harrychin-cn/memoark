@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 784 784" role="img" aria-labelledby="title desc">
+  <title id="title">MemoArk logo</title>
+  <desc id="desc">A folded white note carrying a small ark above calm waves, on a deep navy and teal rounded square.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07192b"/>
+      <stop offset="0.55" stop-color="#0b3144"/>
+      <stop offset="1" stop-color="#0d5660"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#5eead4" stop-opacity=".28"/>
+      <stop offset="1" stop-color="#5eead4" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+    <clipPath id="tile"><rect x="36" y="36" width="712" height="712" rx="172"/></clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect x="36" y="36" width="712" height="712" fill="url(#bg)"/>
+    <circle cx="590" cy="182" r="248" fill="url(#glow)"/>
+    <circle cx="190" cy="672" r="214" fill="#07192b" opacity=".18"/>
+  </g>
+  <rect x="38.5" y="38.5" width="707" height="707" rx="169.5" fill="none" stroke="#65e7d1" stroke-opacity=".22" stroke-width="5"/>
+  <path d="M258 166H466L574 274V536Q574 570 540 570H258Q224 570 224 536V200Q224 166 258 166Z" fill="#020b15" opacity=".32" filter="url(#shadow)"/>
+  <path d="M258 150H466L574 258V520Q574 554 540 554H258Q224 554 224 520V184Q224 150 258 150Z" fill="#f7fffe"/>
+  <path d="M466 150V224Q466 258 500 258H574Z" fill="#b9f4e9"/>
+  <path d="M466 153V224Q466 258 500 258H571" fill="none" stroke="#79ddcc" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M399 278V402" fill="none" stroke="#102f45" stroke-width="18" stroke-linecap="round"/>
+  <path d="M387 291C333 308 295 345 284 388H387Z" fill="#17a994"/>
+  <path d="M411 290C465 312 503 348 515 388H411Z" fill="#61dfcc"/>
+  <path d="M276 402H523C509 455 460 486 400 486S291 455 276 402Z" fill="#102f45"/>
+  <path d="M304 421C333 443 365 452 400 452S467 443 495 421" fill="none" stroke="#52d9c4" stroke-width="10" stroke-linecap="round" opacity=".9"/>
+  <path d="M196 612c33-30 66-30 99 0s66 30 99 0 66-30 99 0 66 30 99 0" fill="none" stroke="#5eead4" stroke-width="24" stroke-linecap="round"/>
+  <path d="M238 660c27-23 54-23 81 0s54 23 81 0 54-23 81 0 54 23 81 0" fill="none" stroke="#f7fffe" stroke-opacity=".78" stroke-width="16" stroke-linecap="round"/>
+</svg>

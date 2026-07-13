@@ -13,6 +13,7 @@ import { useTranslate } from "@/utils/i18n";
 import { convertVisibilityFromString } from "@/utils/memo";
 import {
   AudioRecorderPanel,
+  DraftRecoveryNotice,
   EditorContent,
   EditorMetadata,
   EditorToolbar,
@@ -54,8 +55,11 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
   const { aiSetting, fetchSetting } = useInstance();
   const [isAudioRecorderOpen, setIsAudioRecorderOpen] = useState(false);
   const [isTranscribingAudio, setIsTranscribingAudio] = useState(false);
+  const [completedEditIdentity, setCompletedEditIdentity] = useState<string | null>(null);
 
   const memoName = memo?.name;
+  const draftCacheKey = memoName ? `edit-${memoName}` : cacheKey;
+  const editorIdentity = `${currentUser?.name ?? ""}\u0000${draftCacheKey ?? ""}\u0000${memoName ?? "create"}`;
   const canTranscribe = useMemo(() => {
     const providerId = aiSetting.transcription?.providerId ?? "";
     if (!providerId) return false;
@@ -66,19 +70,25 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
   // Get default visibility from user settings
   const defaultVisibility = userGeneralSetting?.memoVisibility ? convertVisibilityFromString(userGeneralSetting.memoVisibility) : undefined;
 
-  const { isInitialized } = useMemoInit({
+  const { isInitialized, pendingDraft, draftBaseUpdateTime, restorePendingDraft, discardPendingDraft } = useMemoInit({
     editorRef,
     memo,
-    cacheKey,
+    cacheKey: draftCacheKey,
     username: currentUser?.name ?? "",
     autoFocus,
     defaultVisibility,
     defaultCreateTime,
   });
-  const isDraftCacheEnabled = !memo;
-
-  // Auto-save content to localStorage
-  const { discardDraft } = useAutoSave(state.content, currentUser?.name ?? "", cacheKey, isInitialized && isDraftCacheEnabled);
+  // Auto-save new and edited memo content locally. A discovered edit draft must
+  // be explicitly restored or discarded before new writes can replace it.
+  const { discardDraft } = useAutoSave(state.content, currentUser?.name ?? "", draftCacheKey, {
+    enabled: isInitialized && !pendingDraft && completedEditIdentity !== editorIdentity,
+    baselineContent: memo?.content ?? "",
+    mode: memo ? "edit" : "create",
+    memoName,
+    baseUpdateTime: draftBaseUpdateTime,
+  });
+  const isEditorLocked = Boolean(pendingDraft) || state.ui.isLoading.saving;
 
   // Focus mode management with body scroll lock
   useFocusMode(state.ui.isFocusMode);
@@ -234,6 +244,8 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
   useKeyboard(editorRef, handleSave);
 
   async function handleSave() {
+    if (isEditorLocked) return;
+
     // Validate before saving
     const { valid, reason } = validationService.canSave(state);
     if (!valid) {
@@ -254,6 +266,9 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
 
       // Clear localStorage cache on successful save and prevent the unmount
       // flush from writing the just-saved content back as a stale draft.
+      if (memo) {
+        setCompletedEditIdentity(editorIdentity);
+      }
       discardDraft();
 
       // Invalidate React Query cache to refresh memo lists across the app
@@ -321,13 +336,25 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
         <FocusModeExitButton isActive={state.ui.isFocusMode} onToggle={handleToggleFocusMode} title={t("editor.exit-focus-mode")} />
 
         {(memoName || (!memo && state.timestamps.createTime)) && (
-          <div className="w-full -mb-1">
+          <div className="w-full -mb-1" inert={isEditorLocked}>
             <TimestampPopover />
           </div>
         )}
 
+        {pendingDraft && (
+          <DraftRecoveryNotice
+            savedAt={pendingDraft.savedAt}
+            hasServerChanges={pendingDraft.hasServerChanges}
+            onRestore={() => {
+              restorePendingDraft();
+              requestAnimationFrame(() => editorRef.current?.focus());
+            }}
+            onDiscard={discardPendingDraft}
+          />
+        )}
+
         {/* Editor content grows to fill available space in focus mode */}
-        <EditorContent ref={editorRef} placeholder={placeholder} />
+        <EditorContent ref={editorRef} placeholder={placeholder} readOnly={isEditorLocked} />
 
         {isAudioRecorderOpen &&
           (state.audioRecorder.status === "recording" || state.audioRecorder.status === "requesting_permission" || isTranscribingAudio) && (
@@ -343,7 +370,7 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
           )}
 
         {/* Metadata and toolbar grouped together at bottom */}
-        <div className="w-full flex flex-col gap-2">
+        <div className="w-full flex flex-col gap-2" inert={isEditorLocked}>
           <EditorMetadata memoName={memoName} />
           <EditorToolbar onSave={handleSave} onCancel={onCancel} memoName={memoName} onAudioRecorderClick={handleAudioRecorderClick} />
         </div>

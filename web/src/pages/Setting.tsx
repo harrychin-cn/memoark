@@ -16,7 +16,7 @@ import useMediaQuery from "@/hooks/useMediaQuery";
 import { User_Role } from "@/types/proto/api/v1/user_service_pb";
 import { useTranslate } from "@/utils/i18n";
 
-const GITHUB_COMMIT_URL_PREFIX = "https://github.com/usememos/memos/commit/";
+const GITHUB_COMMIT_URL_PREFIX = "https://github.com/harrychin-cn/memoark/commit/";
 
 const isCommitSha = (commit: string) => /^[0-9a-f]{7,40}$/i.test(commit);
 

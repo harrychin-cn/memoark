@@ -1,15 +1,17 @@
-import { AlertTriangleIcon, KeyRoundIcon, PenLineIcon } from "lucide-react";
+import { AlertTriangleIcon, DownloadIcon, KeyRoundIcon, PenLineIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
-import { userServiceClient } from "@/connect";
+import { memoServiceClient, userServiceClient } from "@/connect";
 import { useAuth } from "@/contexts/AuthContext";
+import { downloadFileFromBlob } from "@/helpers/utils";
 import useCurrentUser from "@/hooks/useCurrentUser";
 import { useDialog } from "@/hooks/useDialog";
 import useNavigateTo from "@/hooks/useNavigateTo";
 import { handleError } from "@/lib/error";
 import { ROUTES } from "@/router/routes";
+import { createMemoExportFile } from "@/services/memoExportService";
 import { useTranslate } from "@/utils/i18n";
 import ChangeMemberPasswordDialog from "../ChangeMemberPasswordDialog";
 import UpdateAccountDialog from "../UpdateAccountDialog";
@@ -27,6 +29,27 @@ const MyAccountSection = () => {
   const accountDialog = useDialog();
   const passwordDialog = useDialog();
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExportMemos = async () => {
+    if (!user?.name || isExporting) {
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const result = await createMemoExportFile(user, memoServiceClient);
+      downloadFileFromBlob(new Blob([result.content], { type: "application/json;charset=utf-8" }), result.filename);
+      toast.success(t("setting.account.export-success", { count: result.document.counts.total }));
+    } catch (error) {
+      handleError(error, toast.error, {
+        context: "Export memos",
+        fallbackMessage: t("setting.account.export-failed"),
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     if (!user?.name) {
@@ -71,6 +94,20 @@ const MyAccountSection = () => {
       <LinkedIdentitySection />
 
       <AccessTokenSection />
+
+      <SettingGroup
+        showSeparator
+        title={t("setting.account.export-memos")}
+        description={t("setting.account.export-description")}
+        actions={
+          <Button variant="outline" size="sm" disabled={!user?.name || isExporting} onClick={handleExportMemos}>
+            <DownloadIcon className="w-4 h-4 mr-1.5" />
+            {isExporting ? t("setting.account.exporting") : t("setting.account.export-memos")}
+          </Button>
+        }
+      >
+        <p className="text-xs leading-5 text-muted-foreground">{t("setting.account.export-limitations")}</p>
+      </SettingGroup>
 
       <SettingGroup showSeparator title={t("setting.account.danger-area")} description={t("setting.account.danger-area-description")}>
         <div className="flex flex-col gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4">

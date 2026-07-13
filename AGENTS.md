@@ -2,7 +2,7 @@
 
 This file provides guidance to AI coding agents when working with code in this repository.
 
-Self-hosted note-taking tool. Go 1.26 backend (Echo v5, Connect RPC + gRPC-Gateway), React 18 + TypeScript 6 + Vite 7 frontend, Protocol Buffers API, SQLite/MySQL/PostgreSQL.
+MemoArk is a self-hosted note-taking tool based on Memos. Go 1.26 backend (Echo v5, Connect RPC + gRPC-Gateway), React 18 + TypeScript 6 + Vite 7 frontend, Protocol Buffers API, SQLite/MySQL/PostgreSQL.
 
 ## Commands
 
@@ -99,8 +99,8 @@ web/src/
 ## CI/CD
 
 - **backend-tests.yml:** Go 1.26.2, `go mod tidy -go=1.26.2`, golangci-lint v2.11.3, tests parallelized by group (store, server, internal, other)
-- **build-canary-image.yml:** Builds frontend with `pnpm release`, then publishes canary multi-arch container images for linux/amd64 and linux/arm64
 - **frontend-tests.yml:** Node 24, pnpm 11, lint + build
 - **proto-linter.yml:** buf lint + format check
-- **release.yml:** On version tags, builds frontend once, packages binaries for Linux/macOS/Windows, and publishes release container images/tags
+- **Triggers:** Test workflows run only for pull requests or an explicit manual dispatch; ordinary pushes do not start CI.
+- **Publishing:** No automated release or container publishing workflow is enabled. Add one only after MemoArk release targets and credentials are configured.
 - **Docker:** Multi-stage (`scripts/Dockerfile`), Alpine 3.21, non-root user, port 5230, multi-arch (amd64/arm64/arm/v7)

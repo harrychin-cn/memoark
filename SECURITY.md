@@ -2,37 +2,33 @@
 
 ## Supported Versions
 
-Memos is currently a `0.x` project. Security fixes are only provided for the latest release. Older releases are not supported for security updates, and fixes are not backported.
+MemoArk is currently a `0.x` project. Security fixes are provided for the latest release only; older releases do not receive backports.
 
-If you run Memos in production, keep your instance updated to the latest release.
+If you run MemoArk in production, keep your instance updated to the latest release.
 
 ## Reporting a Vulnerability
 
-Please report security issues privately by email: `dev@usememos.com`
+Report suspected vulnerabilities privately through [GitHub Private Vulnerability Reporting](https://github.com/harrychin-cn/memoark/security/advisories/new).
 
-Do not open public GitHub issues, discussions, or pull requests for suspected vulnerabilities.
-
-Please include:
+Do not open a public issue or pull request for a suspected vulnerability. Please include:
 
 - A clear description of the issue
 - Steps to reproduce
-- Affected version or commit
-- Deployment details that matter to reproduction
-- Your assessment of impact
+- The affected version or commit
+- Deployment details relevant to reproduction
+- Your assessment of the impact
 
-We will review reports as time permits and fix valid issues in regular releases.
+Reports will be reviewed as time permits, and confirmed issues will be addressed in a regular or security release as appropriate.
 
 ## Disclosure and CVEs
 
-Memos is self-hosted software and is still in the `0.x` stage. At this stage, we do not run a formal disclosure program, publish separate security advisories for every issue, or request CVE IDs.
-
-Security fixes may be shipped directly in normal releases or noted briefly in release notes and changelogs.
+MemoArk is self-hosted software and is still in the `0.x` stage. Security fixes may be shipped in normal releases and noted in release notes or the changelog.
 
 ## Self-Hosted Deployment Notes
 
-The security posture of a Memos instance depends heavily on how it is deployed and operated. In particular:
+The security posture of a MemoArk instance depends heavily on how it is deployed and operated. In particular:
 
-- Keep Memos updated
+- Keep MemoArk updated
 - Put it behind a properly configured reverse proxy when exposed to the internet
 - Require authentication for any non-public deployment
 - Use TLS in production

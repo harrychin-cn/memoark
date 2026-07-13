@@ -1,7 +1,17 @@
 import { useCallback, useEffect, useRef } from "react";
-import { cacheService } from "../services";
+import { cacheService, type MemoEditorDraftMetadata } from "../services";
 
-export const useAutoSave = (content: string, username: string, cacheKey: string | undefined, enabled = true) => {
+interface UseAutoSaveOptions extends MemoEditorDraftMetadata {
+  enabled?: boolean;
+  baselineContent?: string;
+}
+
+export const useAutoSave = (
+  content: string,
+  username: string,
+  cacheKey: string | undefined,
+  { enabled = true, baselineContent = "", mode = "create", memoName, baseUpdateTime }: UseAutoSaveOptions = {},
+) => {
   const latestContentRef = useRef(content);
   const discardedContentRef = useRef<string | undefined>(undefined);
 
@@ -16,8 +26,13 @@ export const useAutoSave = (content: string, username: string, cacheKey: string 
     if (!enabled) return;
 
     const key = cacheService.key(username, cacheKey);
-    cacheService.save(key, content);
-  }, [content, username, cacheKey, enabled]);
+    if (content === baselineContent) {
+      cacheService.clear(key);
+      return;
+    }
+
+    cacheService.save(key, content, { mode, memoName, baseUpdateTime });
+  }, [content, username, cacheKey, enabled, baselineContent, mode, memoName, baseUpdateTime]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -28,7 +43,12 @@ export const useAutoSave = (content: string, username: string, cacheKey: string 
         return;
       }
 
-      cacheService.saveNow(key, latestContentRef.current);
+      if (latestContentRef.current === baselineContent) {
+        cacheService.clear(key);
+        return;
+      }
+
+      cacheService.saveNow(key, latestContentRef.current, { mode, memoName, baseUpdateTime });
     };
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
@@ -46,7 +66,7 @@ export const useAutoSave = (content: string, username: string, cacheKey: string 
       window.removeEventListener("pagehide", flushDraft);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [username, cacheKey, enabled]);
+  }, [username, cacheKey, enabled, baselineContent, mode, memoName, baseUpdateTime]);
 
   const discardDraft = useCallback(() => {
     const key = cacheService.key(username, cacheKey);

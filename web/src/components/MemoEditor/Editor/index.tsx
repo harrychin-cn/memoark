@@ -34,6 +34,7 @@ const Editor = forwardRef(function Editor(props: EditorProps, ref: React.Forward
     onContentChange: handleContentChangeCallback,
     isFocusMode,
     isInIME = false,
+    readOnly = false,
     onCompositionStart,
     onCompositionEnd,
   } = props;
@@ -220,6 +221,7 @@ const Editor = forwardRef(function Editor(props: EditorProps, ref: React.Forward
           isFocusMode ? "flex-1 h-0" : "h-full",
         )}
         rows={1}
+        readOnly={readOnly}
         placeholder={placeholder}
         ref={editorRef}
         onPaste={handleEditorPaste}

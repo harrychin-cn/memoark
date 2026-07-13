@@ -260,7 +260,7 @@ const NotificationSection = () => {
           <Input
             className="w-full sm:w-80"
             value={emailSetting.fromName}
-            placeholder="Memos"
+            placeholder="MemoArk"
             onChange={(e) => updateEmailSetting({ fromName: e.target.value })}
           />
         </SettingRow>

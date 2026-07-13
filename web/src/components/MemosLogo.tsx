@@ -10,7 +10,7 @@ interface Props {
 function MemosLogo(props: Props) {
   const { collapsed } = props;
   const { generalSetting: instanceGeneralSetting } = useInstance();
-  const title = instanceGeneralSetting.customProfile?.title || "Memos";
+  const title = instanceGeneralSetting.customProfile?.title || "MemoArk";
   const avatarUrl = instanceGeneralSetting.customProfile?.logoUrl || "/full-logo.webp";
 
   return (

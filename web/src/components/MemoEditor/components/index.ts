@@ -1,6 +1,7 @@
 // UI components for MemoEditor
 
 export * from "./AudioRecorderPanel";
+export * from "./DraftRecoveryNotice";
 export * from "./EditorContent";
 export * from "./EditorMetadata";
 export * from "./EditorToolbar";

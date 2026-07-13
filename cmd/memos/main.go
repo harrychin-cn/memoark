@@ -103,7 +103,7 @@ var (
 	}
 	versionCmd = &cobra.Command{
 		Use:   "version",
-		Short: "Print the current Memos version",
+		Short: "Print the current MemoArk version",
 		Run: func(_ *cobra.Command, _ []string) {
 			fmt.Println(version.GetCurrentVersion())
 		},
@@ -167,7 +167,7 @@ func init() {
 }
 
 func printGreetings(profile *profile.Profile) {
-	fmt.Printf("Memos %s started successfully!\n", profile.Version)
+	fmt.Printf("MemoArk %s started successfully!\n", profile.Version)
 
 	if profile.Demo {
 		fmt.Fprint(os.Stderr, "Development mode is enabled\n")
@@ -184,18 +184,18 @@ func printGreetings(profile *profile.Profile) {
 	if len(profile.UNIXSock) == 0 {
 		if len(profile.Addr) == 0 {
 			fmt.Printf("Server running on port %d\n", profile.Port)
-			fmt.Printf("Access your memos at: http://localhost:%d\n", profile.Port)
+			fmt.Printf("Access MemoArk at: http://localhost:%d\n", profile.Port)
 		} else {
 			fmt.Printf("Server running on %s:%d\n", profile.Addr, profile.Port)
-			fmt.Printf("Access your memos at: http://%s:%d\n", profile.Addr, profile.Port)
+			fmt.Printf("Access MemoArk at: http://%s:%d\n", profile.Addr, profile.Port)
 		}
 	} else {
 		fmt.Printf("Server running on unix socket: %s\n", profile.UNIXSock)
 	}
 
 	fmt.Println()
-	fmt.Printf("Documentation: %s\n", "https://usememos.com")
-	fmt.Printf("Source code: %s\n", "https://github.com/usememos/memos")
+	fmt.Printf("Documentation: %s\n", "https://github.com/harrychin-cn/memoark#quick-start")
+	fmt.Printf("Source code: %s\n", "https://github.com/harrychin-cn/memoark")
 	fmt.Println("\nHappy note-taking!")
 }
 

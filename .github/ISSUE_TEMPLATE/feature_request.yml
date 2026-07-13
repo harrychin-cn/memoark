@@ -7,7 +7,7 @@ body:
       value: |
         Thanks for suggesting an improvement. Please describe the problem first so maintainers can evaluate the request.
 
-        **Before submitting**, please search [existing issues](https://github.com/usememos/memos/issues?q=label%3Aenhancement) to avoid duplicates.
+        **Before submitting**, please search [existing issues](https://github.com/harrychin-cn/memoark/issues?q=label%3Aenhancement) to avoid duplicates.
 
   - type: checkboxes
     id: pre-check
@@ -34,9 +34,9 @@ body:
     id: solution
     attributes:
       label: Proposed Solution
-      description: Describe the behavior you would like Memos to support.
+      description: Describe the behavior you would like MemoArk to support.
       placeholder: |
-        Memos should ...
+        MemoArk should ...
     validations:
       required: true
 

@@ -37,3 +37,9 @@ export const downloadFileFromUrl = (url: string, filename: string) => {
   a.click();
   a.remove();
 };
+
+export const downloadFileFromBlob = (blob: Blob, filename: string) => {
+  const url = URL.createObjectURL(blob);
+  downloadFileFromUrl(url, filename);
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+};
