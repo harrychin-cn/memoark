@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"path/filepath"
 	"testing"
 
 	// sqlite driver.
@@ -40,9 +41,14 @@ func NewTestingStore(ctx context.Context, t *testing.T) *store.Store {
 // NewTestingStoreWithDSN creates a testing store connected to a specific DSN.
 // This is useful for testing migrations on existing data.
 func NewTestingStoreWithDSN(_ context.Context, t *testing.T, driver, dsn string) *store.Store {
+	dataDirectory := t.TempDir()
+	if driver == "sqlite" {
+		dataDirectory = filepath.Dir(dsn)
+	}
+
 	profile := &profile.Profile{
 		Port:    getUnusedPort(),
-		Data:    t.TempDir(), // Dummy dir, DSN matters
+		Data:    dataDirectory,
 		DSN:     dsn,
 		Driver:  driver,
 		Version: version.GetCurrentVersion(),

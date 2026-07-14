@@ -45,6 +45,10 @@ Stop the instance without deleting its data:
 docker compose -f scripts/compose.yaml down
 ```
 
+Before upgrading an existing SQLite database, MemoArk creates and verifies a backup when schema migrations are pending. See
+[SQLite migration backups and restore](docs/operations/sqlite-migration-backups.md) for the backup location, Docker behavior, and manual
+restore procedure.
+
 ## Development
 
 Frontend:

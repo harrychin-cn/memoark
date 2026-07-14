@@ -118,8 +118,13 @@ func (s *Store) Migrate(ctx context.Context) error {
 		)
 		return errors.Errorf("cannot downgrade schema version from %s to %s", instanceBasicSetting.SchemaVersion, currentSchemaVersion)
 	}
-	// Apply migrations if needed.
-	if isVersionEmpty(instanceBasicSetting.SchemaVersion) || version.IsVersionGreaterThan(currentSchemaVersion, instanceBasicSetting.SchemaVersion) {
+	// Apply migrations if needed. SQLite creates and verifies a safety backup
+	// before the migration transaction starts.
+	migrationPending := isVersionEmpty(instanceBasicSetting.SchemaVersion) || version.IsVersionGreaterThan(currentSchemaVersion, instanceBasicSetting.SchemaVersion)
+	if migrationPending {
+		if err := s.createPreMigrationBackup(ctx, instanceBasicSetting.SchemaVersion, currentSchemaVersion); err != nil {
+			return errors.Wrap(err, "failed to create pre-migration backup")
+		}
 		if err := s.applyMigrations(ctx, instanceBasicSetting.SchemaVersion, currentSchemaVersion); err != nil {
 			return errors.Wrap(err, "failed to apply migrations")
 		}

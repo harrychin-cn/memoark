@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"path/filepath"
 	"strings"
 	"testing"
 	"time"
@@ -43,6 +44,7 @@ func TestMigrationFromV0262PreservesLegacyData(t *testing.T) {
 	settingBeforeSeed, err := legacyStore.GetInstanceBasicSetting(ctx)
 	require.NoError(t, err)
 	t.Logf("Legacy schema version before migration: %s", settingBeforeSeed.SchemaVersion)
+	require.NoError(t, legacyStore.Close())
 
 	err = container.Terminate(ctx)
 	require.NoError(t, err, "failed to stop v0.26.2 memos container")
@@ -56,8 +58,15 @@ func TestMigrationFromV0262PreservesLegacyData(t *testing.T) {
 	count, err := countSystemSetting(ctx, db, "STORAGE")
 	require.NoError(t, err)
 	require.Zero(t, count, "v0.26.2 database should not have a STORAGE setting before migration")
+	if driver == "sqlite" {
+		require.Empty(t, listMigrationBackupFiles(t, filepath.Dir(hostDSN)), "legacy database should have no migration backup before upgrade")
+	}
 
 	ts := NewTestingStoreWithDSN(ctx, t, driver, hostDSN)
+	defer ts.Close()
+	if driver == "sqlite" {
+		require.Equal(t, filepath.Clean(filepath.Dir(hostDSN)), filepath.Clean(ts.GetDataDir()), "SQLite data directory should match the DSN directory")
+	}
 	err = ts.Migrate(ctx)
 	require.NoError(t, err, "migration from v0.26.2 should succeed for %s", driver)
 
@@ -66,6 +75,42 @@ func TestMigrationFromV0262PreservesLegacyData(t *testing.T) {
 	currentSetting, err := ts.GetInstanceBasicSetting(ctx)
 	require.NoError(t, err)
 	require.Equal(t, currentVersion, currentSetting.SchemaVersion, "schema version should be updated")
+	if driver == "sqlite" {
+		dataDirectory := filepath.Dir(hostDSN)
+		backupFiles := listMigrationBackupFiles(t, dataDirectory)
+		require.Len(t, backupFiles, 1, "migration should create exactly one backup")
+
+		backupPath := backupFiles[0]
+		backupName := filepath.Base(backupPath)
+		expectedPrefix := fmt.Sprintf("memoark-pre-migration-v%s-to-v%s-", settingBeforeSeed.SchemaVersion, currentVersion)
+		require.True(t, strings.HasPrefix(backupName, expectedPrefix), "backup filename should contain source and target schema versions: %s", backupName)
+		require.True(t, strings.HasSuffix(backupName, "Z.db"), "backup filename should contain a UTC timestamp: %s", backupName)
+		requireSQLiteIntegrityOK(t, backupPath)
+
+		backupDatabase := openMigrationSQLDB(t, "sqlite", backupPath)
+		defer backupDatabase.Close()
+		require.Equal(t, settingBeforeSeed.SchemaVersion, readSQLiteSchemaVersion(t, backupDatabase), "backup should retain the legacy schema version")
+
+		backupHasActivity, err := tableExists(ctx, backupDatabase, "sqlite", "activity")
+		require.NoError(t, err)
+		require.True(t, backupHasActivity, "backup should retain the legacy activity table")
+		backupHasMemoShare, err := tableExists(ctx, backupDatabase, "sqlite", "memo_share")
+		require.NoError(t, err)
+		require.False(t, backupHasMemoShare, "backup should not contain the post-upgrade memo_share table")
+		backupHasUserIdentity, err := tableExists(ctx, backupDatabase, "sqlite", "user_identity")
+		require.NoError(t, err)
+		require.False(t, backupHasUserIdentity, "backup should not contain the post-upgrade user_identity table")
+
+		sourceDatabase := ts.GetDriver().GetDB()
+		sourceHasUserIdentity, err := tableExists(ctx, sourceDatabase, "sqlite", "user_identity")
+		require.NoError(t, err)
+		require.True(t, sourceHasUserIdentity, "source database should have the current schema")
+		requireSQLiteMemoContent(t, sourceDatabase, "legacy-parent", "parent memo")
+		requireSQLiteMemoContent(t, backupDatabase, "legacy-parent", "parent memo")
+
+		require.NoError(t, ts.Migrate(ctx), "repeating migration on the current database should succeed")
+		require.Len(t, listMigrationBackupFiles(t, dataDirectory), 1, "repeating migration should not create another backup")
+	}
 
 	storageSetting, err := ts.GetInstanceStorageSetting(ctx)
 	require.NoError(t, err)

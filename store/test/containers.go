@@ -320,7 +320,9 @@ func StartMemosContainer(ctx context.Context, cfg MemosContainerConfig) (testcon
 		Env:          env,
 		ExposedPorts: []string{"5230/tcp"},
 		WaitingFor:   MemosStartupWaitStrategy,
-		User:         fmt.Sprintf("%d:%d", os.Getuid(), os.Getgid()),
+	}
+	if uid, gid := os.Getuid(), os.Getgid(); uid >= 0 && gid >= 0 {
+		req.User = fmt.Sprintf("%d:%d", uid, gid)
 	}
 
 	// Use local image if specified
