@@ -1,4 +1,4 @@
-import { AlertTriangleIcon, DownloadIcon, KeyRoundIcon, PenLineIcon } from "lucide-react";
+import { AlertTriangleIcon, DownloadIcon, KeyRoundIcon, PenLineIcon, UploadIcon } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -18,6 +18,7 @@ import UpdateAccountDialog from "../UpdateAccountDialog";
 import UserAvatar from "../UserAvatar";
 import AccessTokenSection from "./AccessTokenSection";
 import LinkedIdentitySection from "./LinkedIdentitySection";
+import MemoImportDialog from "./MemoImportDialog";
 import SettingGroup from "./SettingGroup";
 import SettingSection from "./SettingSection";
 
@@ -28,6 +29,7 @@ const MyAccountSection = () => {
   const navigateTo = useNavigateTo();
   const accountDialog = useDialog();
   const passwordDialog = useDialog();
+  const importDialog = useDialog();
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -109,6 +111,20 @@ const MyAccountSection = () => {
         <p className="text-xs leading-5 text-muted-foreground">{t("setting.account.export-limitations")}</p>
       </SettingGroup>
 
+      <SettingGroup
+        showSeparator
+        title={t("setting.account.import-memos")}
+        description={t("setting.account.import-description")}
+        actions={
+          <Button variant="outline" size="sm" onClick={importDialog.open}>
+            <UploadIcon className="w-4 h-4 mr-1.5" />
+            {t("setting.account.import-memos")}
+          </Button>
+        }
+      >
+        <p className="text-xs leading-5 text-muted-foreground">{t("setting.account.import-empty-account-only")}</p>
+      </SettingGroup>
+
       <SettingGroup showSeparator title={t("setting.account.danger-area")} description={t("setting.account.danger-area-description")}>
         <div className="flex flex-col gap-3 rounded-xl border border-destructive/30 bg-destructive/5 p-4">
           <div className="flex items-start gap-3">
@@ -133,6 +149,8 @@ const MyAccountSection = () => {
 
       {/* Change Password Dialog */}
       <ChangeMemberPasswordDialog open={passwordDialog.isOpen} onOpenChange={passwordDialog.setOpen} user={user} />
+
+      <MemoImportDialog open={importDialog.isOpen} onOpenChange={importDialog.setOpen} />
 
       <ConfirmDialog
         open={deleteOpen}

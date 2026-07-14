@@ -27,6 +27,7 @@ type Driver interface {
 
 	// Memo model related methods.
 	CreateMemo(ctx context.Context, create *Memo) (*Memo, error)
+	ImportMemosAtomically(ctx context.Context, creatorID int32, memos []*Memo) error
 	ListMemos(ctx context.Context, find *FindMemo) ([]*Memo, error)
 	UpdateMemo(ctx context.Context, update *UpdateMemo) error
 	DeleteMemo(ctx context.Context, delete *DeleteMemo) error

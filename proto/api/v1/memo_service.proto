@@ -23,6 +23,20 @@ service MemoService {
     };
     option (google.api.method_signature) = "memo";
   }
+  // PreviewMemoImport validates a MemoArk v1 export without writing data.
+  rpc PreviewMemoImport(PreviewMemoImportRequest) returns (MemoImportPreview) {
+    option (google.api.http) = {
+      post: "/api/v1/memos:previewImport"
+      body: "*"
+    };
+  }
+  // ImportMemoExport restores supported memo fields from a MemoArk v1 export.
+  rpc ImportMemoExport(ImportMemoExportRequest) returns (MemoImportResult) {
+    option (google.api.http) = {
+      post: "/api/v1/memos:import"
+      body: "*"
+    };
+  }
   // ListMemos lists memos with pagination and filter.
   rpc ListMemos(ListMemosRequest) returns (ListMemosResponse) {
     option (google.api.http) = {get: "/api/v1/memos"};
@@ -634,4 +648,74 @@ message LinkMetadata {
 
   // The link image URL.
   string image = 4;
+}
+
+message PreviewMemoImportRequest {
+  // Required. The unmodified UTF-8 JSON bytes from a MemoArk export file.
+  bytes data = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+message ImportMemoExportRequest {
+  // Required. The unmodified UTF-8 JSON bytes from a MemoArk export file.
+  bytes data = 1 [(google.api.field_behavior) = REQUIRED];
+}
+
+enum MemoImportIssueKind {
+  MEMO_IMPORT_ISSUE_KIND_UNSPECIFIED = 0;
+  INVALID = 1;
+  UNSUPPORTED = 2;
+}
+
+message MemoImportIssue {
+  // One-based memo index. Zero denotes a document-level issue.
+  int32 record_index = 1;
+
+  // Source memo resource name when one could be read.
+  string source_name = 2;
+
+  // Whether the issue blocks import or denotes skipped unsupported data.
+  MemoImportIssueKind kind = 3;
+
+  // Human-readable explanation suitable for the import preview.
+  string message = 4;
+}
+
+message MemoImportSkippedCounts {
+  int32 attachments = 1;
+  int32 comments = 2;
+  int32 relations = 3;
+  int32 reactions = 4;
+  int32 locations = 5;
+  int32 settings = 6;
+}
+
+message MemoImportPreview {
+  // Whether the document envelope is a valid MemoArk v1 export.
+  bool envelope_valid = 1;
+
+  // Whether this export may be imported into the current account.
+  bool can_import = 2;
+
+  // Present when import is blocked.
+  string blocking_reason = 3;
+
+  int32 total = 4;
+  int32 normal = 5;
+  int32 archived = 6;
+  int32 invalid = 7;
+  int32 unsupported = 8;
+  MemoImportSkippedCounts skipped = 9;
+  repeated MemoImportIssue issues = 10;
+  string source_user = 11;
+  string exported_at = 12;
+}
+
+message MemoImportResult {
+  int32 restored = 1;
+  int32 skipped_total = 2;
+  int32 failed = 3;
+  int32 normal = 4;
+  int32 archived = 5;
+  MemoImportSkippedCounts skipped = 6;
+  repeated string warnings = 7;
 }

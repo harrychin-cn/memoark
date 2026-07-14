@@ -303,6 +303,22 @@ func (s *ConnectServiceHandler) CreateMemo(ctx context.Context, req *connect.Req
 	return connect.NewResponse(resp), nil
 }
 
+func (s *ConnectServiceHandler) PreviewMemoImport(ctx context.Context, req *connect.Request[v1pb.PreviewMemoImportRequest]) (*connect.Response[v1pb.MemoImportPreview], error) {
+	resp, err := s.APIV1Service.PreviewMemoImport(ctx, req.Msg)
+	if err != nil {
+		return nil, convertGRPCError(err)
+	}
+	return connect.NewResponse(resp), nil
+}
+
+func (s *ConnectServiceHandler) ImportMemoExport(ctx context.Context, req *connect.Request[v1pb.ImportMemoExportRequest]) (*connect.Response[v1pb.MemoImportResult], error) {
+	resp, err := s.APIV1Service.ImportMemoExport(ctx, req.Msg)
+	if err != nil {
+		return nil, convertGRPCError(err)
+	}
+	return connect.NewResponse(resp), nil
+}
+
 func (s *ConnectServiceHandler) ListMemos(ctx context.Context, req *connect.Request[v1pb.ListMemosRequest]) (*connect.Response[v1pb.ListMemosResponse], error) {
 	resp, err := s.APIV1Service.ListMemos(ctx, req.Msg)
 	if err != nil {

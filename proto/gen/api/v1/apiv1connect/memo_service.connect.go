@@ -36,6 +36,12 @@ const (
 const (
 	// MemoServiceCreateMemoProcedure is the fully-qualified name of the MemoService's CreateMemo RPC.
 	MemoServiceCreateMemoProcedure = "/memos.api.v1.MemoService/CreateMemo"
+	// MemoServicePreviewMemoImportProcedure is the fully-qualified name of the MemoService's
+	// PreviewMemoImport RPC.
+	MemoServicePreviewMemoImportProcedure = "/memos.api.v1.MemoService/PreviewMemoImport"
+	// MemoServiceImportMemoExportProcedure is the fully-qualified name of the MemoService's
+	// ImportMemoExport RPC.
+	MemoServiceImportMemoExportProcedure = "/memos.api.v1.MemoService/ImportMemoExport"
 	// MemoServiceListMemosProcedure is the fully-qualified name of the MemoService's ListMemos RPC.
 	MemoServiceListMemosProcedure = "/memos.api.v1.MemoService/ListMemos"
 	// MemoServiceGetMemoProcedure is the fully-qualified name of the MemoService's GetMemo RPC.
@@ -95,6 +101,10 @@ const (
 type MemoServiceClient interface {
 	// CreateMemo creates a memo.
 	CreateMemo(context.Context, *connect.Request[v1.CreateMemoRequest]) (*connect.Response[v1.Memo], error)
+	// PreviewMemoImport validates a MemoArk v1 export without writing data.
+	PreviewMemoImport(context.Context, *connect.Request[v1.PreviewMemoImportRequest]) (*connect.Response[v1.MemoImportPreview], error)
+	// ImportMemoExport restores supported memo fields from a MemoArk v1 export.
+	ImportMemoExport(context.Context, *connect.Request[v1.ImportMemoExportRequest]) (*connect.Response[v1.MemoImportResult], error)
 	// ListMemos lists memos with pagination and filter.
 	ListMemos(context.Context, *connect.Request[v1.ListMemosRequest]) (*connect.Response[v1.ListMemosResponse], error)
 	// GetMemo gets a memo.
@@ -151,6 +161,18 @@ func NewMemoServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 			httpClient,
 			baseURL+MemoServiceCreateMemoProcedure,
 			connect.WithSchema(memoServiceMethods.ByName("CreateMemo")),
+			connect.WithClientOptions(opts...),
+		),
+		previewMemoImport: connect.NewClient[v1.PreviewMemoImportRequest, v1.MemoImportPreview](
+			httpClient,
+			baseURL+MemoServicePreviewMemoImportProcedure,
+			connect.WithSchema(memoServiceMethods.ByName("PreviewMemoImport")),
+			connect.WithClientOptions(opts...),
+		),
+		importMemoExport: connect.NewClient[v1.ImportMemoExportRequest, v1.MemoImportResult](
+			httpClient,
+			baseURL+MemoServiceImportMemoExportProcedure,
+			connect.WithSchema(memoServiceMethods.ByName("ImportMemoExport")),
 			connect.WithClientOptions(opts...),
 		),
 		listMemos: connect.NewClient[v1.ListMemosRequest, v1.ListMemosResponse](
@@ -273,6 +295,8 @@ func NewMemoServiceClient(httpClient connect.HTTPClient, baseURL string, opts ..
 // memoServiceClient implements MemoServiceClient.
 type memoServiceClient struct {
 	createMemo           *connect.Client[v1.CreateMemoRequest, v1.Memo]
+	previewMemoImport    *connect.Client[v1.PreviewMemoImportRequest, v1.MemoImportPreview]
+	importMemoExport     *connect.Client[v1.ImportMemoExportRequest, v1.MemoImportResult]
 	listMemos            *connect.Client[v1.ListMemosRequest, v1.ListMemosResponse]
 	getMemo              *connect.Client[v1.GetMemoRequest, v1.Memo]
 	updateMemo           *connect.Client[v1.UpdateMemoRequest, v1.Memo]
@@ -297,6 +321,16 @@ type memoServiceClient struct {
 // CreateMemo calls memos.api.v1.MemoService.CreateMemo.
 func (c *memoServiceClient) CreateMemo(ctx context.Context, req *connect.Request[v1.CreateMemoRequest]) (*connect.Response[v1.Memo], error) {
 	return c.createMemo.CallUnary(ctx, req)
+}
+
+// PreviewMemoImport calls memos.api.v1.MemoService.PreviewMemoImport.
+func (c *memoServiceClient) PreviewMemoImport(ctx context.Context, req *connect.Request[v1.PreviewMemoImportRequest]) (*connect.Response[v1.MemoImportPreview], error) {
+	return c.previewMemoImport.CallUnary(ctx, req)
+}
+
+// ImportMemoExport calls memos.api.v1.MemoService.ImportMemoExport.
+func (c *memoServiceClient) ImportMemoExport(ctx context.Context, req *connect.Request[v1.ImportMemoExportRequest]) (*connect.Response[v1.MemoImportResult], error) {
+	return c.importMemoExport.CallUnary(ctx, req)
 }
 
 // ListMemos calls memos.api.v1.MemoService.ListMemos.
@@ -398,6 +432,10 @@ func (c *memoServiceClient) BatchGetLinkMetadata(ctx context.Context, req *conne
 type MemoServiceHandler interface {
 	// CreateMemo creates a memo.
 	CreateMemo(context.Context, *connect.Request[v1.CreateMemoRequest]) (*connect.Response[v1.Memo], error)
+	// PreviewMemoImport validates a MemoArk v1 export without writing data.
+	PreviewMemoImport(context.Context, *connect.Request[v1.PreviewMemoImportRequest]) (*connect.Response[v1.MemoImportPreview], error)
+	// ImportMemoExport restores supported memo fields from a MemoArk v1 export.
+	ImportMemoExport(context.Context, *connect.Request[v1.ImportMemoExportRequest]) (*connect.Response[v1.MemoImportResult], error)
 	// ListMemos lists memos with pagination and filter.
 	ListMemos(context.Context, *connect.Request[v1.ListMemosRequest]) (*connect.Response[v1.ListMemosResponse], error)
 	// GetMemo gets a memo.
@@ -450,6 +488,18 @@ func NewMemoServiceHandler(svc MemoServiceHandler, opts ...connect.HandlerOption
 		MemoServiceCreateMemoProcedure,
 		svc.CreateMemo,
 		connect.WithSchema(memoServiceMethods.ByName("CreateMemo")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memoServicePreviewMemoImportHandler := connect.NewUnaryHandler(
+		MemoServicePreviewMemoImportProcedure,
+		svc.PreviewMemoImport,
+		connect.WithSchema(memoServiceMethods.ByName("PreviewMemoImport")),
+		connect.WithHandlerOptions(opts...),
+	)
+	memoServiceImportMemoExportHandler := connect.NewUnaryHandler(
+		MemoServiceImportMemoExportProcedure,
+		svc.ImportMemoExport,
+		connect.WithSchema(memoServiceMethods.ByName("ImportMemoExport")),
 		connect.WithHandlerOptions(opts...),
 	)
 	memoServiceListMemosHandler := connect.NewUnaryHandler(
@@ -570,6 +620,10 @@ func NewMemoServiceHandler(svc MemoServiceHandler, opts ...connect.HandlerOption
 		switch r.URL.Path {
 		case MemoServiceCreateMemoProcedure:
 			memoServiceCreateMemoHandler.ServeHTTP(w, r)
+		case MemoServicePreviewMemoImportProcedure:
+			memoServicePreviewMemoImportHandler.ServeHTTP(w, r)
+		case MemoServiceImportMemoExportProcedure:
+			memoServiceImportMemoExportHandler.ServeHTTP(w, r)
 		case MemoServiceListMemosProcedure:
 			memoServiceListMemosHandler.ServeHTTP(w, r)
 		case MemoServiceGetMemoProcedure:
@@ -619,6 +673,14 @@ type UnimplementedMemoServiceHandler struct{}
 
 func (UnimplementedMemoServiceHandler) CreateMemo(context.Context, *connect.Request[v1.CreateMemoRequest]) (*connect.Response[v1.Memo], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("memos.api.v1.MemoService.CreateMemo is not implemented"))
+}
+
+func (UnimplementedMemoServiceHandler) PreviewMemoImport(context.Context, *connect.Request[v1.PreviewMemoImportRequest]) (*connect.Response[v1.MemoImportPreview], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("memos.api.v1.MemoService.PreviewMemoImport is not implemented"))
+}
+
+func (UnimplementedMemoServiceHandler) ImportMemoExport(context.Context, *connect.Request[v1.ImportMemoExportRequest]) (*connect.Response[v1.MemoImportResult], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("memos.api.v1.MemoService.ImportMemoExport is not implemented"))
 }
 
 func (UnimplementedMemoServiceHandler) ListMemos(context.Context, *connect.Request[v1.ListMemosRequest]) (*connect.Response[v1.ListMemosResponse], error) {

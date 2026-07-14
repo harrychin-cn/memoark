@@ -1240,6 +1240,56 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/Status'
+    /api/v1/memos:import:
+        post:
+            tags:
+                - MemoService
+            description: ImportMemoExport restores supported memo fields from a MemoArk v1 export.
+            operationId: MemoService_ImportMemoExport
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ImportMemoExportRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MemoImportResult'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
+    /api/v1/memos:previewImport:
+        post:
+            tags:
+                - MemoService
+            description: PreviewMemoImport validates a MemoArk v1 export without writing data.
+            operationId: MemoService_PreviewMemoImport
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/PreviewMemoImportRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MemoImportPreview'
+                default:
+                    description: Default error response
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/Status'
     /api/v1/shares/{shareId}:
         get:
             tags:
@@ -2686,6 +2736,15 @@ components:
             properties:
                 oauth2Config:
                     $ref: '#/components/schemas/OAuth2Config'
+        ImportMemoExportRequest:
+            required:
+                - data
+            type: object
+            properties:
+                data:
+                    type: string
+                    description: Required. The unmodified UTF-8 JSON bytes from a MemoArk export file.
+                    format: bytes
         InstanceProfile:
             type: object
             properties:
@@ -3256,6 +3315,109 @@ components:
                     allOf:
                         - $ref: '#/components/schemas/Location'
                     description: Optional. The location of the memo.
+        MemoImportIssue:
+            type: object
+            properties:
+                recordIndex:
+                    type: integer
+                    description: One-based memo index. Zero denotes a document-level issue.
+                    format: int32
+                sourceName:
+                    type: string
+                    description: Source memo resource name when one could be read.
+                kind:
+                    enum:
+                        - MEMO_IMPORT_ISSUE_KIND_UNSPECIFIED
+                        - INVALID
+                        - UNSUPPORTED
+                    type: string
+                    description: Whether the issue blocks import or denotes skipped unsupported data.
+                    format: enum
+                message:
+                    type: string
+                    description: Human-readable explanation suitable for the import preview.
+        MemoImportPreview:
+            type: object
+            properties:
+                envelopeValid:
+                    type: boolean
+                    description: Whether the document envelope is a valid MemoArk v1 export.
+                canImport:
+                    type: boolean
+                    description: Whether this export may be imported into the current account.
+                blockingReason:
+                    type: string
+                    description: Present when import is blocked.
+                total:
+                    type: integer
+                    format: int32
+                normal:
+                    type: integer
+                    format: int32
+                archived:
+                    type: integer
+                    format: int32
+                invalid:
+                    type: integer
+                    format: int32
+                unsupported:
+                    type: integer
+                    format: int32
+                skipped:
+                    $ref: '#/components/schemas/MemoImportSkippedCounts'
+                issues:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/MemoImportIssue'
+                sourceUser:
+                    type: string
+                exportedAt:
+                    type: string
+        MemoImportResult:
+            type: object
+            properties:
+                restored:
+                    type: integer
+                    format: int32
+                skippedTotal:
+                    type: integer
+                    format: int32
+                failed:
+                    type: integer
+                    format: int32
+                normal:
+                    type: integer
+                    format: int32
+                archived:
+                    type: integer
+                    format: int32
+                skipped:
+                    $ref: '#/components/schemas/MemoImportSkippedCounts'
+                warnings:
+                    type: array
+                    items:
+                        type: string
+        MemoImportSkippedCounts:
+            type: object
+            properties:
+                attachments:
+                    type: integer
+                    format: int32
+                comments:
+                    type: integer
+                    format: int32
+                relations:
+                    type: integer
+                    format: int32
+                reactions:
+                    type: integer
+                    format: int32
+                locations:
+                    type: integer
+                    format: int32
+                settings:
+                    type: integer
+                    format: int32
         MemoRelation:
             required:
                 - memo
@@ -3425,6 +3587,15 @@ components:
             description: |-
                 PersonalAccessToken represents a long-lived token for API/script access.
                  PATs are distinct from short-lived JWT access tokens used for session authentication.
+        PreviewMemoImportRequest:
+            required:
+                - data
+            type: object
+            properties:
+                data:
+                    type: string
+                    description: Required. The unmodified UTF-8 JSON bytes from a MemoArk export file.
+                    format: bytes
         Reaction:
             required:
                 - contentId
