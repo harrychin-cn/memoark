@@ -25,20 +25,17 @@ Milestone: [MemoArk v0.1.0](https://github.com/harrychin-cn/memoark/milestone/1)
 
 ### P0 release blockers
 
-- [#1 Create a verified SQLite backup before schema migrations](https://github.com/harrychin-cn/memoark/issues/1)
-- [#2 Restore a MemoArk v1 JSON export into an empty account](https://github.com/harrychin-cn/memoark/issues/2)
+- [x] [#1 Create a verified SQLite backup before schema migrations](https://github.com/harrychin-cn/memoark/issues/1)
+- [x] [#2 Restore a MemoArk v1 JSON export into an empty account](https://github.com/harrychin-cn/memoark/issues/2)
 
 ### P1 high-value improvements
 
-- [#3 Preserve failed saves locally and provide a safe retry](https://github.com/harrychin-cn/memoark/issues/3)
-- [#4 Restore multi-tag AND filtering](https://github.com/harrychin-cn/memoark/issues/4)
-- [#5 Fix hashtag boundaries and Unicode apostrophes](https://github.com/harrychin-cn/memoark/issues/5)
-- [#6 Bulk rename or merge a tag with a preview](https://github.com/harrychin-cn/memoark/issues/6)
+- [x] [#3 Preserve failed saves locally and provide a safe retry](https://github.com/harrychin-cn/memoark/issues/3)
+- [x] [#4 Restore multi-tag AND filtering](https://github.com/harrychin-cn/memoark/issues/4)
 
-**#4 multi-tag filtering is complete.** The remaining finite delivery order is #1 SQLite migration backup, #2 JSON import,
-#3 failed-save recovery, and then one integrated release-candidate verification pass. #5 and #6 are deliberately deferred together
-to v0.1.1/backlog because they are organization enhancements rather than recovery release blockers, and #6 should follow #5's shared
-parsing rules.
+**v0.1.0 is complete.** Issues #1 through #4 passed their automated, container, and real-browser acceptance gates, and the milestone
+is closed. The release delivers reversible SQLite upgrades, empty-account JSON import, failed-save recovery, and multi-tag AND
+filtering without expanding into unrelated organization features.
 
 ## v0.1.0 release gate
 
@@ -48,6 +45,18 @@ parsing rules.
 - Export-to-import round-trip tests pass for supported fields.
 - Offline/failed-save browser tests prove that content survives reload and retry without duplicate notes.
 - The release notes list unsupported backup/import data explicitly.
+
+Gate result: **passed on 2026-07-14**. See [v0.1.0 release notes](docs/releases/v0.1.0.md) for commands, artifacts, and known limits.
+
+## v0.1.1: tag consistency and maintenance
+
+Milestone: [MemoArk v0.1.1](https://github.com/harrychin-cn/memoark/milestone/2)
+
+- [ ] [#5 Fix hashtag boundaries and Unicode apostrophes](https://github.com/harrychin-cn/memoark/issues/5)
+- [ ] [#6 Bulk rename or merge a tag with a preview](https://github.com/harrychin-cn/memoark/issues/6)
+
+#5 and #6 were deliberately deferred with written reasons. They improve organization rather than recovery safety, and #6 should use
+the shared parsing rules established by #5 instead of introducing a second tag parser.
 
 ## Later backlog
 
