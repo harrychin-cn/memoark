@@ -1,6 +1,7 @@
 package email
 
 import (
+	"net"
 	"testing"
 	"time"
 
@@ -9,9 +10,26 @@ import (
 )
 
 func TestSend(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("failed to start local SMTP test listener: %v", err)
+	}
+	t.Cleanup(func() {
+		_ = listener.Close()
+	})
+
+	serverDone := make(chan error, 1)
+	go func() {
+		conn, err := listener.Accept()
+		if err == nil {
+			err = conn.Close()
+		}
+		serverDone <- err
+	}()
+
 	config := &Config{
-		SMTPHost:  "smtp.example.com",
-		SMTPPort:  587,
+		SMTPHost:  "127.0.0.1",
+		SMTPPort:  listener.Addr().(*net.TCPAddr).Port,
 		FromEmail: "test@example.com",
 	}
 
@@ -21,12 +39,14 @@ func TestSend(t *testing.T) {
 		Body:    "Test body",
 	}
 
-	// This will fail to connect (no real server), but should validate inputs
-	err := Send(config, message)
-	// We expect an error because there's no real SMTP server
-	// But it should be a connection error, not a validation error
+	// The local listener accepts TCP and closes before an SMTP greeting. This
+	// verifies that valid inputs reach the SMTP protocol layer without relying
+	// on external DNS or platform-specific socket error text.
+	err = Send(config, message)
+	assert.NoError(t, <-serverDone)
 	assert.Error(t, err)
-	assert.Contains(t, err.Error(), "dial")
+	assert.Contains(t, err.Error(), "failed to create SMTP client")
+	assert.NotContains(t, err.Error(), "invalid email")
 }
 
 func TestSendValidation(t *testing.T) {
