@@ -12,7 +12,7 @@ import useLoading from "@/hooks/useLoading";
 import useNavigateTo from "@/hooks/useNavigateTo";
 import { handleError } from "@/lib/error";
 import { ROUTES } from "@/router/routes";
-import { useTranslate } from "@/utils/i18n";
+import { getLocaleWithFallback, useTranslate } from "@/utils/i18n";
 
 interface PasswordSignInFormProps {
   redirectPath?: string;
@@ -63,7 +63,7 @@ function PasswordSignInForm({ redirectPath }: PasswordSignInFormProps) {
       if (response.accessToken) {
         setAccessToken(response.accessToken, response.accessTokenExpiresAt ? timestampDate(response.accessTokenExpiresAt) : undefined);
       }
-      await initialize();
+      await initialize(getLocaleWithFallback());
       navigateTo(redirectPath || ROUTES.HOME, { replace: true });
     } catch (error: unknown) {
       handleError(error, toast.error, {

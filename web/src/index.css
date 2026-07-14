@@ -31,3 +31,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes memoark-bird-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.4deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(0.4deg);
+  }
+}
+
+.memoark-bird-illustration {
+  animation: memoark-bird-float 3.6s ease-in-out infinite;
+  animation-delay: var(--memoark-bird-delay, 0ms);
+  transform-origin: 50% 75%;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memoark-bird-illustration {
+    animation: none;
+  }
+}

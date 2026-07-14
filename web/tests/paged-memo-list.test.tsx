@@ -34,7 +34,7 @@ vi.mock("@/components/MemoEditor", () => ({
 }));
 
 describe("<PagedMemoList>", () => {
-  it("uses the tile sprite Placeholder for the empty state", () => {
+  it("uses the vector illustration Placeholder for the empty state", () => {
     const queryClient = new QueryClient();
 
     render(
@@ -44,6 +44,6 @@ describe("<PagedMemoList>", () => {
     );
 
     expect(screen.getByText("No data found.")).toBeInTheDocument();
-    expect(screen.getByTestId("placeholder-sprite")).toBeInTheDocument();
+    expect(screen.getByTestId("placeholder-illustration")).toBeInTheDocument();
   });
 });

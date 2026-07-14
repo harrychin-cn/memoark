@@ -1,11 +1,9 @@
 import { ExternalLinkIcon } from "lucide-react";
-import TileSpriteStrip from "@/components/Placeholder/TileSpriteStrip";
-import { TILE_SPRITES, type TileSprite } from "@/components/Placeholder/tileSprites";
+import BirdIllustration from "@/components/Placeholder/BirdIllustration";
+import { BIRD_ILLUSTRATIONS, type BirdIllustration as BirdIllustrationAsset } from "@/components/Placeholder/birdIllustrations";
 import SettingGroup from "@/components/Settings/SettingGroup";
 import SettingSection from "@/components/Settings/SettingSection";
 import { Button } from "@/components/ui/button";
-
-const SPRITE_SCALE = 2;
 
 const PRODUCT_LINKS = [
   { label: "GitHub", href: "https://github.com/harrychin-cn/memoark" },
@@ -15,12 +13,12 @@ const PRODUCT_LINKS = [
 
 const PRODUCT_POINTS = ["Draft-safe editing.", "Visible recovery.", "Portable JSON exports."];
 
-const BirdSprite = ({ sprite }: { sprite: TileSprite }) => {
+const BirdCard = ({ illustration }: { illustration: BirdIllustrationAsset }) => {
   return (
     <figure className="flex w-auto min-w-28 flex-none flex-col items-center gap-3 rounded-xl border border-border bg-muted/20 px-4 py-4 text-center">
-      <TileSpriteStrip sprite={sprite} scale={SPRITE_SCALE} className="size-16" testId="about-bird-sprite" />
+      <BirdIllustration illustration={illustration} size={72} testId="about-bird-illustration" />
       <figcaption className="min-w-0">
-        <h3 className="font-mono text-sm text-foreground">{sprite.name}</h3>
+        <h3 className="font-mono text-sm text-foreground">{illustration.name}</h3>
       </figcaption>
     </figure>
   );
@@ -78,10 +76,10 @@ const About = () => {
               </p>
             </SettingGroup>
 
-            <SettingGroup showSeparator title="Birds" description="Pixel tile strips used by empty states.">
+            <SettingGroup showSeparator title="Birds" description="Smooth vector companions used by empty states.">
               <section aria-label="Birds" className="flex flex-row flex-wrap gap-3">
-                {TILE_SPRITES.map((sprite) => (
-                  <BirdSprite key={sprite.name} sprite={sprite} />
+                {BIRD_ILLUSTRATIONS.map((illustration) => (
+                  <BirdCard key={illustration.name} illustration={illustration} />
                 ))}
               </section>
             </SettingGroup>

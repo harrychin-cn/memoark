@@ -1,10 +1,10 @@
 import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { TILE_SPRITES } from "@/components/Placeholder/tileSprites";
+import { BIRD_ILLUSTRATIONS } from "@/components/Placeholder/birdIllustrations";
 import About from "@/pages/About";
 
 describe("<About>", () => {
-  it("renders the MemoArk product story, attribution, and current bird sprites", () => {
+  it("renders the MemoArk product story, attribution, and current vector bird family", () => {
     render(<About />);
 
     expect(screen.getByRole("heading", { name: "MemoArk" })).toBeInTheDocument();
@@ -15,10 +15,10 @@ describe("<About>", () => {
     expect(screen.getByRole("link", { name: /Upstream/i })).toHaveAttribute("href", "https://github.com/usememos/memos");
 
     const birds = screen.getByRole("region", { name: "Birds" });
-    expect(within(birds).getAllByTestId("about-bird-sprite")).toHaveLength(TILE_SPRITES.length);
+    expect(within(birds).getAllByTestId("about-bird-illustration")).toHaveLength(BIRD_ILLUSTRATIONS.length);
 
-    for (const sprite of TILE_SPRITES) {
-      expect(within(birds).getByText(sprite.name)).toBeInTheDocument();
+    for (const illustration of BIRD_ILLUSTRATIONS) {
+      expect(within(birds).getByText(illustration.name)).toBeInTheDocument();
     }
   });
 });

@@ -71,6 +71,20 @@ go run ./cmd/memos --port 8081
 The Go module path, API resource names, `MEMOS_*` environment variables, binary name, and data directory remain compatible with the
 upstream project for now. This is intentional and avoids a risky mass rename.
 
+## Trust and disclosures
+
+- [Privacy / 隐私说明](PRIVACY.md) explains what a self-hosted instance stores, the browser data used by MemoArk, and optional
+  connections to services configured by an instance operator.
+- [Advertising and sponsorship / 广告与赞助披露](docs/ADVERTISING.md) records the project's current commercial relationships and
+  the rules for advertising, sponsorships, and affiliate links.
+- [Trademarks and project identity / 商标与项目标识](TRADEMARKS.md) distinguishes factual upstream attribution from affiliation or
+  endorsement.
+
+The MemoArk-maintained distribution currently contains no paid placement or affiliate links. Any future paid, sponsored, or affiliate
+content must be clearly labelled **where it appears / 在内容实际展示位置就地标注**. A link to a central policy alone is not enough;
+the nearby label must identify the commercial relationship and who benefits from it. Self-hosted instance operators remain responsible
+for content and integrations they add independently.
+
 ## Reporting problems
 
 - [Bug reports](https://github.com/harrychin-cn/memoark/issues/new?template=bug_report.yml)
@@ -85,4 +99,5 @@ MemoArk is based on Memos and is not affiliated with or endorsed by the original
 so changes remain traceable and future security updates can be reviewed cleanly.
 
 The original Memos copyright and MIT license are preserved in [LICENSE](LICENSE). MemoArk's attribution details are recorded in
-[NOTICE](NOTICE). Changes made for MemoArk are also distributed under the MIT License.
+[NOTICE](NOTICE). Changes made for MemoArk are also distributed under the MIT License. See [TRADEMARKS.md](TRADEMARKS.md) for the
+separate rules covering project names and visual identity.

@@ -1,28 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { TILE_SPRITES, pickTileSprite } from "@/components/Placeholder/tileSprites";
+import { BIRD_ILLUSTRATIONS, pickBirdIllustration } from "@/components/Placeholder/birdIllustrations";
 import { DEFAULT_MESSAGES, type PlaceholderVariant } from "@/components/Placeholder/messages";
 
-describe("TILE_SPRITES integrity", () => {
-  it("registers 32px by 32px sprite strips with animation-specific frame counts", () => {
-    expect(TILE_SPRITES.map((sprite) => sprite.name)).toEqual(["OwlBlink", "EagleIdle", "ToucanIdle"]);
-    expect(TILE_SPRITES.map((sprite) => [sprite.name, sprite.frames])).toEqual([
-      ["OwlBlink", 5],
-      ["EagleIdle", 4],
-      ["ToucanIdle", 4],
-    ]);
+describe("BIRD_ILLUSTRATIONS integrity", () => {
+  it("registers a cohesive vector illustration family", () => {
+    expect(BIRD_ILLUSTRATIONS.map((illustration) => illustration.name)).toEqual(["OwlNote", "EagleLetter", "ToucanBookmark"]);
 
-    for (const sprite of TILE_SPRITES) {
-      expect(sprite.name).toMatch(/^[A-Z][A-Za-z]+(Idle|Hop|Blink|Drift|Flutter|Hover|Peck)$/);
-      expect(sprite.frameWidth).toBe(32);
-      expect(sprite.frameHeight).toBe(32);
-      expect(sprite.frames).toBeGreaterThanOrEqual(2);
-      expect(sprite.src).toMatch(/(\.svg|data:image\/svg\+xml)/);
+    for (const illustration of BIRD_ILLUSTRATIONS) {
+      expect(illustration.name).toMatch(/^[A-Z][A-Za-z]+$/);
+      expect(illustration.src).toMatch(/(\.svg|data:image\/svg\+xml)/);
+      expect(illustration.motionDelay).toMatch(/^-?\d+ms$/);
     }
   });
 
-  it("returns a registered tile sprite from the pool", () => {
-    const sprite = pickTileSprite();
-    expect(TILE_SPRITES).toContain(sprite);
+  it("returns a registered illustration from the pool", () => {
+    const illustration = pickBirdIllustration();
+    expect(BIRD_ILLUSTRATIONS).toContain(illustration);
   });
 });
 

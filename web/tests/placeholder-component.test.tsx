@@ -30,26 +30,21 @@ describe("<Placeholder>", () => {
     expect(screen.queryByText(DEFAULT_MESSAGES.empty)).not.toBeInTheDocument();
   });
 
-  it("renders a 32px sprite tileset at a crisp 2x display scale", () => {
+  it("renders a smooth scalable vector illustration", () => {
     const { container } = render(<Placeholder variant="empty" />);
-    const viewport = screen.getByTestId("placeholder-sprite");
-    const strip = viewport.firstElementChild;
+    const illustration = screen.getByTestId("placeholder-illustration");
+    const image = illustration.firstElementChild;
 
-    expect(viewport).toHaveAttribute("aria-hidden", "true");
-    expect(viewport).toHaveStyle({
-      width: "64px",
-      height: "64px",
-      overflow: "hidden",
+    expect(illustration).toHaveAttribute("aria-hidden", "true");
+    expect(illustration).toHaveAttribute("data-illustration-name", expect.stringMatching(/^(OwlNote|EagleLetter|ToucanBookmark)$/));
+    expect(illustration).toHaveStyle({
+      width: "72px",
+      height: "72px",
     });
-    expect(strip).toHaveAttribute("src", expect.stringMatching(/(\.svg|data:image\/svg\+xml)/));
-    expect(strip).toHaveAttribute("width", expect.stringMatching(/^(128|160|192)$/));
-    expect(strip).toHaveAttribute("height", "32");
-    expect(["256px", "320px", "384px"]).toContain((strip as HTMLElement).style.width);
-    expect(["steps(4)", "steps(5)", "steps(6)"]).toContain((strip as HTMLElement).style.animationTimingFunction);
-    expect(strip).toHaveStyle({
-      height: "64px",
-      imageRendering: "pixelated",
-    });
+    expect(image).toHaveAttribute("src", expect.stringMatching(/(\.svg|data:image\/svg\+xml)/));
+    expect(image).toHaveAttribute("width", "96");
+    expect(image).toHaveAttribute("height", "96");
+    expect((image as HTMLElement).style.imageRendering).toBe("");
     expect(container.firstChild).toHaveClass("max-w-md");
   });
 

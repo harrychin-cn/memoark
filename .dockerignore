@@ -20,3 +20,10 @@ memos
 docs/
 web/coverage/
 .DS_Store
+
+# Legal and commercial disclosures shipped in the runtime image.
+!PRIVACY.md
+!TRADEMARKS.md
+!docs/
+docs/**
+!docs/ADVERTISING.md

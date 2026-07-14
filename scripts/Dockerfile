@@ -40,6 +40,9 @@ COPY --from=backend /backend-build/memos /usr/local/memos/memos
 COPY --from=backend --chmod=755 /backend-build/scripts/entrypoint.sh /usr/local/memos/entrypoint.sh
 COPY --from=backend /backend-build/LICENSE /usr/local/memos/LICENSE
 COPY --from=backend /backend-build/NOTICE /usr/local/memos/NOTICE
+COPY --from=backend /backend-build/TRADEMARKS.md /usr/local/memos/TRADEMARKS.md
+COPY --from=backend /backend-build/PRIVACY.md /usr/local/memos/PRIVACY.md
+COPY --from=backend /backend-build/docs/ADVERTISING.md /usr/local/memos/ADVERTISING.md
 
 # Run as root to fix permissions, entrypoint will drop to nonroot
 USER root

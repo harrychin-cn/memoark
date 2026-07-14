@@ -9,6 +9,7 @@ import useNavigateTo from "@/hooks/useNavigateTo";
 import { handleError } from "@/lib/error";
 import { ROUTES } from "@/router/routes";
 import { getSafeRedirectPath } from "@/utils/auth-redirect";
+import { getLocaleWithFallback } from "@/utils/i18n";
 import { validateOAuthState } from "@/utils/oauth";
 
 interface State {
@@ -117,7 +118,7 @@ const AuthCallback = () => {
           loading: false,
           errorMessage: "",
         });
-        await initialize();
+        await initialize(flowMode === "signin" ? getLocaleWithFallback() : undefined);
         // Defense-in-depth: even though `returnUrl` was sanitized before being
         // stored (see storeOAuthState in SignIn), re-validate on the way out so
         // a corrupted state entry can never be used for an open redirect.
