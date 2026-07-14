@@ -10,10 +10,21 @@ export const useAutoSave = (
   content: string,
   username: string,
   cacheKey: string | undefined,
-  { enabled = true, baselineContent = "", mode = "create", memoName, baseUpdateTime }: UseAutoSaveOptions = {},
+  {
+    enabled = true,
+    baselineContent = "",
+    mode = "create",
+    memoName,
+    baseUpdateTime,
+    requestId,
+    pending,
+    attemptedAt,
+  }: UseAutoSaveOptions = {},
 ) => {
   const latestContentRef = useRef(content);
   const discardedContentRef = useRef<string | undefined>(undefined);
+  const latestDeliveryMetadataRef = useRef({ requestId, pending, attemptedAt });
+  latestDeliveryMetadataRef.current = { requestId, pending, attemptedAt };
 
   useEffect(() => {
     latestContentRef.current = content;
@@ -26,13 +37,13 @@ export const useAutoSave = (
     if (!enabled) return;
 
     const key = cacheService.key(username, cacheKey);
-    if (content === baselineContent) {
+    if (content === baselineContent && !pending) {
       cacheService.clear(key);
       return;
     }
 
-    cacheService.save(key, content, { mode, memoName, baseUpdateTime });
-  }, [content, username, cacheKey, enabled, baselineContent, mode, memoName, baseUpdateTime]);
+    cacheService.save(key, content, { mode, memoName, baseUpdateTime, requestId, pending, attemptedAt });
+  }, [content, username, cacheKey, enabled, baselineContent, mode, memoName, baseUpdateTime, requestId, pending, attemptedAt]);
 
   useEffect(() => {
     if (!enabled) return;
@@ -43,12 +54,17 @@ export const useAutoSave = (
         return;
       }
 
-      if (latestContentRef.current === baselineContent) {
+      if (latestContentRef.current === baselineContent && !latestDeliveryMetadataRef.current.pending) {
         cacheService.clear(key);
         return;
       }
 
-      cacheService.saveNow(key, latestContentRef.current, { mode, memoName, baseUpdateTime });
+      cacheService.saveNow(key, latestContentRef.current, {
+        mode,
+        memoName,
+        baseUpdateTime,
+        ...latestDeliveryMetadataRef.current,
+      });
     };
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {

@@ -11,12 +11,14 @@ import { cn } from "@/lib/utils";
 import { InstanceSetting_Key } from "@/types/proto/api/v1/instance_service_pb";
 import { useTranslate } from "@/utils/i18n";
 import { convertVisibilityFromString } from "@/utils/memo";
+import { generateUUID } from "@/utils/uuid";
 import {
   AudioRecorderPanel,
   DraftRecoveryNotice,
   EditorContent,
   EditorMetadata,
   EditorToolbar,
+  FailedSaveNotice,
   FocusModeExitButton,
   FocusModeOverlay,
   TimestampPopover,
@@ -24,10 +26,15 @@ import {
 import { FOCUS_MODE_STYLES } from "./constants";
 import type { EditorRefActions } from "./Editor";
 import { useAudioRecorder, useAutoSave, useFocusMode, useKeyboard, useMemoInit } from "./hooks";
-import { errorService, memoService, transcriptionService, validationService } from "./services";
+import { cacheService, errorService, memoService, transcriptionService, validationService } from "./services";
 import { EditorProvider, useEditorContext } from "./state";
 import type { MemoEditorProps } from "./types";
 import type { LocalFile } from "./types/attachment";
+
+type SaveDeliveryState =
+  | { kind: "idle" }
+  | { kind: "sending"; requestId?: string; savedAt: string; retrying: boolean; persisted: boolean }
+  | { kind: "unsent"; requestId?: string; savedAt: string };
 
 const MemoEditor = (props: MemoEditorProps) => (
   <EditorProvider>
@@ -56,6 +63,9 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
   const [isAudioRecorderOpen, setIsAudioRecorderOpen] = useState(false);
   const [isTranscribingAudio, setIsTranscribingAudio] = useState(false);
   const [completedEditIdentity, setCompletedEditIdentity] = useState<string | null>(null);
+  const [requestId, setRequestId] = useState<string | undefined>(undefined);
+  const [deliveryState, setDeliveryState] = useState<SaveDeliveryState>({ kind: "idle" });
+  const saveInFlightRef = useRef(false);
 
   const memoName = memo?.name;
   const draftCacheKey = memoName ? `edit-${memoName}` : cacheKey;
@@ -70,7 +80,15 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
   // Get default visibility from user settings
   const defaultVisibility = userGeneralSetting?.memoVisibility ? convertVisibilityFromString(userGeneralSetting.memoVisibility) : undefined;
 
-  const { isInitialized, pendingDraft, draftBaseUpdateTime, restorePendingDraft, discardPendingDraft } = useMemoInit({
+  const {
+    isInitialized,
+    pendingDraft,
+    draftBaseUpdateTime,
+    draftRequestId,
+    recoveredPendingSave,
+    restorePendingDraft,
+    discardPendingDraft,
+  } = useMemoInit({
     editorRef,
     memo,
     cacheKey: draftCacheKey,
@@ -79,6 +97,18 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
     defaultVisibility,
     defaultCreateTime,
   });
+
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    setRequestId(draftRequestId);
+    setDeliveryState(
+      recoveredPendingSave
+        ? { kind: "unsent", requestId: recoveredPendingSave.requestId, savedAt: recoveredPendingSave.savedAt }
+        : { kind: "idle" },
+    );
+  }, [editorIdentity, isInitialized, draftRequestId, recoveredPendingSave]);
+
   // Auto-save new and edited memo content locally. A discovered edit draft must
   // be explicitly restored or discarded before new writes can replace it.
   const { discardDraft } = useAutoSave(state.content, currentUser?.name ?? "", draftCacheKey, {
@@ -87,6 +117,9 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
     mode: memo ? "edit" : "create",
     memoName,
     baseUpdateTime: draftBaseUpdateTime,
+    requestId,
+    pending: deliveryState.kind !== "idle",
+    attemptedAt: deliveryState.kind === "idle" ? undefined : deliveryState.savedAt,
   });
   const isEditorLocked = Boolean(pendingDraft) || state.ui.isLoading.saving;
 
@@ -244,7 +277,7 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
   useKeyboard(editorRef, handleSave);
 
   async function handleSave() {
-    if (isEditorLocked) return;
+    if (saveInFlightRef.current || isEditorLocked) return;
 
     // Validate before saving
     const { valid, reason } = validationService.canSave(state);
@@ -253,12 +286,45 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
       return;
     }
 
+    const retrying = deliveryState.kind === "unsent";
+    const savedAt = new Date().toISOString();
+    const draftKey = cacheService.key(currentUser?.name ?? "", draftCacheKey);
+    let nextRequestId = requestId;
+    let persisted = false;
+
+    saveInFlightRef.current = true;
     dispatch(actions.setLoading("saving", true));
 
     try {
-      const result = await memoService.save(state, { memoName, parentMemoName });
+      // uuid uses getRandomValues and works on the plain-HTTP LAN deployments
+      // where crypto.randomUUID may be unavailable. Keep generation inside the
+      // guarded save path so an unexpected runtime failure cannot escape the UI.
+      nextRequestId = memo ? requestId : (requestId ?? generateUUID());
+      persisted = cacheService.saveNow(draftKey, state.content, {
+        mode: memo ? "edit" : "create",
+        memoName,
+        baseUpdateTime: draftBaseUpdateTime,
+        savedAt,
+        requestId: nextRequestId,
+        pending: true,
+        attemptedAt: savedAt,
+      });
 
-      if (!result.hasChanges) {
+      setRequestId(nextRequestId);
+      setDeliveryState({ kind: "sending", requestId: nextRequestId, savedAt, retrying, persisted });
+
+      const result = await memoService.save(state, {
+        memoName,
+        parentMemoName,
+        requestId: nextRequestId,
+        retrying,
+        baseUpdateTime: draftBaseUpdateTime,
+      });
+
+      if (!result.hasChanges && !result.confirmedExisting && !retrying) {
+        discardDraft();
+        setRequestId(undefined);
+        setDeliveryState({ kind: "idle" });
         toast.error(t("editor.no-changes-detected"));
         onCancel?.();
         return;
@@ -270,6 +336,8 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
         setCompletedEditIdentity(editorIdentity);
       }
       discardDraft();
+      setRequestId(undefined);
+      setDeliveryState({ kind: "idle" });
 
       // Invalidate React Query cache to refresh memo lists across the app
       const invalidationPromises = [
@@ -305,14 +373,41 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
       // Notify parent component of successful save
       onConfirm?.(result.memoName);
     } catch (error) {
-      handleError(error, toast.error, {
-        context: "Failed to save memo",
-        fallbackMessage: errorService.getErrorMessage(error),
-      });
+      if (errorService.classifySaveError(error) === "network" && persisted) {
+        setDeliveryState({ kind: "unsent", requestId: nextRequestId, savedAt });
+      } else {
+        setDeliveryState({ kind: "idle" });
+        cacheService.saveNow(draftKey, state.content, {
+          mode: memo ? "edit" : "create",
+          memoName,
+          baseUpdateTime: draftBaseUpdateTime,
+          savedAt,
+          requestId: nextRequestId,
+          pending: false,
+        });
+
+        if (errorService.classifySaveError(error) === "network") {
+          console.error("Failed to save memo", error);
+          toast.error(t("editor.failed-save.local-cache-error"));
+        } else {
+          handleError(error, toast.error, {
+            context: "Failed to save memo",
+            fallbackMessage: errorService.getErrorMessage(error),
+          });
+        }
+      }
     } finally {
+      saveInFlightRef.current = false;
       dispatch(actions.setLoading("saving", false));
     }
   }
+
+  const failedSaveNotice =
+    deliveryState.kind === "unsent"
+      ? { savedAt: deliveryState.savedAt, retrying: false }
+      : deliveryState.kind === "sending" && deliveryState.retrying
+        ? { savedAt: deliveryState.savedAt, retrying: true }
+        : null;
 
   return (
     <>
@@ -351,6 +446,10 @@ const MemoEditorImpl: React.FC<MemoEditorProps> = ({
             }}
             onDiscard={discardPendingDraft}
           />
+        )}
+
+        {failedSaveNotice && (
+          <FailedSaveNotice savedAt={failedSaveNotice.savedAt} retrying={failedSaveNotice.retrying} onRetry={() => void handleSave()} />
         )}
 
         {/* Editor content grows to fill available space in focus mode */}

@@ -1,5 +1,6 @@
 import { create } from "@bufbuild/protobuf";
 import { FieldMaskSchema, timestampDate, timestampFromDate } from "@bufbuild/protobuf/wkt";
+import { Code, ConnectError } from "@connectrpc/connect";
 import { isEqual } from "lodash-es";
 import { memoServiceClient } from "@/connect";
 import type { Attachment } from "@/types/proto/api/v1/attachment_service_pb";
@@ -73,14 +74,74 @@ function buildUpdateMask(
   return { mask, patch };
 }
 
+function matchesPersistedEditorState(
+  memo: Memo,
+  state: EditorState,
+  allAttachments: typeof state.metadata.attachments,
+  baseUpdateTime?: string,
+): boolean {
+  if (
+    !isEqual(state.content, memo.content) ||
+    !isEqual(state.metadata.visibility, memo.visibility) ||
+    !isEqual(allAttachments, memo.attachments) ||
+    !isEqual(state.metadata.relations, memo.relations) ||
+    !isEqual(state.metadata.location, memo.location)
+  ) {
+    return false;
+  }
+
+  if (state.timestamps.createTime) {
+    const serverCreateTime = memo.createTime ? timestampDate(memo.createTime).toISOString() : undefined;
+    if (state.timestamps.createTime.toISOString() !== serverCreateTime) {
+      return false;
+    }
+  }
+
+  if (state.timestamps.updateTime) {
+    const requestedUpdateTime = state.timestamps.updateTime.toISOString();
+    const updateTimeWasExplicitlyChanged = baseUpdateTime === undefined || requestedUpdateTime !== baseUpdateTime;
+    const serverUpdateTime = memo.updateTime ? timestampDate(memo.updateTime).toISOString() : undefined;
+    if (updateTimeWasExplicitlyChanged && requestedUpdateTime !== serverUpdateTime) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+async function saveExistingMemo(
+  prevMemo: Memo,
+  state: EditorState,
+  allAttachments: typeof state.metadata.attachments,
+  options: { retrying?: boolean; baseUpdateTime?: string } = {},
+): Promise<{ memoName: string; hasChanges: boolean; confirmedExisting?: boolean }> {
+  if (options.retrying && matchesPersistedEditorState(prevMemo, state, allAttachments, options.baseUpdateTime)) {
+    return { memoName: prevMemo.name, hasChanges: false, confirmedExisting: true };
+  }
+
+  const { mask, patch } = buildUpdateMask(prevMemo, state, allAttachments);
+  if (mask.size === 0) {
+    return { memoName: prevMemo.name, hasChanges: false };
+  }
+
+  const memo = await memoServiceClient.updateMemo({
+    memo: create(MemoSchema, patch as Record<string, unknown>),
+    updateMask: create(FieldMaskSchema, { paths: Array.from(mask) }),
+  });
+  return { memoName: memo.name, hasChanges: true };
+}
+
 export const memoService = {
   async save(
     state: EditorState,
     options: {
       memoName?: string;
       parentMemoName?: string;
+      requestId?: string;
+      retrying?: boolean;
+      baseUpdateTime?: string;
     },
-  ): Promise<{ memoName: string; hasChanges: boolean }> {
+  ): Promise<{ memoName: string; hasChanges: boolean; confirmedExisting?: boolean }> {
     // 1. Upload local files first
     const newAttachments = await uploadService.uploadFiles(state.localFiles);
     const allAttachments = [...state.metadata.attachments, ...newAttachments];
@@ -88,17 +149,7 @@ export const memoService = {
     // 2. Update existing memo
     if (options.memoName) {
       const prevMemo = await memoServiceClient.getMemo({ name: options.memoName });
-      const { mask, patch } = buildUpdateMask(prevMemo, state, allAttachments);
-
-      if (mask.size === 0) {
-        return { memoName: prevMemo.name, hasChanges: false };
-      }
-
-      const memo = await memoServiceClient.updateMemo({
-        memo: create(MemoSchema, patch as Record<string, unknown>),
-        updateMask: create(FieldMaskSchema, { paths: Array.from(mask) }),
-      });
-      return { memoName: memo.name, hasChanges: true };
+      return saveExistingMemo(prevMemo, state, allAttachments, options);
     }
 
     // 3. Create new memo or comment
@@ -112,12 +163,25 @@ export const memoService = {
       updateTime: state.timestamps.updateTime ? timestampFromDate(state.timestamps.updateTime) : undefined,
     });
 
-    const memo = options.parentMemoName
-      ? await memoServiceClient.createMemoComment({
-          name: options.parentMemoName,
-          comment: memoData,
-        })
-      : await memoServiceClient.createMemo({ memo: memoData });
+    let memo: Memo;
+    if (options.parentMemoName) {
+      memo = await memoServiceClient.createMemoComment({
+        name: options.parentMemoName,
+        comment: memoData,
+        commentId: options.requestId,
+      });
+    } else {
+      try {
+        memo = await memoServiceClient.createMemo({ memo: memoData, memoId: options.requestId });
+      } catch (error) {
+        if (!(options.requestId && error instanceof ConnectError && error.code === Code.AlreadyExists)) {
+          throw error;
+        }
+
+        const existingMemo = await memoServiceClient.getMemo({ name: `memos/${options.requestId}` });
+        return saveExistingMemo(existingMemo, state, allAttachments, { retrying: true, baseUpdateTime: options.baseUpdateTime });
+      }
+    }
 
     return { memoName: memo.name, hasChanges: true };
   },

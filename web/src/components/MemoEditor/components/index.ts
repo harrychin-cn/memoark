@@ -5,5 +5,6 @@ export * from "./DraftRecoveryNotice";
 export * from "./EditorContent";
 export * from "./EditorMetadata";
 export * from "./EditorToolbar";
+export * from "./FailedSaveNotice";
 export { FocusModeExitButton, FocusModeOverlay } from "./FocusModeOverlay";
 export { TimestampPopover } from "./TimestampPopover";

@@ -38,6 +38,12 @@ function useRecoveryHarness(targetMemo: Memo = memo, targetCacheKey: string = ca
   return { ...recovery, content: state.content };
 }
 
+function useCreateRecoveryHarness(targetCacheKey = "home-memo-editor") {
+  const recovery = useMemoInit({ editorRef, cacheKey: targetCacheKey, username });
+  const { state } = useEditorContext();
+  return { ...recovery, content: state.content };
+}
+
 describe("memo editor recovery", () => {
   beforeEach(() => {
     localStorage.clear();
@@ -72,6 +78,52 @@ describe("memo editor recovery", () => {
 
     expect(result.current.content).toBe("local unsaved content");
     expect(result.current.pendingDraft).toBeNull();
+  });
+
+  it("restores a pending create save with its stable request id", () => {
+    const createCacheKey = "home-memo-editor";
+    cacheService.saveNow(cacheService.key(username, createCacheKey), "create awaiting retry", {
+      mode: "create",
+      savedAt: "2026-07-13T10:00:00.000Z",
+      attemptedAt: "2026-07-13T10:00:01.000Z",
+      requestId: "stable-create-id",
+      pending: true,
+    });
+
+    const { result } = renderHook(() => useCreateRecoveryHarness(createCacheKey), { wrapper });
+
+    expect(result.current.content).toBe("create awaiting retry");
+    expect(result.current.draftRequestId).toBe("stable-create-id");
+    expect(result.current.recoveredPendingSave).toEqual({
+      requestId: "stable-create-id",
+      savedAt: "2026-07-13T10:00:01.000Z",
+    });
+  });
+
+  it("promotes pending delivery metadata after an edit draft is restored", () => {
+    cacheService.saveNow(cacheService.key(username, cacheKey), "edit awaiting retry", {
+      mode: "edit",
+      memoName,
+      baseUpdateTime: serverUpdateTime.toISOString(),
+      savedAt: "2026-07-13T10:00:00.000Z",
+      attemptedAt: "2026-07-13T10:00:01.000Z",
+      requestId: "stable-edit-id",
+      pending: true,
+    });
+
+    const { result } = renderHook(useRecoveryHarness, { wrapper });
+
+    expect(result.current.pendingDraft?.pendingSave).toEqual({
+      requestId: "stable-edit-id",
+      savedAt: "2026-07-13T10:00:01.000Z",
+    });
+
+    act(() => result.current.restorePendingDraft());
+
+    expect(result.current.recoveredPendingSave).toEqual({
+      requestId: "stable-edit-id",
+      savedAt: "2026-07-13T10:00:01.000Z",
+    });
   });
 
   it("marks a draft as conflicted when the server revision changed", () => {
@@ -149,6 +201,35 @@ describe("memo editor recovery", () => {
     expect(cacheService.loadDraft(key)?.content).toBe("latest edit");
   });
 
+  it("keeps a pending edit record when its text still matches the server baseline", () => {
+    vi.useFakeTimers();
+    const key = cacheService.key(username, cacheKey);
+    const attemptedAt = "2026-07-13T10:00:01.000Z";
+
+    const { unmount } = renderHook(() =>
+      useAutoSave(memo.content, username, cacheKey, {
+        baselineContent: memo.content,
+        mode: "edit",
+        memoName,
+        baseUpdateTime: serverUpdateTime.toISOString(),
+        pending: true,
+        attemptedAt,
+      }),
+    );
+
+    act(() => vi.advanceTimersByTime(CACHE_DEBOUNCE_DELAY));
+    expect(cacheService.loadDraft(key)).toMatchObject({
+      mode: "edit",
+      memoName,
+      content: memo.content,
+      pending: true,
+      attemptedAt,
+    });
+
+    unmount();
+    expect(cacheService.loadDraft(key)?.pending).toBe(true);
+  });
+
   it("flushes an edit draft immediately when the editor closes", () => {
     vi.useFakeTimers();
     const key = cacheService.key(username, cacheKey);
@@ -173,10 +254,10 @@ describe("memo editor recovery", () => {
       updateTime: timestampFromDate(new Date("2026-07-13T10:00:00.000Z")),
     });
     const secondCacheKey = `edit-${secondMemo.name}`;
-    const { result, rerender } = renderHook(
-      ({ targetMemo, targetCacheKey }) => useRecoveryHarness(targetMemo, targetCacheKey),
-      { wrapper, initialProps: { targetMemo: memo, targetCacheKey: cacheKey } },
-    );
+    const { result, rerender } = renderHook(({ targetMemo, targetCacheKey }) => useRecoveryHarness(targetMemo, targetCacheKey), {
+      wrapper,
+      initialProps: { targetMemo: memo, targetCacheKey: cacheKey },
+    });
 
     expect(result.current.content).toBe("server content");
     rerender({ targetMemo: secondMemo, targetCacheKey: secondCacheKey });

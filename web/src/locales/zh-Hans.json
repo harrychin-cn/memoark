@@ -132,6 +132,14 @@
       "saved-at": "本机保存于 {{time}}",
       "title": "发现未保存的本机修改"
     },
+    "failed-save": {
+      "description": "正文草稿已安全保存在这台设备上。恢复连接后可重新发送。",
+      "local-cache-error": "内容尚未发送，也无法写入本机草稿。请保持页面打开后重试。",
+      "retry": "重试",
+      "retrying": "正在重试...",
+      "saved-at": "本机保存于 {{time}}",
+      "title": "已保存在本机，尚未发送"
+    },
     "add-your-comment-here": "请输入您的评论...",
     "any-thoughts": "此刻的想法...",
     "exit-focus-mode": "退出聚焦模式",

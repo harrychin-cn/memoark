@@ -17,28 +17,53 @@ describe("memo editor cache", () => {
     vi.unstubAllGlobals();
   });
 
-  it("stores a v2 create draft and exposes its metadata", () => {
+  it("stores a v3 create draft and exposes its delivery metadata", () => {
     const key = cacheService.key("users/steven", "home-memo-editor");
     const savedAt = "2026-07-13T10:00:00.000Z";
+    const attemptedAt = "2026-07-13T10:00:01.000Z";
 
-    cacheService.saveNow(key, "- [x] Draft task", {
-      mode: "create",
-      savedAt,
-    });
+    expect(
+      cacheService.saveNow(key, "- [x] Draft task", {
+        mode: "create",
+        savedAt,
+        requestId: "memo-request-id",
+        pending: true,
+        attemptedAt,
+      }),
+    ).toBe(true);
 
     expect(cacheService.load(key)).toBe("- [x] Draft task");
     expect(cacheService.loadDraft(key)).toEqual({
       mode: "create",
       savedAt,
+      requestId: "memo-request-id",
+      pending: true,
+      attemptedAt,
       content: "- [x] Draft task",
     });
     expect(JSON.parse(localStorage.getItem(key) ?? "null")).toEqual({
       kind: "memos.editor-cache",
-      version: 2,
+      version: 3,
       mode: "create",
       savedAt,
+      requestId: "memo-request-id",
+      pending: true,
+      attemptedAt,
       content: "- [x] Draft task",
     });
+  });
+
+  it("does not claim an attachment-only pending create was persisted by the text cache", () => {
+    const key = cacheService.key("users/steven", "home-memo-editor");
+
+    expect(
+      cacheService.saveNow(key, "", {
+        mode: "create",
+        requestId: "attachment-only-request",
+        pending: true,
+      }),
+    ).toBe(false);
+    expect(cacheService.loadDraft(key)).toBeNull();
   });
 
   it("removes empty draft content instead of caching it", () => {
@@ -77,6 +102,26 @@ describe("memo editor cache", () => {
 
     expect(cacheService.load(key)).toBe("- [ ] migrated task");
     expect(cacheService.loadDraft(key)).toEqual({ mode: "create", content: "- [ ] migrated task" });
+  });
+
+  it("loads v2 draft entries without delivery metadata", () => {
+    const key = cacheService.key("users/steven", "home-memo-editor");
+    localStorage.setItem(
+      key,
+      JSON.stringify({
+        kind: "memos.editor-cache",
+        version: 2,
+        mode: "create",
+        savedAt: "2026-07-13T10:00:00.000Z",
+        content: "v2 draft",
+      }),
+    );
+
+    expect(cacheService.loadDraft(key)).toEqual({
+      mode: "create",
+      savedAt: "2026-07-13T10:00:00.000Z",
+      content: "v2 draft",
+    });
   });
 
   it("keeps raw JSON markdown drafts intact", () => {
@@ -132,7 +177,7 @@ describe("memo editor cache", () => {
       throw new Error("remove denied");
     });
 
-    expect(() => cacheService.saveNow(key, "draft")).not.toThrow();
+    expect(cacheService.saveNow(key, "draft")).toBe(false);
     expect(() => cacheService.clear(key)).not.toThrow();
     expect(() => cacheService.load(key)).not.toThrow();
     expect(cacheService.load(key)).toBe("");

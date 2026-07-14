@@ -165,6 +165,14 @@
       "saved-at": "Saved locally at {{time}}",
       "title": "Unsaved local edits found"
     },
+    "failed-save": {
+      "description": "Your memo text is safe on this device. Reconnect and retry when you are ready.",
+      "local-cache-error": "The memo was not sent and could not be saved locally. Keep this page open and retry.",
+      "retry": "Retry",
+      "retrying": "Retrying...",
+      "saved-at": "Saved locally at {{time}}",
+      "title": "Saved locally, not sent"
+    },
     "add-your-comment-here": "Add your comment here...",
     "any-thoughts": "Any thoughts...",
     "exit-focus-mode": "Exit Focus Mode",
