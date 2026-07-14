@@ -10,6 +10,8 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/pkg/errors"
+
 	"github.com/usememos/memos/internal/base"
 )
 
@@ -256,9 +258,9 @@ func ensureJSONEOF(decoder *json.Decoder) error {
 	var extra any
 	if err := decoder.Decode(&extra); err != io.EOF {
 		if err == nil {
-			return fmt.Errorf("export JSON contains trailing data")
+			return errors.New("export JSON contains trailing data")
 		}
-		return fmt.Errorf("invalid trailing export JSON: %v", err)
+		return errors.Wrap(err, "invalid trailing export JSON")
 	}
 	return nil
 }
@@ -268,11 +270,11 @@ func parseRecord(data json.RawMessage, maxContentLength int) (Record, SkippedCou
 	var skipped SkippedCounts
 	var fields map[string]json.RawMessage
 	if err := json.Unmarshal(data, &fields); err != nil || fields == nil {
-		return record, skipped, false, "", fmt.Errorf("memo must be a JSON object")
+		return record, skipped, false, "", errors.New("memo must be a JSON object")
 	}
 	for key := range fields {
 		if _, ok := allowedMemoFields[key]; !ok {
-			return record, skipped, false, "", fmt.Errorf("unknown memo field %q", key)
+			return record, skipped, false, "", errors.Errorf("unknown memo field %q", key)
 		}
 	}
 
@@ -283,14 +285,14 @@ func parseRecord(data json.RawMessage, maxContentLength int) (Record, SkippedCou
 	record.SourceName = name
 	uid, ok := strings.CutPrefix(name, "memos/")
 	if !ok || !base.UIDMatcher.MatchString(uid) {
-		return record, skipped, false, "", fmt.Errorf("invalid memo resource name")
+		return record, skipped, false, "", errors.New("invalid memo resource name")
 	}
 	state, err := requiredString(fields, "state")
 	if err != nil {
 		return record, skipped, false, "", err
 	}
 	if state != "NORMAL" && state != "ARCHIVED" {
-		return record, skipped, false, state, fmt.Errorf("unsupported memo state %q", state)
+		return record, skipped, false, state, errors.Errorf("unsupported memo state %q", state)
 	}
 	record.State = state
 	createTime, err := requiredTimestamp(fields, "createTime")
@@ -301,11 +303,11 @@ func parseRecord(data json.RawMessage, maxContentLength int) (Record, SkippedCou
 	if value, ok := fields["updateTime"]; ok && !bytes.Equal(bytes.TrimSpace(value), []byte("null")) {
 		var text string
 		if err := json.Unmarshal(value, &text); err != nil {
-			return record, skipped, false, state, fmt.Errorf("updateTime must be an RFC3339 string")
+			return record, skipped, false, state, errors.New("updateTime must be an RFC3339 string")
 		}
 		record.UpdateTime, err = time.Parse(time.RFC3339Nano, text)
 		if err != nil {
-			return record, skipped, false, state, fmt.Errorf("invalid updateTime timestamp")
+			return record, skipped, false, state, errors.New("invalid updateTime timestamp")
 		}
 	} else {
 		record.UpdateTime = createTime
@@ -315,18 +317,18 @@ func parseRecord(data json.RawMessage, maxContentLength int) (Record, SkippedCou
 		return record, skipped, false, state, err
 	}
 	if maxContentLength > 0 && len(record.Content) > maxContentLength {
-		return record, skipped, false, state, fmt.Errorf("content exceeds the %d-byte limit", maxContentLength)
+		return record, skipped, false, state, errors.Errorf("content exceeds the %d-byte limit", maxContentLength)
 	}
 	record.Visibility, err = requiredString(fields, "visibility")
 	if err != nil {
 		return record, skipped, false, state, err
 	}
 	if record.Visibility != "PRIVATE" && record.Visibility != "PROTECTED" && record.Visibility != "PUBLIC" {
-		return record, skipped, false, state, fmt.Errorf("unsupported memo visibility %q", record.Visibility)
+		return record, skipped, false, state, errors.Errorf("unsupported memo visibility %q", record.Visibility)
 	}
 	value, ok := fields["pinned"]
 	if !ok || json.Unmarshal(value, &record.Pinned) != nil {
-		return record, skipped, false, state, fmt.Errorf("pinned must be a boolean")
+		return record, skipped, false, state, errors.New("pinned must be a boolean")
 	}
 
 	if skipped.Attachments, err = arrayLength(fields, "attachments"); err != nil {
@@ -341,7 +343,7 @@ func parseRecord(data json.RawMessage, maxContentLength int) (Record, SkippedCou
 	if value, ok := fields["location"]; ok && !bytes.Equal(bytes.TrimSpace(value), []byte("null")) {
 		var object map[string]json.RawMessage
 		if err := json.Unmarshal(value, &object); err != nil || object == nil {
-			return record, skipped, false, state, fmt.Errorf("location must be an object or null")
+			return record, skipped, false, state, errors.New("location must be an object or null")
 		}
 		skipped.Locations = 1
 	}
@@ -349,7 +351,7 @@ func parseRecord(data json.RawMessage, maxContentLength int) (Record, SkippedCou
 	if value, ok := fields["parent"]; ok && !bytes.Equal(bytes.TrimSpace(value), []byte("null")) {
 		var parent string
 		if err := json.Unmarshal(value, &parent); err != nil {
-			return record, skipped, false, state, fmt.Errorf("parent must be a string or null")
+			return record, skipped, false, state, errors.New("parent must be a string or null")
 		}
 		comment = parent != ""
 	}
@@ -359,11 +361,11 @@ func parseRecord(data json.RawMessage, maxContentLength int) (Record, SkippedCou
 func requiredString(fields map[string]json.RawMessage, name string) (string, error) {
 	value, ok := fields[name]
 	if !ok {
-		return "", fmt.Errorf("missing required field %q", name)
+		return "", errors.Errorf("missing required field %q", name)
 	}
 	var text string
 	if err := json.Unmarshal(value, &text); err != nil {
-		return "", fmt.Errorf("%s must be a string", name)
+		return "", errors.Errorf("%s must be a string", name)
 	}
 	return text, nil
 }
@@ -375,7 +377,7 @@ func requiredTimestamp(fields map[string]json.RawMessage, name string) (time.Tim
 	}
 	parsed, err := time.Parse(time.RFC3339Nano, text)
 	if err != nil {
-		return time.Time{}, fmt.Errorf("invalid %s timestamp", name)
+		return time.Time{}, errors.Errorf("invalid %s timestamp", name)
 	}
 	return parsed, nil
 }
@@ -387,7 +389,7 @@ func arrayLength(fields map[string]json.RawMessage, name string) (int, error) {
 	}
 	var items []json.RawMessage
 	if err := json.Unmarshal(value, &items); err != nil {
-		return 0, fmt.Errorf("%s must be an array", name)
+		return 0, errors.Errorf("%s must be an array", name)
 	}
 	return len(items), nil
 }
