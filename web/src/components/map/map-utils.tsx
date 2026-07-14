@@ -1,8 +1,7 @@
-import { DivIcon } from "leaflet";
+import { DivIcon, type Map as LeafletMap } from "leaflet";
 import { MapPinIcon } from "lucide-react";
 import { useMemo } from "react";
 import ReactDOMServer from "react-dom/server";
-import { TileLayer } from "react-leaflet";
 import { useAuth } from "@/contexts/AuthContext";
 import { resolveTheme } from "@/utils/theme";
 
@@ -11,10 +10,12 @@ const TILE_URLS = {
   dark: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
 } as const;
 
-export const ThemedTileLayer = () => {
+export const useThemedTileUrl = () => {
   const { userGeneralSetting } = useAuth();
-  const isDark = useMemo(() => resolveTheme(userGeneralSetting?.theme || "system").includes("dark"), [userGeneralSetting?.theme]);
-  return <TileLayer url={isDark ? TILE_URLS.dark : TILE_URLS.light} />;
+  return useMemo(
+    () => (resolveTheme(userGeneralSetting?.theme || "system").includes("dark") ? TILE_URLS.dark : TILE_URLS.light),
+    [userGeneralSetting?.theme],
+  );
 };
 
 interface MarkerIconOptions {
@@ -39,3 +40,30 @@ export const createMarkerIcon = (options?: MarkerIconOptions): DivIcon => {
 };
 
 export const defaultMarkerIcon = createMarkerIcon();
+
+export const observeMapSize = (map: LeafletMap, container: HTMLElement) => {
+  if (typeof ResizeObserver === "undefined") {
+    return () => {};
+  }
+
+  let frame: number | undefined;
+  const observer = new ResizeObserver(() => {
+    if (frame !== undefined) {
+      cancelAnimationFrame(frame);
+    }
+
+    frame = requestAnimationFrame(() => {
+      map.invalidateSize({ pan: false });
+      frame = undefined;
+    });
+  });
+
+  observer.observe(container);
+
+  return () => {
+    observer.disconnect();
+    if (frame !== undefined) {
+      cancelAnimationFrame(frame);
+    }
+  };
+};

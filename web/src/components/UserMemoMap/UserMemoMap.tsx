@@ -1,13 +1,13 @@
 import { timestampDate } from "@bufbuild/protobuf/wkt";
 import L, { DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "leaflet.markercluster";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import { ArrowUpRightIcon, MapPinIcon } from "lucide-react";
-import { useEffect, useMemo } from "react";
-import { MapContainer, Marker, Popup, useMap } from "react-leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
-import { defaultMarkerIcon, ThemedTileLayer } from "@/components/map/map-utils";
+import { defaultMarkerIcon, observeMapSize, useThemedTileUrl } from "@/components/map/map-utils";
 import { buildMemoCreatorFilter } from "@/helpers/resource-names";
 import { useInfiniteMemos } from "@/hooks/useMemoQueries";
 import { cn } from "@/lib/utils";
@@ -23,6 +23,25 @@ interface ClusterGroup {
   getChildCount(): number;
 }
 
+interface PopupHost {
+  memo: Memo;
+  element: HTMLDivElement;
+}
+
+const DEFAULT_CENTER = { lat: 48.8566, lng: 2.3522 };
+const POPUP_CLASS_NAME = cn(
+  "w-64!",
+  "[&_.leaflet-popup-content-wrapper]:rounded-lg",
+  "[&_.leaflet-popup-content-wrapper]:border",
+  "[&_.leaflet-popup-content-wrapper]:border-border",
+  "[&_.leaflet-popup-content-wrapper]:bg-background",
+  "[&_.leaflet-popup-content-wrapper]:shadow-lg",
+  "[&_.leaflet-popup-content]:m-1",
+  "[&_.leaflet-popup-content]:[font-size:inherit]",
+  "[&_.leaflet-popup-content]:[line-height:inherit]",
+  "[&_.leaflet-popup-tip]:bg-background",
+);
+
 const createClusterCustomIcon = (cluster: ClusterGroup) => {
   return new DivIcon({
     html: `<span class="flex h-8 w-8 items-center justify-center rounded-full border border-border bg-background/95 text-xs font-semibold text-foreground shadow-sm backdrop-blur-sm">${cluster.getChildCount()}</span>`,
@@ -31,20 +50,123 @@ const createClusterCustomIcon = (cluster: ClusterGroup) => {
   });
 };
 
-const MapFitBounds = ({ memos }: { memos: Memo[] }) => {
-  const map = useMap();
+const MemoPopup = ({ memo }: { memo: Memo }) => {
+  return (
+    <div className="flex flex-col gap-2.5 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div className="space-y-1">
+          <span className="inline-flex rounded-full border border-border/70 bg-muted/50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            Memo
+          </span>
+          <span className="block text-[11px] font-medium text-muted-foreground">
+            {memo.createTime &&
+              timestampDate(memo.createTime).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+              })}
+          </span>
+        </div>
+        <Link
+          to={`/memos/${memo.name.split("/").pop()}`}
+          className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-foreground transition-all hover:border-primary/40 hover:text-primary"
+        >
+          Open
+          <ArrowUpRightIcon className="h-3.5 w-3.5" />
+        </Link>
+      </div>
+      <div className="space-y-1">
+        <div className="line-clamp-3 text-sm leading-snug font-medium text-foreground">{memo.snippet || "No content"}</div>
+        <div className="text-[11px] text-muted-foreground">
+          {memo.location!.latitude.toFixed(2)}°, {memo.location!.longitude.toFixed(2)}°
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface MemoMapCanvasProps {
+  memos: Memo[];
+  tileUrl: string;
+}
+
+const MemoMapCanvas = ({ memos, tileUrl }: MemoMapCanvasProps) => {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
+  const initialTileUrlRef = useRef(tileUrl);
+  const [map, setMap] = useState<L.Map | null>(null);
+  const [popupHosts, setPopupHosts] = useState<PopupHost[]>([]);
 
   useEffect(() => {
-    if (memos.length === 0) return;
+    const mapContainer = mapContainerRef.current;
+    if (!mapContainer) return;
 
-    const validMemos = memos.filter((m) => m.location);
-    if (validMemos.length === 0) return;
+    const createdMap = L.map(mapContainer, {
+      attributionControl: false,
+      center: DEFAULT_CENTER,
+      scrollWheelZoom: true,
+      zoom: 2,
+      zoomControl: false,
+    });
+    const tileLayer = L.tileLayer(initialTileUrlRef.current).addTo(createdMap);
+    const stopObservingMapSize = observeMapSize(createdMap, mapContainer);
 
-    const bounds = L.latLngBounds(validMemos.map((memo) => [memo.location!.latitude, memo.location!.longitude]));
-    map.fitBounds(bounds, { padding: [50, 50] });
-  }, [memos, map]);
+    tileLayerRef.current = tileLayer;
+    setMap(createdMap);
 
-  return null;
+    return () => {
+      tileLayerRef.current = null;
+      stopObservingMapSize();
+      createdMap.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    tileLayerRef.current?.setUrl(tileUrl);
+  }, [tileUrl]);
+
+  useEffect(() => {
+    if (!map) return;
+
+    const clusterGroup = L.markerClusterGroup({
+      chunkedLoading: true,
+      iconCreateFunction: createClusterCustomIcon,
+      maxClusterRadius: 40,
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+    });
+    const hosts = memos.flatMap((memo): PopupHost[] => {
+      if (!memo.location) return [];
+
+      const popupHost = document.createElement("div");
+      const marker = L.marker([memo.location.latitude, memo.location.longitude], { icon: defaultMarkerIcon });
+      marker.bindPopup(popupHost, { closeButton: false, className: POPUP_CLASS_NAME });
+      clusterGroup.addLayer(marker);
+
+      return [{ memo, element: popupHost }];
+    });
+
+    clusterGroup.addTo(map);
+    setPopupHosts(hosts);
+
+    if (hosts.length > 0) {
+      map.fitBounds(L.latLngBounds(hosts.map(({ memo }) => [memo.location!.latitude, memo.location!.longitude])), { padding: [50, 50] });
+    } else {
+      map.setView(DEFAULT_CENTER, 2);
+    }
+
+    return () => {
+      clusterGroup.remove();
+      clusterGroup.clearLayers();
+    };
+  }, [map, memos]);
+
+  return (
+    <>
+      <div ref={mapContainerRef} className="h-full w-full !bg-muted" />
+      {popupHosts.map(({ memo, element }) => createPortal(<MemoPopup memo={memo} />, element, memo.name))}
+    </>
+  );
 };
 
 const UserMemoMap = ({ creator, className }: Props) => {
@@ -59,12 +181,10 @@ const UserMemoMap = ({ creator, className }: Props) => {
     },
     { enabled: Boolean(creatorFilter) },
   );
-
   const memosWithLocation = useMemo(() => data?.pages.flatMap((page) => page.memos).filter((memo) => memo.location) || [], [data]);
+  const tileUrl = useThemedTileUrl();
 
   if (isLoading) return null;
-
-  const defaultCenter = { lat: 48.8566, lng: 2.3522 };
 
   return (
     <div
@@ -94,75 +214,7 @@ const UserMemoMap = ({ creator, className }: Props) => {
         </div>
       </div>
 
-      <MapContainer
-        center={defaultCenter}
-        zoom={2}
-        className="h-full w-full z-0 !bg-muted"
-        scrollWheelZoom
-        zoomControl={false}
-        attributionControl={false}
-      >
-        <ThemedTileLayer />
-        <MarkerClusterGroup
-          chunkedLoading
-          iconCreateFunction={createClusterCustomIcon}
-          maxClusterRadius={40}
-          spiderfyOnMaxZoom
-          showCoverageOnHover={false}
-        >
-          {memosWithLocation.map((memo) => (
-            <Marker key={memo.name} position={[memo.location!.latitude, memo.location!.longitude]} icon={defaultMarkerIcon}>
-              <Popup
-                closeButton={false}
-                className={cn(
-                  "w-64!",
-                  "[&_.leaflet-popup-content-wrapper]:rounded-lg",
-                  "[&_.leaflet-popup-content-wrapper]:border",
-                  "[&_.leaflet-popup-content-wrapper]:border-border",
-                  "[&_.leaflet-popup-content-wrapper]:bg-background",
-                  "[&_.leaflet-popup-content-wrapper]:shadow-lg",
-                  "[&_.leaflet-popup-content]:m-1",
-                  "[&_.leaflet-popup-content]:[font-size:inherit]",
-                  "[&_.leaflet-popup-content]:[line-height:inherit]",
-                  "[&_.leaflet-popup-tip]:bg-background",
-                )}
-              >
-                <div className="flex flex-col gap-2.5 p-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="space-y-1">
-                      <span className="inline-flex rounded-full border border-border/70 bg-muted/50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-                        Memo
-                      </span>
-                      <span className="block text-[11px] font-medium text-muted-foreground">
-                        {memo.createTime &&
-                          timestampDate(memo.createTime).toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                      </span>
-                    </div>
-                    <Link
-                      to={`/memos/${memo.name.split("/").pop()}`}
-                      className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-foreground transition-all hover:border-primary/40 hover:text-primary"
-                    >
-                      Open
-                      <ArrowUpRightIcon className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="line-clamp-3 text-sm leading-snug font-medium text-foreground">{memo.snippet || "No content"}</div>
-                    <div className="text-[11px] text-muted-foreground">
-                      {memo.location!.latitude.toFixed(2)}°, {memo.location!.longitude.toFixed(2)}°
-                    </div>
-                  </div>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </MarkerClusterGroup>
-        <MapFitBounds memos={memosWithLocation} />
-      </MapContainer>
+      <MemoMapCanvas memos={memosWithLocation} tileUrl={tileUrl} />
     </div>
   );
 };

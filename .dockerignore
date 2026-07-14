@@ -24,6 +24,11 @@ web/coverage/
 # Legal and commercial disclosures shipped in the runtime image.
 !PRIVACY.md
 !TRADEMARKS.md
+!THIRD_PARTY_NOTICES
+!notices/
+!notices/**
+!sbom/
+!sbom/**
 !docs/
 docs/**
 !docs/ADVERTISING.md

@@ -79,6 +79,8 @@ upstream project for now. This is intentional and avoids a risky mass rename.
   the rules for advertising, sponsorships, and affiliate links.
 - [Trademarks and project identity / 商标与项目标识](TRADEMARKS.md) distinguishes factual upstream attribution from affiliation or
   endorsement.
+- [Third-party notices](THIRD_PARTY_NOTICES) and [distribution compliance](docs/COMPLIANCE.md) provide the current dependency
+  notices, SBOMs, and the reproducible container/native-package release steps.
 
 The MemoArk-maintained distribution currently contains no paid placement or affiliate links. Any future paid, sponsored, or affiliate
 content must be clearly labelled **where it appears / 在内容实际展示位置就地标注**. A link to a central policy alone is not enough;
