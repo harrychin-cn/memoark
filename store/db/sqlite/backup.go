@@ -11,14 +11,9 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	msqlite "modernc.org/sqlite"
 )
 
 const migrationBackupDirectory = "backups"
-
-type onlineBackuper interface {
-	NewBackup(destinationURI string) (*msqlite.Backup, error)
-}
 
 // CreateMigrationBackup creates and verifies a consistent online SQLite
 // backup before schema migrations modify the source database.
@@ -72,31 +67,7 @@ func (d *DB) copyDatabaseToBackup(ctx context.Context, backupPath string) error 
 	defer connection.Close()
 
 	return connection.Raw(func(driverConnection any) error {
-		backuper, ok := driverConnection.(onlineBackuper)
-		if !ok {
-			return errors.New("modernc SQLite connection does not support online backup")
-		}
-
-		backup, err := backuper.NewBackup(backupPath)
-		if err != nil {
-			return errors.Wrap(err, "failed to initialize online backup")
-		}
-
-		morePages, stepErr := backup.Step(-1)
-		finishErr := backup.Finish()
-		if stepErr != nil {
-			if finishErr != nil {
-				return errors.Wrapf(stepErr, "failed to copy SQLite pages; backup cleanup also failed: %v", finishErr)
-			}
-			return errors.Wrap(stepErr, "failed to copy SQLite pages")
-		}
-		if finishErr != nil {
-			return errors.Wrap(finishErr, "failed to finish online backup")
-		}
-		if morePages {
-			return errors.New("online backup did not copy all SQLite pages")
-		}
-		return nil
+		return copySQLiteConnectionToBackup(ctx, driverConnection, backupPath)
 	})
 }
 

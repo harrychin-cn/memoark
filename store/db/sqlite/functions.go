@@ -1,3 +1,5 @@
+//go:build !android
+
 // Package sqlite provides SQLite driver implementation with custom functions.
 // Custom functions are registered globally on first use to extend SQLite's
 // limited ASCII-only text operations with proper Unicode support.

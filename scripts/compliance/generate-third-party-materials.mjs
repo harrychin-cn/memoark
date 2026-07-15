@@ -11,6 +11,7 @@ const repositoryRoot = resolve(scriptDirectory, "..", "..");
 const webDirectory = join(repositoryRoot, "web");
 const defaultGoOS = "linux";
 const defaultGoArch = "amd64";
+const defaultGoPackage = "./cmd/memos";
 const baselineApplicationVersion = "source-baseline";
 
 function targetVariant(options) {
@@ -35,6 +36,8 @@ Options:
   --goos <name>             Go target OS (default: ${defaultGoOS})
   --goarch <name>           Go target architecture (default: ${defaultGoArch})
   --goarm <5|6|7>           Go ARM variant; requires --goarch arm
+  --go-package <path>       Go package whose linked modules are inventoried (default: ${defaultGoPackage})
+  --cgo-enabled <0|1>       CGO setting used for dependency analysis (default: 0)
   --go-toolchain-version <v> Go binary build toolchain version recorded in the SBOM and notices
   --provenance <mode>       baseline (default) for tracked source materials, or release for an exact release artifact
   --application-version <v> Required with --provenance release; recorded for the MemoArk release artifact
@@ -54,6 +57,8 @@ function parseArguments(argumentsList) {
     goos: defaultGoOS,
     goarch: defaultGoArch,
     goarm: "",
+    goPackage: defaultGoPackage,
+    cgoEnabled: "0",
     goToolchainVersion: "",
     provenance: "baseline",
     applicationVersion: "",
@@ -69,7 +74,20 @@ function parseArguments(argumentsList) {
       options.check = true;
       continue;
     }
-    if (["--goos", "--goarch", "--goarm", "--go-toolchain-version", "--provenance", "--application-version", "--notices-output", "--sbom-output"].includes(argument)) {
+    if (
+      [
+        "--goos",
+        "--goarch",
+        "--goarm",
+        "--go-package",
+        "--cgo-enabled",
+        "--go-toolchain-version",
+        "--provenance",
+        "--application-version",
+        "--notices-output",
+        "--sbom-output",
+      ].includes(argument)
+    ) {
       const value = argumentsList[index + 1];
       if (!value || value.startsWith("--")) {
         throw new Error(`${argument} requires a value.`);
@@ -88,6 +106,12 @@ function parseArguments(argumentsList) {
   }
   if (options.goarm && (options.goarch !== "arm" || !/^[567]$/.test(options.goarm))) {
     throw new Error("--goarm must be 5, 6, or 7 and requires --goarch arm.");
+  }
+  if (!/^\.\/[A-Za-z0-9_./-]+$/.test(options.goPackage)) {
+    throw new Error("--go-package must be a relative package path beginning with ./.");
+  }
+  if (!["0", "1"].includes(options.cgoEnabled)) {
+    throw new Error("--cgo-enabled must be 0 or 1.");
   }
   if (options.goToolchainVersion && !/^go[0-9A-Za-z._+-]+$/.test(options.goToolchainVersion)) {
     throw new Error("Go toolchain version must begin with go, for example go1.26.2.");
@@ -302,7 +326,7 @@ function componentFromPackage({ ecosystem, name, version, directory, declaredLic
 function collectGoComponents(options) {
   const environment = {
     ...process.env,
-    CGO_ENABLED: "0",
+    CGO_ENABLED: options.cgoEnabled,
     GOOS: options.goos,
     GOARCH: options.goarch,
   };
@@ -311,7 +335,7 @@ function collectGoComponents(options) {
     environment.GOARM = options.goarm;
   }
   const packageRecords = parseJSONStream(
-    commandOutput("go", ["list", "-mod=readonly", "-deps", "-json", "./cmd/memos"], { env: environment }),
+    commandOutput("go", ["list", "-mod=readonly", "-deps", "-json", options.goPackage], { env: environment }),
   );
   const components = new Map();
   for (const packageRecord of packageRecords) {
@@ -548,6 +572,8 @@ function buildSBOM({
     goarch: options.goarch,
     goarm: options.goarm,
     goos: options.goos,
+    goPackage: options.goPackage,
+    cgoEnabled: options.cgoEnabled,
     analysisGoToolchainVersion,
     buildGoToolchainVersion,
     provenance: options.provenance,
@@ -584,6 +610,8 @@ function buildSBOM({
             ]
           : []),
         { name: "memoark:go-target", value: targetPlatform(options) },
+        { name: "memoark:go-package", value: options.goPackage },
+        { name: "memoark:cgo-enabled", value: options.cgoEnabled },
         { name: "memoark:go.mod-sha256", value: hashes.goMod },
         { name: "memoark:go.sum-sha256", value: hashes.goSum },
         { name: "memoark:package.json-sha256", value: hashes.packageJson },
@@ -684,7 +712,7 @@ function buildNotices({
     "It records the MemoArk application source dependencies' declared or detected license and preserves any top-level license text supplied with a component.",
     "",
     "Scope:",
-    `- Go modules linked by ./cmd/memos for ${targetPlatform(options)} with CGO_ENABLED=0, plus the statically linked Go standard library and runtime.`,
+    `- Go modules linked by ${options.goPackage} for ${targetPlatform(options)} with CGO_ENABLED=${options.cgoEnabled}, plus the statically linked Go standard library and runtime.`,
     "- Packages in the resolved pnpm production dependency tree used to build the embedded browser application.",
     operatingSystemInventoryLine,
     "",

@@ -8,6 +8,9 @@ web/dist
 build/
 bin/
 memos
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/app/libs/*.aar
 
 # Buildx SPDX attestations are release records, not source-controlled baselines.
 sbom/memoark-image-*.spdx.json

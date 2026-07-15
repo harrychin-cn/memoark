@@ -41,7 +41,7 @@ const MyAccountSection = () => {
     setIsExporting(true);
     try {
       const result = await createMemoExportFile(user, memoServiceClient);
-      downloadFileFromBlob(new Blob([result.content], { type: "application/json;charset=utf-8" }), result.filename);
+      await downloadFileFromBlob(new Blob([result.content], { type: "application/json;charset=utf-8" }), result.filename);
       toast.success(t("setting.account.export-success", { count: result.document.counts.total }));
     } catch (error) {
       handleError(error, toast.error, {

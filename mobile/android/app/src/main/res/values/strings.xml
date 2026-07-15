@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MemoArk</string>
+    <string name="starting">正在启动本地 MemoArk…</string>
+    <string name="backend_start_failed">本地服务启动失败：\n%1$s</string>
+    <string name="no_app_for_link">没有可打开此链接的应用</string>
+    <string name="no_file_picker">无法打开文件选择器</string>
+    <string name="download_started">已开始下载</string>
+    <string name="download_failed">下载失败</string>
+    <string name="export_saved">文件已保存</string>
+    <string name="export_failed">文件保存失败</string>
+    <string name="share_with">分享 MemoArk 文件</string>
+    <string name="share_failed">分享失败</string>
+</resources>
