@@ -25,17 +25,17 @@ const LocationDisplayView = ({ location, className }: LocationDisplayViewProps) 
       <PopoverTrigger asChild>
         <button
           type="button"
+          title={displayText}
           className={cn(
-            "w-full flex flex-row gap-2 cursor-pointer",
-            "relative inline-flex items-center gap-1.5 px-2 h-7 rounded-md border border-border bg-muted/20 hover:bg-accent/20 text-muted-foreground hover:text-foreground text-xs transition-colors",
+            "relative inline-flex max-w-full min-w-0 cursor-pointer items-center gap-1.5 h-7 rounded-md border border-border bg-muted/20 px-2 text-xs text-muted-foreground transition-colors hover:bg-accent/20 hover:text-foreground",
             className,
           )}
         >
           <span className="shrink-0 text-muted-foreground">
             <MapPinIcon className="w-3.5 h-3.5" />
           </span>
-          <span className="text-nowrap opacity-80">[{getLocationCoordinatesText(location, 2)}]</span>
-          <span className="text-nowrap truncate">{displayText}</span>
+          <span className="shrink-0 text-nowrap opacity-80">[{getLocationCoordinatesText(location, 2)}]</span>
+          <span className="min-w-0 truncate">{displayText}</span>
         </button>
       </PopoverTrigger>
       <PopoverContent align="start">

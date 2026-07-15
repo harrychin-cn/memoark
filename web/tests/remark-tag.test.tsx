@@ -5,11 +5,7 @@ import { describe, expect, it } from "vitest";
 import { remarkTag } from "@/utils/remark-plugins/remark-tag";
 
 const renderMarkdown = (content: string): string =>
-  renderToStaticMarkup(
-    <ReactMarkdown remarkPlugins={[remarkGfm, remarkTag]}>
-      {content}
-    </ReactMarkdown>,
-  );
+  renderToStaticMarkup(<ReactMarkdown remarkPlugins={[remarkGfm, remarkTag]}>{content}</ReactMarkdown>);
 
 describe("remarkTag", () => {
   it("does not turn URL fragments inside autolinks into tags", () => {
@@ -50,5 +46,35 @@ describe("remarkTag", () => {
 
     expect(html).toContain('data-tag="urgent"');
     expect(html).toContain('data-tag="later"');
+  });
+
+  it("does not turn a backslash-escaped #tag into a tag, but still tags an unescaped one", () => {
+    const html = renderMarkdown("\\#NAS is my server and a #real tag");
+
+    expect(html).not.toContain('data-tag="NAS"');
+    expect(html).toContain("#NAS");
+    expect(html).toContain('data-tag="real"');
+  });
+
+  it("keeps an escaped hash literal when escaped and unescaped tags share a text node", () => {
+    const html = renderMarkdown("\\#first then #second");
+
+    expect(html).not.toContain('data-tag="first"');
+    expect(html).toContain("#first");
+    expect(html).toContain('data-tag="second"');
+  });
+
+  it("tags a whole word containing combining marks", () => {
+    const html = renderMarkdown("#കവിത");
+
+    expect(html).toContain('data-tag="കവിത"');
+    expect(html).not.toContain('data-tag="കവ"');
+  });
+
+  it("still tags a hash that shares a text node with an entity reference", () => {
+    const html = renderMarkdown("Tom &amp; Jerry #cartoon");
+
+    expect(html).toContain('data-tag="cartoon"');
+    expect(html).toContain("Tom &amp; Jerry");
   });
 });

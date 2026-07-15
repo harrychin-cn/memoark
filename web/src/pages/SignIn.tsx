@@ -18,6 +18,7 @@ import { storeOAuthState } from "@/utils/oauth";
 const SignIn = () => {
   const t = useTranslate();
   const [identityProviderList, setIdentityProviderList] = useState<IdentityProvider[]>([]);
+  const [identityProviderListLoading, setIdentityProviderListLoading] = useState(true);
   const { generalSetting: instanceGeneralSetting } = useInstance();
   const [searchParams] = useSearchParams();
   const redirectTarget = getSafeRedirectPath(searchParams.get(AUTH_REDIRECT_PARAM));
@@ -25,11 +26,32 @@ const SignIn = () => {
 
   // Prepare identity provider list.
   useEffect(() => {
+    let isActive = true;
+
     const fetchIdentityProviderList = async () => {
-      const { identityProviders } = await identityProviderServiceClient.listIdentityProviders({});
-      setIdentityProviderList(identityProviders);
+      try {
+        const { identityProviders } = await identityProviderServiceClient.listIdentityProviders({});
+        if (isActive) {
+          setIdentityProviderList(identityProviders);
+        }
+      } catch (error) {
+        if (isActive) {
+          handleError(error, toast.error, {
+            context: "Failed to load sign-in options",
+            fallbackMessage: "Failed to load sign-in options. Please try again.",
+          });
+        }
+      } finally {
+        if (isActive) {
+          setIdentityProviderListLoading(false);
+        }
+      }
     };
-    fetchIdentityProviderList();
+
+    void fetchIdentityProviderList();
+    return () => {
+      isActive = false;
+    };
   }, []);
 
   const handleSignInWithIdentityProvider = async (identityProvider: IdentityProvider) => {
@@ -79,6 +101,8 @@ const SignIn = () => {
         </div>
         {!instanceGeneralSetting.disallowPasswordAuth ? (
           <PasswordSignInForm redirectPath={redirectTarget} />
+        ) : identityProviderListLoading ? (
+          <div className="h-10 w-full animate-pulse rounded-md bg-muted/60" aria-hidden="true" />
         ) : (
           identityProviderList.length === 0 && <p className="w-full text-2xl mt-2 text-muted-foreground">Password auth is not allowed.</p>
         )}
