@@ -1,4 +1,4 @@
-package mobilebackend
+package backend
 
 import (
 	"fmt"

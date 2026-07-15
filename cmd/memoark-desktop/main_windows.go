@@ -16,6 +16,7 @@ import (
 	"time"
 	"unsafe"
 
+	pkgerrors "github.com/pkg/errors"
 	"golang.org/x/sys/windows"
 
 	"github.com/usememos/memos/internal/profile"
@@ -51,7 +52,7 @@ func main() {
 	}
 
 	if *port < 1 || *port > 65535 {
-		showError("MemoArk could not start.", fmt.Errorf("invalid port %d", *port))
+		showError("MemoArk could not start.", pkgerrors.Errorf("invalid port %d", *port))
 		return
 	}
 

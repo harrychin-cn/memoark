@@ -28,7 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.memoark.mobile.mobilebackend.Mobilebackend;
+import com.memoark.mobile.backend.Backend;
 
 import org.json.JSONObject;
 
@@ -80,7 +80,7 @@ public final class MainActivity extends Activity {
     protected void onStop() {
         lifecycleStarted = false;
         Future<?> shutdown = backendExecutor.submit(() -> {
-            String error = Mobilebackend.stop();
+            String error = Backend.stop();
             if (!error.isEmpty()) {
                 Log.e(TAG, "Backend shutdown failed: " + error);
             }
@@ -158,7 +158,7 @@ public final class MainActivity extends Activity {
     private void startBackendAndLoad() {
         backendExecutor.execute(() -> {
             String dataDirectory = new File(getFilesDir(), "memoark").getAbsolutePath();
-            String error = Mobilebackend.start(dataDirectory, LOCAL_PORT);
+            String error = Backend.start(dataDirectory, LOCAL_PORT);
             runOnUiThread(() -> {
                 if (!lifecycleStarted || isFinishing()) {
                     return;
@@ -383,7 +383,7 @@ public final class MainActivity extends Activity {
             }
             Uri[] results = fileChooserResults(resultCode, data);
             backendExecutor.execute(() -> {
-                String error = Mobilebackend.start(new File(getFilesDir(), "memoark").getAbsolutePath(), LOCAL_PORT);
+                String error = Backend.start(new File(getFilesDir(), "memoark").getAbsolutePath(), LOCAL_PORT);
                 runOnUiThread(() -> callback.onReceiveValue(error.isEmpty() ? results : null));
             });
             return;

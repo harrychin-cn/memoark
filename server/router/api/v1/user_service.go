@@ -268,10 +268,10 @@ func (s *APIV1Service) UpdateUser(ctx context.Context, request *v1pb.UpdateUserR
 		return nil, status.Errorf(codes.PermissionDenied, "permission denied")
 	}
 
-	currentTs := time.Now().Unix()
+	currentSec := time.Now().Unix()
 	update := &store.UpdateUser{
 		ID:        user.ID,
-		UpdatedTs: &currentTs,
+		UpdatedTs: &currentSec,
 	}
 	instanceGeneralSetting, err := s.Store.GetInstanceGeneralSetting(ctx)
 	if err != nil {

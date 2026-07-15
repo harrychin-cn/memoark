@@ -1,5 +1,5 @@
-// Package mobilebackend exposes the embedded MemoArk service to native mobile hosts.
-package mobilebackend
+// Package backend exposes the embedded MemoArk service to native mobile hosts.
+package backend
 
 import (
 	"context"
