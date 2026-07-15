@@ -1,146 +1,126 @@
 # Distribution compliance / 发行合规
 
-## What each artifact carries / 各发行物携带的文件
+## What ships in a release / 发行包携带什么？
 
 Every MemoArk native Windows archive contains:
 
-- `LICENSE`: source-code license and upstream copyright terms;
-- `NOTICE`: MemoArk and Memos provenance notice;
-- `TRADEMARKS.md`: project identity and non-endorsement rules;
-- `PRIVACY.md`: self-hosted privacy statement;
-- `ADVERTISING.md`: advertising, sponsorship, and affiliate disclosure rules;
-- `THIRD_PARTY_NOTICES`: target-specific MemoArk application dependency notices;
-- `sbom/SBOM.cdx.json`: target-specific CycloneDX source-build SBOM.
+- LICENSE: source-code license and upstream copyright terms;
+- NOTICE: MemoArk and Memos provenance notice;
+- TRADEMARKS.md: project identity and non-endorsement rules;
+- PRIVACY.md: self-hosted privacy statement;
+- ADVERTISING.md: advertising, sponsorship, and affiliate disclosure rules;
+- THIRD_PARTY_NOTICES: exact application dependency notices for that archive;
+- sbom/SBOM.cdx.json: exact CycloneDX source-build SBOM for that archive.
 
 Every MemoArk-maintained Linux container image contains the first six documents plus
-`/usr/local/memos/sbom.cdx.json`, its matching **application source-build** SBOM. For an
-image, the shipped `THIRD_PARTY_NOTICES` is copied from the matching target-specific file under
-`notices/`; the root `THIRD_PARTY_NOTICES` is the default Linux/amd64 audit copy. The
-container image's separate SPDX SBOM includes Alpine and other operating-system packages;
-release publishing must attach that SBOM to the exact image digest with Buildx `--sbom=true`.
-It is not interchangeable with the source-build SBOM.
+/usr/local/memos/sbom.cdx.json, its matching **application source-build** SBOM. A separate
+Buildx SPDX SBOM inventories Alpine and other operating-system packages. Keep that image SBOM
+with the exact image digest when publishing; it is not interchangeable with the application
+source-build SBOM.
 
-`THIRD_PARTY_NOTICES` deliberately covers the linked Go modules, the statically linked Go standard
+THIRD_PARTY_NOTICES covers the linked Go modules, the statically linked Go standard
 library/runtime, and the browser application's pnpm production tree. Its Go runtime entry preserves
-both the Go `LICENSE` and `PATENTS` texts. It is not a complete notice file for Alpine or any other
+both the Go LICENSE and PATENTS texts. It is not a complete notice file for Alpine or any other
 container operating-system package.
 
-## Application notices and source-build SBOM / 应用依赖声明与源构建 SBOM
+## Source baseline versus release provenance / 源码基线与发行溯源
 
-`THIRD_PARTY_NOTICES`, `notices/memoark-source-linux-amd64.THIRD_PARTY_NOTICES`, and
-`sbom/memoark-source-linux-amd64.cdx.json` are generated from:
+The repository tracks a reproducible **source baseline**:
 
-- Go modules actually linked by `./cmd/memos` for the selected `GOOS/GOARCH` with
-  `CGO_ENABLED=0`, plus one synthetic component for the statically linked Go standard library and
-  runtime;
-- the physically installed pnpm production dependency tree used for the embedded web build.
+- THIRD_PARTY_NOTICES;
+- notices/memoark-source-linux-*.THIRD_PARTY_NOTICES;
+- sbom/memoark-source-linux-*.cdx.json.
 
-They intentionally record build inputs. They are not a claim that every optional package is
-present in every platform-specific browser bundle. The SBOM records both the Go version used to
-analyze dependencies and the Go version declared for the binary build. Linux defaults the build
-toolchain to the `golang:<version>-alpine` builder pinned in `scripts/Dockerfile`; native Windows
-archives use the local Go toolchain for both values.
+The baseline records targets, dependency manifests, resolved dependency licenses, and Go runtime
+license hashes. It deliberately does **not** record an application version, Git revision, or Git
+timestamp. This keeps ordinary development Docker builds usable and prevents generated files from
+changing the commit that they claim to describe.
 
-Generate and verify the files before a release. The application version must match the binary
-or image version being released:
+Exact version-and-revision-bound notices and SBOMs are release artifacts. They are generated only
+inside an isolated worktree, copied into the release record and runtime image, then discarded with
+that worktree. COMPLIANCE_CHECK=true accepts only those exact release materials; it rejects the
+source baseline by design.
 
-```powershell
+To install the web dependency tree and verify the tracked baseline:
+
+~~~powershell
 cd G:\项目\memoark\web
 corepack pnpm install --frozen-lockfile
 cd ..
-node scripts/compliance/generate-third-party-materials.mjs --application-version 0.29.1-memoark.8
-node scripts/compliance/generate-third-party-materials.mjs `
-  --application-version 0.29.1-memoark.8 `
-  --notices-output notices/memoark-source-linux-amd64.THIRD_PARTY_NOTICES
-node scripts/compliance/generate-third-party-materials.mjs --application-version 0.29.1-memoark.8 --check
-node scripts/compliance/generate-third-party-materials.mjs `
-  --application-version 0.29.1-memoark.8 `
-  --notices-output notices/memoark-source-linux-amd64.THIRD_PARTY_NOTICES `
-  --check
-```
+node scripts/compliance/generate-third-party-materials.mjs --check
+node scripts/compliance/generate-third-party-materials.mjs --notices-output notices/memoark-source-linux-amd64.THIRD_PARTY_NOTICES --check
+node scripts/compliance/generate-third-party-materials.mjs --goos linux --goarch arm64 --notices-output notices/memoark-source-linux-arm64.THIRD_PARTY_NOTICES --check
+node scripts/compliance/generate-third-party-materials.mjs --goos linux --goarch arm --goarm 7 --notices-output notices/memoark-source-linux-armv7.THIRD_PARTY_NOTICES --check
+~~~
 
-For another Linux architecture, pass its target and matching notice output explicitly. For
-example, use `--goos linux --goarch arm64 --notices-output
-notices/memoark-source-linux-arm64.THIRD_PARTY_NOTICES`; for arm/v7 use `--goos linux --goarch
-arm --goarm 7 --notices-output notices/memoark-source-linux-armv7.THIRD_PARTY_NOTICES`. The
-Dockerfile copies the matching source notice and SBOM. When `COMPLIANCE_CHECK=true`, it rejects a
-build when their target, version, Git revision, Go build toolchain, runtime LICENSE/PATENTS hashes,
-or dependency-manifest hashes do not match the binary being compiled. Ordinary local development
-builds leave that strict release gate disabled.
+Run the same commands without --check after a dependency, lockfile, Go toolchain, or compliance
+generator change. Do not pass --application-version for the source baseline.
 
-The generator fails for a dependency with neither a declared license nor a classifiable local
-license file. It excludes platform-incompatible pnpm optional packages that were not installed.
-It also fails if a removed React Leaflet package reappears in the production dependency tree.
+## Strict container release record / 严格容器发行记录
 
-## Linux image SBOM and attestation / Linux 镜像 SBOM 与证明
+Use the single release entry point for a commercial container build:
 
-After rebuilding the embedded frontend, create an inspectable local SPDX image SBOM for the
-same version and commit:
-
-```powershell
+~~~powershell
 cd G:\项目\memoark
-Push-Location web
-corepack pnpm release
-Pop-Location
-node scripts/compliance/generate-third-party-materials.mjs --application-version 0.29.1-memoark.8
-node scripts/compliance/generate-third-party-materials.mjs `
-  --application-version 0.29.1-memoark.8 `
-  --notices-output notices/memoark-source-linux-amd64.THIRD_PARTY_NOTICES
-node scripts/compliance/generate-third-party-materials.mjs --application-version 0.29.1-memoark.8 --check
-node scripts/compliance/generate-third-party-materials.mjs `
-  --application-version 0.29.1-memoark.8 `
-  --notices-output notices/memoark-source-linux-amd64.THIRD_PARTY_NOTICES `
-  --check
-powershell -ExecutionPolicy Bypass -File scripts/generate-image-sbom.ps1 `
-  -Platform linux/amd64 `
-  -Version 0.29.1-memoark.8 `
-  -Commit (git rev-parse HEAD)
-```
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-container-release.ps1 -Version 0.29.1-memoark.9 -Platform linux/amd64
+~~~
 
-This creates `sbom/memoark-image-linux-amd64.spdx.json`. The command uses an OCI export so its
-temporary verification build retains the Buildx SPDX attestation without changing a named local
-deployment image.
+The script only releases the current clean HEAD; it intentionally has no commit override,
+deployment, push, tag, load, run, stop, or remove option. It:
 
-When publishing an image, do not use a plain `docker build` followed by `docker push`. Build the
-same version and commit with an SBOM attestation at publish time:
+1. creates a detached disposable worktree at that exact commit;
+2. runs pnpm install --frozen-lockfile, frontend lint/test/release, go mod tidy -diff, and
+   GOFLAGS=-parallel=1 go test -count=1 -p 1 ./... (the scoped setting also reaches nested
+   database-driver test processes, keeping database-container tests isolated);
+3. generates target-specific materials with --provenance release, including the exact version and
+   Git revision;
+4. builds and retains an OCI archive with COMPLIANCE_CHECK=true and Buildx --sbom=true;
+5. writes a release record under
+   build/releases/memoark-<version>-<12-character-git-revision>/;
+6. removes the disposable worktree and confirms that the source worktree remains clean.
 
-```powershell
-docker buildx build `
-  --platform linux/amd64 `
-  --sbom=true `
-  --build-arg COMPLIANCE_CHECK=true `
-  --build-arg VERSION=0.29.1-memoark.8 `
-  --build-arg COMMIT=(git rev-parse HEAD) `
-  --tag <registry>/memoark:0.29.1-memoark.8 `
-  --push `
-  -f scripts/Dockerfile .
-```
+The release artifact contains images/ OCI archives, notices/, source CycloneDX files, image SPDX files,
+image-SBOM provenance JSON (OCI index, image-manifest, attestation-manifest, attestation reference,
+SPDX-layer, and OCI-archive SHA-256 digests), release-manifest.json, and SHA256SUMS. It is ignored by
+Git and is the artifact to retain with the release. The script rejects an output path under .local\data,
+uses an exclusive release lock, and snapshots
+memoark-local before and after the build. It never operates the container; any change to its ID,
+image, state or restart timing, ports, mounts, health status, or restart policy fails the release
+preparation. The strict gate accepts an image SBOM only when both the OCI attestation reference
+and the in-toto SPDX subject bind it to the retained archive's image-manifest digest.
 
-Keep the generated SPDX file with the release record as an independently inspectable copy. The
-container image contains BusyBox, Alpine, and other OS components that are not covered by
-`THIRD_PARTY_NOTICES`; preserve the image attestation and complete any OS-license notice or
-source-availability review required for the intended distribution channel.
+Build several targets by repeating -Platform:
+
+~~~powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-container-release.ps1 -Version 0.29.1-memoark.9 -Platform linux/amd64,linux/arm64,linux/arm/v7
+~~~
+
+The wrapper validates a strict OCI build but does not publish it. Publish the retained OCI archive
+instead of rebuilding from a normal source checkout, verify that the destination image-manifest digest
+equals release-manifest.json, attach the accompanying SPDX SBOM to that exact digest, and complete the
+distribution-channel review below.
+
+scripts/generate-image-sbom.ps1 remains the lower-level strict builder. It requires exact release
+materials already present in its working tree and writes an OCI archive, SPDX file, and digest-bound
+provenance JSON sidecar under build/releases/; call it through package-container-release.ps1 for a
+repeatable release.
 
 ## Native archive / 原生 Windows 压缩包
 
-First build the embedded frontend, then create a Windows archive:
+Create a Windows archive from a clean source worktree:
 
-```powershell
+~~~powershell
 cd G:\项目\memoark
-Push-Location web
-corepack pnpm release
-Pop-Location
-powershell -ExecutionPolicy Bypass -File scripts/package-release.ps1 `
-  -GoOS windows `
-  -GoArch amd64 `
-  -Version 0.29.1-memoark.8
-```
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-release.ps1 -GoOS windows -GoArch amd64 -Version 0.29.1-memoark.9
+~~~
 
-The script writes an inspectable staging folder and ZIP under `build/releases/`. It builds the
-native binary, generates target-specific notices/SBOM with the same version, confirms their
-presence, and verifies that the final ZIP contains every required disclosure file. The script is
-intentionally limited to Windows archives; POSIX archive permissions must be packaged and checked
-from a native target environment before Linux or macOS binary distribution is supported.
+The script rejects local tracked or untracked changes, builds the embedded frontend itself, restores
+the tracked frontend placeholder afterward, and verifies the source worktree is clean before accepting
+the archive. It writes an inspectable staging folder and ZIP under build/releases/, generates
+release-provenance notices/SBOMs in the staging folder, builds the native binary with the same version
+and Git revision, and verifies that the final ZIP contains every required disclosure file. It is
+intentionally limited to Windows archives; POSIX archive permissions must be packaged and checked from
+a native target environment before Linux or macOS binary distribution is supported.
 
 ## Remaining release review / 尚待完成的发行审查
 
@@ -148,5 +128,5 @@ from a native target environment before Linux or macOS binary distribution is su
   Their terms, attribution, rate limits, and any operator-specific privacy disclosures require a
   separate review before representing the map integration as commercially cleared.
 - A commercial container release still needs a distribution-channel review for its Alpine/OS
-  component notices and any corresponding source-availability obligations. The application
-  notice file and source-build SBOM do not settle those operating-system obligations.
+  component notices and any corresponding source-availability obligations. The application notice
+  file and source-build SBOM do not settle those operating-system obligations.

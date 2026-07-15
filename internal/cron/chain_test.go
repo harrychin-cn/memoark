@@ -10,20 +10,6 @@ import (
 	"time"
 )
 
-func waitFor(t *testing.T, timeout time.Duration, fn func() bool) {
-	t.Helper()
-
-	deadline := time.Now().Add(timeout)
-	for time.Now().Before(deadline) {
-		if fn() {
-			return
-		}
-		time.Sleep(time.Millisecond)
-	}
-
-	t.Fatal("condition not met before timeout")
-}
-
 func appendingJob(slice *[]int, value int) Job {
 	var m sync.Mutex
 	return FuncJob(func() {
@@ -88,14 +74,12 @@ type countJob struct {
 	m       sync.Mutex
 	started int
 	done    int
-	delay   time.Duration
 }
 
 func (j *countJob) Run() {
 	j.m.Lock()
 	j.started++
 	j.m.Unlock()
-	time.Sleep(j.delay)
 	j.m.Lock()
 	j.done++
 	j.m.Unlock()
@@ -113,13 +97,96 @@ func (j *countJob) Done() int {
 	return j.done
 }
 
+type blockingCountJob struct {
+	m           sync.Mutex
+	started     int
+	done        int
+	startedCh   chan struct{}
+	releaseCh   chan struct{}
+	startedOnce sync.Once
+	releaseOnce sync.Once
+}
+
+func newBlockingCountJob() *blockingCountJob {
+	return &blockingCountJob{
+		startedCh: make(chan struct{}),
+		releaseCh: make(chan struct{}),
+	}
+}
+
+func (j *blockingCountJob) Run() {
+	j.m.Lock()
+	j.started++
+	j.m.Unlock()
+	j.startedOnce.Do(func() { close(j.startedCh) })
+	<-j.releaseCh
+	j.m.Lock()
+	j.done++
+	j.m.Unlock()
+}
+
+func (j *blockingCountJob) Started() int {
+	defer j.m.Unlock()
+	j.m.Lock()
+	return j.started
+}
+
+func (j *blockingCountJob) Done() int {
+	defer j.m.Unlock()
+	j.m.Lock()
+	return j.done
+}
+
+func (j *blockingCountJob) Release() {
+	j.releaseOnce.Do(func() { close(j.releaseCh) })
+}
+
+func (j *blockingCountJob) WaitStarted(t *testing.T) {
+	t.Helper()
+	select {
+	case <-j.startedCh:
+	case <-time.After(time.Second):
+		t.Fatal("blocking job did not start")
+	}
+}
+
+func runJobAsync(j Job) <-chan struct{} {
+	finished := make(chan struct{})
+	go func() {
+		j.Run()
+		close(finished)
+	}()
+	return finished
+}
+
+func waitForJobCompletions(t *testing.T, description string, completions ...<-chan struct{}) {
+	t.Helper()
+	var wg sync.WaitGroup
+	wg.Add(len(completions))
+	for _, completion := range completions {
+		go func(completion <-chan struct{}) {
+			defer wg.Done()
+			<-completion
+		}(completion)
+	}
+	done := make(chan struct{})
+	go func() {
+		wg.Wait()
+		close(done)
+	}()
+
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal(description)
+	}
+}
+
 func TestChainDelayIfStillRunning(t *testing.T) {
 	t.Run("runs immediately", func(*testing.T) {
 		var j countJob
 		wrappedJob := NewChain(DelayIfStillRunning(DiscardLogger)).Then(&j)
-		go wrappedJob.Run()
-
-		waitFor(t, 100*time.Millisecond, func() bool { return j.Done() == 1 })
+		wrappedJob.Run()
 		if c := j.Done(); c != 1 {
 			t.Errorf("expected job run once, immediately, got %d", c)
 		}
@@ -128,35 +195,27 @@ func TestChainDelayIfStillRunning(t *testing.T) {
 	t.Run("second run immediate if first done", func(*testing.T) {
 		var j countJob
 		wrappedJob := NewChain(DelayIfStillRunning(DiscardLogger)).Then(&j)
-		go func() {
-			go wrappedJob.Run()
-			time.Sleep(time.Millisecond)
-			go wrappedJob.Run()
-		}()
-
-		waitFor(t, 100*time.Millisecond, func() bool { return j.Done() == 2 })
+		wrappedJob.Run()
+		wrappedJob.Run()
 		if c := j.Done(); c != 2 {
 			t.Errorf("expected job run twice, immediately, got %d", c)
 		}
 	})
 
 	t.Run("second run delayed if first not done", func(*testing.T) {
-		var j countJob
-		j.delay = 10 * time.Millisecond
-		wrappedJob := NewChain(DelayIfStillRunning(DiscardLogger)).Then(&j)
-		go func() {
-			go wrappedJob.Run()
-			time.Sleep(time.Millisecond)
-			go wrappedJob.Run()
-		}()
-
-		waitFor(t, 100*time.Millisecond, func() bool { return j.Started() == 1 })
+		j := newBlockingCountJob()
+		t.Cleanup(j.Release)
+		wrappedJob := NewChain(DelayIfStillRunning(DiscardLogger)).Then(j)
+		firstDone := runJobAsync(wrappedJob)
+		j.WaitStarted(t)
+		secondDone := runJobAsync(wrappedJob)
 		started, done := j.Started(), j.Done()
-		if done != 0 {
+		if started != 1 || done != 0 {
 			t.Error("expected first job started, but not finished, got", started, done)
 		}
 
-		waitFor(t, 200*time.Millisecond, func() bool { return j.Done() == 2 })
+		j.Release()
+		waitForJobCompletions(t, "delayed jobs did not complete", firstDone, secondDone)
 		started, done = j.Started(), j.Done()
 		if started != 2 || done != 2 {
 			t.Error("expected both jobs done, got", started, done)
@@ -168,8 +227,7 @@ func TestChainSkipIfStillRunning(t *testing.T) {
 	t.Run("runs immediately", func(*testing.T) {
 		var j countJob
 		wrappedJob := NewChain(SkipIfStillRunning(DiscardLogger)).Then(&j)
-		go wrappedJob.Run()
-		time.Sleep(2 * time.Millisecond) // Give the job 2ms to complete.
+		wrappedJob.Run()
 		if c := j.Done(); c != 1 {
 			t.Errorf("expected job run once, immediately, got %d", c)
 		}
@@ -178,37 +236,28 @@ func TestChainSkipIfStillRunning(t *testing.T) {
 	t.Run("second run immediate if first done", func(*testing.T) {
 		var j countJob
 		wrappedJob := NewChain(SkipIfStillRunning(DiscardLogger)).Then(&j)
-		go func() {
-			go wrappedJob.Run()
-			time.Sleep(time.Millisecond)
-			go wrappedJob.Run()
-		}()
-		time.Sleep(3 * time.Millisecond) // Give both jobs 3ms to complete.
+		wrappedJob.Run()
+		wrappedJob.Run()
 		if c := j.Done(); c != 2 {
 			t.Errorf("expected job run twice, immediately, got %d", c)
 		}
 	})
 
 	t.Run("second run skipped if first not done", func(*testing.T) {
-		var j countJob
-		j.delay = 10 * time.Millisecond
-		wrappedJob := NewChain(SkipIfStillRunning(DiscardLogger)).Then(&j)
-		go func() {
-			go wrappedJob.Run()
-			time.Sleep(time.Millisecond)
-			go wrappedJob.Run()
-		}()
-
-		// After 5ms, the first job is still in progress, and the second job was
-		// already skipped.
-		time.Sleep(5 * time.Millisecond)
+		j := newBlockingCountJob()
+		t.Cleanup(j.Release)
+		wrappedJob := NewChain(SkipIfStillRunning(DiscardLogger)).Then(j)
+		firstDone := runJobAsync(wrappedJob)
+		j.WaitStarted(t)
+		secondDone := runJobAsync(wrappedJob)
+		waitForJobCompletions(t, "second job was not skipped", secondDone)
 		started, done := j.Started(), j.Done()
 		if started != 1 || done != 0 {
 			t.Error("expected first job started, but not finished, got", started, done)
 		}
 
-		// Verify that the first job completes and second does not run.
-		time.Sleep(25 * time.Millisecond)
+		j.Release()
+		waitForJobCompletions(t, "first job did not complete", firstDone)
 		started, done = j.Started(), j.Done()
 		if started != 1 || done != 1 {
 			t.Error("expected second job skipped, got", started, done)
@@ -216,37 +265,48 @@ func TestChainSkipIfStillRunning(t *testing.T) {
 	})
 
 	t.Run("skip 10 jobs on rapid fire", func(*testing.T) {
-		var j countJob
-		j.delay = 10 * time.Millisecond
-		wrappedJob := NewChain(SkipIfStillRunning(DiscardLogger)).Then(&j)
-		for i := 0; i < 11; i++ {
-			go wrappedJob.Run()
+		j := newBlockingCountJob()
+		t.Cleanup(j.Release)
+		wrappedJob := NewChain(SkipIfStillRunning(DiscardLogger)).Then(j)
+		firstDone := runJobAsync(wrappedJob)
+		j.WaitStarted(t)
+		completions := make([]<-chan struct{}, 0, 10)
+		for i := 0; i < 10; i++ {
+			completions = append(completions, runJobAsync(wrappedJob))
 		}
-		time.Sleep(200 * time.Millisecond)
-		done := j.Done()
-		if done != 1 {
-			t.Error("expected 1 jobs executed, 10 jobs dropped, got", done)
+		waitForJobCompletions(t, "rapid-fire jobs were not skipped", completions...)
+		if started, done := j.Started(), j.Done(); started != 1 || done != 0 {
+			t.Error("expected one blocked job and 10 dropped jobs, got", started, done)
 		}
+		j.Release()
+		waitForJobCompletions(t, "first rapid-fire job did not complete", firstDone)
 	})
 
 	t.Run("different jobs independent", func(*testing.T) {
-		var j1, j2 countJob
-		j1.delay = 10 * time.Millisecond
-		j2.delay = 10 * time.Millisecond
+		j1 := newBlockingCountJob()
+		j2 := newBlockingCountJob()
+		t.Cleanup(j1.Release)
+		t.Cleanup(j2.Release)
 		chain := NewChain(SkipIfStillRunning(DiscardLogger))
-		wrappedJob1 := chain.Then(&j1)
-		wrappedJob2 := chain.Then(&j2)
-		for i := 0; i < 11; i++ {
-			go wrappedJob1.Run()
-			go wrappedJob2.Run()
+		wrappedJob1 := chain.Then(j1)
+		wrappedJob2 := chain.Then(j2)
+		firstDone1 := runJobAsync(wrappedJob1)
+		firstDone2 := runJobAsync(wrappedJob2)
+		j1.WaitStarted(t)
+		j2.WaitStarted(t)
+		completions := make([]<-chan struct{}, 0, 20)
+		for i := 0; i < 10; i++ {
+			completions = append(completions, runJobAsync(wrappedJob1), runJobAsync(wrappedJob2))
 		}
-		time.Sleep(100 * time.Millisecond)
-		var (
-			done1 = j1.Done()
-			done2 = j2.Done()
-		)
-		if done1 != 1 || done2 != 1 {
-			t.Error("expected both jobs executed once, got", done1, "and", done2)
+		waitForJobCompletions(t, "overlapping jobs were not skipped", completions...)
+		if started1, done1 := j1.Started(), j1.Done(); started1 != 1 || done1 != 0 {
+			t.Error("expected first job to remain blocked, got", started1, done1)
 		}
+		if started2, done2 := j2.Started(), j2.Done(); started2 != 1 || done2 != 0 {
+			t.Error("expected second job to remain blocked, got", started2, done2)
+		}
+		j1.Release()
+		j2.Release()
+		waitForJobCompletions(t, "independent jobs did not complete", firstDone1, firstDone2)
 	})
 }

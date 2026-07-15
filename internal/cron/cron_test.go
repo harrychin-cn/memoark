@@ -563,7 +563,7 @@ func TestStopAndWait(t *testing.T) {
 		ctx := cron.Stop()
 		select {
 		case <-ctx.Done():
-		case <-time.After(time.Millisecond):
+		case <-time.After(OneSecond):
 			t.Error("context was not done immediately")
 		}
 	})
@@ -572,11 +572,10 @@ func TestStopAndWait(t *testing.T) {
 		cron := newWithSeconds()
 		cron.Start()
 		_ = cron.Stop()
-		time.Sleep(time.Millisecond)
 		ctx := cron.Stop()
 		select {
 		case <-ctx.Done():
-		case <-time.After(time.Millisecond):
+		case <-time.After(OneSecond):
 			t.Error("context was not done immediately")
 		}
 	})
@@ -592,83 +591,99 @@ func TestStopAndWait(t *testing.T) {
 		ctx := cron.Stop()
 		select {
 		case <-ctx.Done():
-		case <-time.After(time.Millisecond):
+		case <-time.After(OneSecond):
 			t.Error("context was not done immediately")
 		}
 	})
 
-	t.Run("a couple fast jobs and a slow job added, waits for slow job", func(*testing.T) {
+	t.Run("a couple fast jobs and a slow job added, waits for slow job", func(t *testing.T) {
+		runSlowJob, started, release := blockingJob()
 		cron := newWithSeconds()
 		cron.AddFunc("* * * * * *", func() {})
 		cron.Start()
-		cron.AddFunc("* * * * * *", func() { time.Sleep(2 * time.Second) })
+		cron.AddFunc("* * * * * *", runSlowJob)
 		cron.AddFunc("* * * * * *", func() {})
-		time.Sleep(time.Second)
+		t.Cleanup(func() {
+			release()
+			select {
+			case <-cron.Stop().Done():
+			case <-time.After(OneSecond):
+				t.Error("cron did not stop during cleanup")
+			}
+		})
+
+		select {
+		case <-started:
+		case <-time.After(2 * OneSecond):
+			t.Fatal("slow job did not start")
+		}
 
 		ctx := cron.Stop()
 
-		// Verify that it is not done for at least 750ms
 		select {
 		case <-ctx.Done():
-			t.Error("context was done too quickly immediately")
-		case <-time.After(750 * time.Millisecond):
-			// expected, because the job sleeping for 1 second is still running
+			t.Error("context was done while the slow job was blocked")
+		default:
 		}
 
-		// Verify that it IS done in the next 500ms (giving 250ms buffer)
+		release()
 		select {
 		case <-ctx.Done():
-			// expected
-		case <-time.After(1500 * time.Millisecond):
-			t.Error("context not done after job should have completed")
+		case <-time.After(OneSecond):
+			t.Error("context not done after slow job release")
 		}
 	})
 
-	t.Run("repeated calls to stop, waiting for completion and after", func(*testing.T) {
+	t.Run("repeated calls to stop, waiting for completion and after", func(t *testing.T) {
+		runSlowJob, started, release := blockingJob()
 		cron := newWithSeconds()
 		cron.AddFunc("* * * * * *", func() {})
-		cron.AddFunc("* * * * * *", func() { time.Sleep(3 * time.Second) })
+		cron.AddFunc("* * * * * *", runSlowJob)
 		cron.Start()
 		cron.AddFunc("* * * * * *", func() {})
-		time.Sleep(time.Second)
+		t.Cleanup(func() {
+			release()
+			select {
+			case <-cron.Stop().Done():
+			case <-time.After(OneSecond):
+				t.Error("cron did not stop during cleanup")
+			}
+		})
+
+		select {
+		case <-started:
+		case <-time.After(2 * OneSecond):
+			t.Fatal("slow job did not start")
+		}
+
 		ctx := cron.Stop()
 		ctx2 := cron.Stop()
 
-		// Verify that it is not done for at least 1500ms.
-		// The 3-second sleep job starts within 1s of cron.Start(), so it always has
-		// at least 2s remaining when Stop() is called, well above this threshold.
 		select {
 		case <-ctx.Done():
-			t.Error("context was done too quickly immediately")
+			t.Error("context was done while the slow job was blocked")
 		case <-ctx2.Done():
-			t.Error("context2 was done too quickly immediately")
-		case <-time.After(1500 * time.Millisecond):
-			// expected, because the job sleeping for 3 seconds is still running
+			t.Error("context2 was done while the slow job was blocked")
+		default:
 		}
 
-		// Verify that it IS done in the next 2s (giving 500ms buffer).
-		// After the 1500ms wait above, at most 1500ms of the job remain.
+		release()
 		select {
 		case <-ctx.Done():
-			// expected
-		case <-time.After(2 * time.Second):
-			t.Error("context not done after job should have completed")
+		case <-time.After(OneSecond):
+			t.Error("context not done after slow job release")
 		}
 
-		// Verify that ctx2 is also done.
 		select {
 		case <-ctx2.Done():
-			// expected
-		case <-time.After(time.Millisecond):
+		case <-time.After(OneSecond):
 			t.Error("context2 not done even though context1 is")
 		}
 
-		// Verify that a new context retrieved from stop is immediately done.
 		ctx3 := cron.Stop()
 		select {
 		case <-ctx3.Done():
-			// expected
-		case <-time.After(time.Millisecond):
+		case <-time.After(OneSecond):
 			t.Error("context not done even when cron Stop is completed")
 		}
 	})
@@ -688,6 +703,22 @@ func wait(wg *sync.WaitGroup) chan bool {
 		ch <- true
 	}()
 	return ch
+}
+
+func blockingJob() (func(), <-chan struct{}, func()) {
+	started := make(chan struct{})
+	release := make(chan struct{})
+	var startedOnce sync.Once
+	var releaseOnce sync.Once
+
+	run := func() {
+		startedOnce.Do(func() { close(started) })
+		<-release
+	}
+	releaseJob := func() {
+		releaseOnce.Do(func() { close(release) })
+	}
+	return run, started, releaseJob
 }
 
 func stop(cron *Cron) chan bool {

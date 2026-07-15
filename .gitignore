@@ -9,6 +9,9 @@ build/
 bin/
 memos
 
+# Buildx SPDX attestations are release records, not source-controlled baselines.
+sbom/memoark-image-*.spdx.json
+
 .DS_Store
 
 # Jetbrains

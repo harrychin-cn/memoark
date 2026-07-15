@@ -11,6 +11,7 @@ const repositoryRoot = resolve(scriptDirectory, "..", "..");
 const webDirectory = join(repositoryRoot, "web");
 const defaultGoOS = "linux";
 const defaultGoArch = "amd64";
+const baselineApplicationVersion = "source-baseline";
 
 function targetVariant(options) {
   return options.goarm ? `v${options.goarm}` : "";
@@ -35,7 +36,8 @@ Options:
   --goarch <name>           Go target architecture (default: ${defaultGoArch})
   --goarm <5|6|7>           Go ARM variant; requires --goarch arm
   --go-toolchain-version <v> Go binary build toolchain version recorded in the SBOM and notices
-  --application-version <v> Version recorded for the MemoArk release artifact
+  --provenance <mode>       baseline (default) for tracked source materials, or release for an exact release artifact
+  --application-version <v> Required with --provenance release; recorded for the MemoArk release artifact
   --notices-output <path>   Output path for THIRD_PARTY_NOTICES
   --sbom-output <path>      Output path for the CycloneDX JSON SBOM
   --check                   Fail instead of writing when either output is stale
@@ -53,6 +55,7 @@ function parseArguments(argumentsList) {
     goarch: defaultGoArch,
     goarm: "",
     goToolchainVersion: "",
+    provenance: "baseline",
     applicationVersion: "",
   };
 
@@ -66,7 +69,7 @@ function parseArguments(argumentsList) {
       options.check = true;
       continue;
     }
-    if (["--goos", "--goarch", "--goarm", "--go-toolchain-version", "--application-version", "--notices-output", "--sbom-output"].includes(argument)) {
+    if (["--goos", "--goarch", "--goarm", "--go-toolchain-version", "--provenance", "--application-version", "--notices-output", "--sbom-output"].includes(argument)) {
       const value = argumentsList[index + 1];
       if (!value || value.startsWith("--")) {
         throw new Error(`${argument} requires a value.`);
@@ -89,8 +92,17 @@ function parseArguments(argumentsList) {
   if (options.goToolchainVersion && !/^go[0-9A-Za-z._+-]+$/.test(options.goToolchainVersion)) {
     throw new Error("Go toolchain version must begin with go, for example go1.26.2.");
   }
+  if (!["baseline", "release"].includes(options.provenance)) {
+    throw new Error("Provenance must be baseline or release.");
+  }
   if (options.applicationVersion && !/^[0-9A-Za-z][0-9A-Za-z._+-]*$/.test(options.applicationVersion)) {
     throw new Error("Application version may contain only letters, numbers, dots, underscores, plus signs, and dashes.");
+  }
+  if (options.provenance === "release" && !options.applicationVersion) {
+    throw new Error("--application-version is required with --provenance release.");
+  }
+  if (options.provenance === "baseline" && options.applicationVersion) {
+    throw new Error("--application-version is only valid with --provenance release.");
   }
 
   options.noticesOutput = resolve(options.noticesOutput ?? join(repositoryRoot, "THIRD_PARTY_NOTICES"));
@@ -527,9 +539,8 @@ function buildSBOM({
   components,
   options,
   hashes,
-  gitRevision,
-  gitTimestamp,
   pnpmVersion,
+  releaseProvenance,
 }) {
   const inputFingerprint = JSON.stringify({
     applicationVersion,
@@ -539,7 +550,8 @@ function buildSBOM({
     goos: options.goos,
     analysisGoToolchainVersion,
     buildGoToolchainVersion,
-    gitRevision,
+    provenance: options.provenance,
+    gitRevision: releaseProvenance?.gitRevision ?? "",
     pnpmVersion,
     components: components.map((component) => `${component.ecosystem}:${component.name}@${component.version}:${component.license}`),
   });
@@ -550,7 +562,7 @@ function buildSBOM({
     serialNumber: `urn:uuid:${deterministicUUID(inputFingerprint)}`,
     version: 1,
     metadata: {
-      timestamp: gitTimestamp,
+      ...(releaseProvenance ? { timestamp: releaseProvenance.gitTimestamp } : {}),
       tools: {
         components: [{ type: "application", name: "MemoArk compliance generator", version: "1.0.0" }],
       },
@@ -564,14 +576,19 @@ function buildSBOM({
       },
       properties: [
         { name: "memoark:scope", value: "source-build-inputs" },
-        { name: "memoark:application-version", value: applicationVersion },
+        { name: "memoark:provenance", value: options.provenance },
+        ...(releaseProvenance
+          ? [
+              { name: "memoark:application-version", value: applicationVersion },
+              { name: "memoark:git-revision", value: releaseProvenance.gitRevision },
+            ]
+          : []),
         { name: "memoark:go-target", value: targetPlatform(options) },
         { name: "memoark:go.mod-sha256", value: hashes.goMod },
         { name: "memoark:go.sum-sha256", value: hashes.goSum },
         { name: "memoark:package.json-sha256", value: hashes.packageJson },
         { name: "memoark:pnpm-lock-sha256", value: hashes.pnpmLock },
         { name: "memoark:pnpm-version", value: pnpmVersion },
-        { name: "memoark:git-revision", value: gitRevision },
         { name: "memoark:go-analysis-toolchain-version", value: analysisGoToolchainVersion },
         { name: "memoark:go-build-toolchain-version", value: buildGoToolchainVersion },
         { name: "memoark:go-runtime-license-sha256", value: sha256File(join(commandOutput("go", ["env", "GOROOT"]), "LICENSE")) },
@@ -595,14 +612,17 @@ function buildNotices({
   components,
   options,
   hashes,
-  gitRevision,
   pnpmVersion,
+  releaseProvenance,
 }) {
   const sharedLicenseTexts = collectSharedLicenseTexts(components);
   const operatingSystemInventoryLine =
     options.goos === "linux"
-      ? `- Alpine and other container operating-system packages are outside this notice file and are inventoried separately in sbom/memoark-image-${targetFileSuffix(options)}.spdx.json when a matching Linux image SBOM is generated.`
+      ? "- Alpine and other container operating-system packages are outside this notice file and are inventoried separately in the matching Linux image SBOM release record."
       : "- Operating-system packages and image SBOMs are outside this native application notice.";
+  const provenanceLines = releaseProvenance
+    ? [`- application version: ${applicationVersion}`, `- git revision: ${releaseProvenance.gitRevision}`]
+    : ["- release provenance: source baseline; exact application version and Git revision are recorded only in release artifacts."];
   const referencedSharedLicenseIdentifiers = new Set();
   const indexRows = components.map((component) => {
     const escapedName = component.name.replace(/\|/g, "\\|");
@@ -672,8 +692,7 @@ function buildNotices({
     "The source SBOM is intentionally a build-input inventory; the image SBOM is the artifact inventory for the Linux container.",
     "",
     "Generation inputs:",
-    `- application version: ${applicationVersion}`,
-    `- git revision: ${gitRevision}`,
+    ...provenanceLines,
     `- Go target: ${targetPlatform(options)}`,
     `- Go dependency analysis toolchain: ${analysisGoToolchainVersion}`,
     `- Go binary build toolchain: ${buildGoToolchainVersion}`,
@@ -718,8 +737,13 @@ function main() {
     packageJson: sha256File(join(webDirectory, "package.json")),
     pnpmLock: sha256File(join(webDirectory, "pnpm-lock.yaml")),
   };
-  const gitRevision = commandOutput("git", ["rev-parse", "HEAD"]);
-  const gitTimestamp = commandOutput("git", ["show", "-s", "--format=%cI", "HEAD"]);
+  const releaseProvenance =
+    options.provenance === "release"
+      ? {
+          gitRevision: commandOutput("git", ["rev-parse", "HEAD"]),
+          gitTimestamp: commandOutput("git", ["show", "-s", "--format=%cI", "HEAD"]),
+        }
+      : null;
   const analysisGoToolchainVersion = commandOutput("go", ["env", "GOVERSION"]);
   const buildGoToolchainVersion = resolveGoBuildToolchainVersion(options);
   const goComponents = [
@@ -735,7 +759,7 @@ function main() {
     throw new Error("Removed React Leaflet packages appeared in the production dependency tree.");
   }
 
-  const applicationVersion = options.applicationVersion || `git-${gitRevision.slice(0, 12)}`;
+  const applicationVersion = options.provenance === "release" ? options.applicationVersion : baselineApplicationVersion;
   const sbom = buildSBOM({
     analysisGoToolchainVersion,
     applicationVersion,
@@ -743,9 +767,8 @@ function main() {
     components,
     options,
     hashes,
-    gitRevision,
-    gitTimestamp,
     pnpmVersion,
+    releaseProvenance,
   });
   const notices = buildNotices({
     analysisGoToolchainVersion,
@@ -754,13 +777,13 @@ function main() {
     components,
     options,
     hashes,
-    gitRevision,
     pnpmVersion,
+    releaseProvenance,
   });
   writeOrCheck(options.noticesOutput, notices, options.check);
   writeOrCheck(options.sbomOutput, JSON.stringify(sbom, null, 2), options.check);
   console.log(
-    `${options.check ? "Verified" : "Generated"} ${components.length} components (${goComponents.length} Go modules/runtime, ${npmComponents.length} npm):\n- ${relative(repositoryRoot, options.noticesOutput)}\n- ${relative(repositoryRoot, options.sbomOutput)}`,
+    `${options.check ? "Verified" : "Generated"} ${options.provenance} materials for ${components.length} components (${goComponents.length} Go modules/runtime, ${npmComponents.length} npm):\n- ${relative(repositoryRoot, options.noticesOutput)}\n- ${relative(repositoryRoot, options.sbomOutput)}`,
   );
 }
 

@@ -1,10 +1,9 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.6",
-  "serialNumber": "urn:uuid:28e13efb-b754-5f46-9afa-57632b78e5d2",
+  "serialNumber": "urn:uuid:0f587c29-2718-5a80-8e50-2c1429305e2f",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-07-14T15:46:24+08:00",
     "tools": {
       "components": [
         {
@@ -16,10 +15,10 @@
     },
     "component": {
       "type": "application",
-      "bom-ref": "pkg:generic/memoark@git-d3c0765d4942",
+      "bom-ref": "pkg:generic/memoark@source-baseline",
       "name": "MemoArk",
-      "version": "git-d3c0765d4942",
-      "purl": "pkg:generic/memoark@git-d3c0765d4942",
+      "version": "source-baseline",
+      "purl": "pkg:generic/memoark@source-baseline",
       "licenses": [
         {
           "license": {
@@ -34,8 +33,8 @@
         "value": "source-build-inputs"
       },
       {
-        "name": "memoark:application-version",
-        "value": "git-d3c0765d4942"
+        "name": "memoark:provenance",
+        "value": "baseline"
       },
       {
         "name": "memoark:go-target",
@@ -60,10 +59,6 @@
       {
         "name": "memoark:pnpm-version",
         "value": "11.0.1"
-      },
-      {
-        "name": "memoark:git-revision",
-        "value": "d3c0765d49426ef062b2dca199b1cfce3ce1621d"
       },
       {
         "name": "memoark:go-analysis-toolchain-version",
@@ -16692,7 +16687,7 @@
   ],
   "dependencies": [
     {
-      "ref": "pkg:generic/memoark@git-d3c0765d4942",
+      "ref": "pkg:generic/memoark@source-baseline",
       "dependsOn": [
         "pkg:generic/go-runtime@1.26.2?os=linux&arch=amd64",
         "pkg:golang/cel.dev/expr@0.25.1",

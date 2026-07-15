@@ -33,6 +33,13 @@ function Restore-EnvironmentValue {
 }
 
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$initialWorktreeStatus = (& git -C $repositoryRoot status --porcelain=v1 --untracked-files=all)
+if ($LASTEXITCODE -ne 0) {
+  throw "Unable to determine the source worktree status."
+}
+if (-not [string]::IsNullOrWhiteSpace(($initialWorktreeStatus -join "`n").Trim())) {
+  throw "Native releases require a clean source worktree. Commit, stash, or remove local changes first."
+}
 $gitRevision = (& git -C $repositoryRoot rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0) {
   throw "Unable to resolve the current Git revision."
@@ -58,8 +65,9 @@ if ($Version -notmatch "^[0-9A-Za-z][0-9A-Za-z._-]*$") {
   throw "Version may contain only letters, numbers, dots, underscores, and dashes."
 }
 
-$frontendIndex = Join-Path $repositoryRoot "server/router/frontend/dist/index.html"
-Require-File $frontendIndex
+$frontendIndexRelativePath = "server/router/frontend/dist/index.html"
+$frontendIndex = Join-Path $repositoryRoot $frontendIndexRelativePath
+$frontendBuildStarted = $false
 
 $resolvedOutputDirectory = if ([System.IO.Path]::IsPathRooted($OutputDirectory)) {
   [System.IO.Path]::GetFullPath($OutputDirectory)
@@ -80,11 +88,30 @@ $binaryPath = Join-Path $stagingDirectory $binaryName
 $noticesPath = Join-Path $stagingDirectory "THIRD_PARTY_NOTICES"
 $sbomPath = Join-Path $stagingDirectory "sbom/SBOM.cdx.json"
 
-Push-Location $repositoryRoot
 try {
-  & node scripts/compliance/generate-third-party-materials.mjs `
+  Push-Location (Join-Path $repositoryRoot "web")
+  try {
+    $frontendBuildStarted = $true
+    & corepack pnpm install --frozen-lockfile
+    if ($LASTEXITCODE -ne 0) {
+      throw "pnpm install failed with exit code $LASTEXITCODE."
+    }
+    & corepack pnpm release
+    if ($LASTEXITCODE -ne 0) {
+      throw "pnpm release failed with exit code $LASTEXITCODE."
+    }
+  }
+  finally {
+    Pop-Location
+  }
+  Require-File $frontendIndex
+
+  Push-Location $repositoryRoot
+  try {
+    & node scripts/compliance/generate-third-party-materials.mjs `
     --goos $GoOS `
     --goarch $GoArch `
+    --provenance release `
     --application-version $Version `
     --notices-output $noticesPath `
     --sbom-output $sbomPath
@@ -133,52 +160,68 @@ try {
     Restore-EnvironmentValue -Name "CGO_ENABLED" -Value $previousCGOEnabled
   }
 
-  $releaseFiles = @{
-    "LICENSE" = "LICENSE"
-    "NOTICE" = "NOTICE"
-    "TRADEMARKS.md" = "TRADEMARKS.md"
-    "PRIVACY.md" = "PRIVACY.md"
-    "docs/ADVERTISING.md" = "ADVERTISING.md"
-  }
-  foreach ($entry in $releaseFiles.GetEnumerator()) {
-    $sourcePath = Join-Path $repositoryRoot $entry.Key
-    Require-File $sourcePath
-    Copy-Item -LiteralPath $sourcePath -Destination (Join-Path $stagingDirectory $entry.Value) -Force
-  }
-}
-finally {
-  Pop-Location
-}
-
-$requiredArchiveEntries = @(
-  $binaryName,
-  "LICENSE",
-  "NOTICE",
-  "TRADEMARKS.md",
-  "PRIVACY.md",
-  "ADVERTISING.md",
-  "THIRD_PARTY_NOTICES",
-  "sbom/SBOM.cdx.json"
-)
-foreach ($entry in $requiredArchiveEntries) {
-  Require-File (Join-Path $stagingDirectory $entry)
-}
-
-$archivePath = Join-Path $resolvedOutputDirectory "memoark-$Version-$target.zip"
-Compress-Archive -LiteralPath (Get-ChildItem -LiteralPath $stagingDirectory -Force | Select-Object -ExpandProperty FullName) -DestinationPath $archivePath -Force
-
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-$archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
-try {
-  $archiveEntries = @($archive.Entries | ForEach-Object { $_.FullName.Replace("\", "/") })
-  foreach ($entry in $requiredArchiveEntries) {
-    if ($archiveEntries -notcontains $entry) {
-      throw "Archive is missing required release file: $entry"
+    $releaseFiles = @{
+      "LICENSE" = "LICENSE"
+      "NOTICE" = "NOTICE"
+      "TRADEMARKS.md" = "TRADEMARKS.md"
+      "PRIVACY.md" = "PRIVACY.md"
+      "docs/ADVERTISING.md" = "ADVERTISING.md"
+    }
+    foreach ($entry in $releaseFiles.GetEnumerator()) {
+      $sourcePath = Join-Path $repositoryRoot $entry.Key
+      Require-File $sourcePath
+      Copy-Item -LiteralPath $sourcePath -Destination (Join-Path $stagingDirectory $entry.Value) -Force
     }
   }
+  finally {
+    Pop-Location
+  }
+
+  $requiredArchiveEntries = @(
+    $binaryName,
+    "LICENSE",
+    "NOTICE",
+    "TRADEMARKS.md",
+    "PRIVACY.md",
+    "ADVERTISING.md",
+    "THIRD_PARTY_NOTICES",
+    "sbom/SBOM.cdx.json"
+  )
+  foreach ($entry in $requiredArchiveEntries) {
+    Require-File (Join-Path $stagingDirectory $entry)
+  }
+
+  $archivePath = Join-Path $resolvedOutputDirectory "memoark-$Version-$target.zip"
+  Compress-Archive -LiteralPath (Get-ChildItem -LiteralPath $stagingDirectory -Force | Select-Object -ExpandProperty FullName) -DestinationPath $archivePath -Force
+
+  Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
+  try {
+    $archiveEntries = @($archive.Entries | ForEach-Object { $_.FullName.Replace("\", "/") })
+    foreach ($entry in $requiredArchiveEntries) {
+      if ($archiveEntries -notcontains $entry) {
+        throw "Archive is missing required release file: $entry"
+      }
+    }
+  }
+  finally {
+    $archive.Dispose()
+  }
+
+  Write-Output "Created native release package: $archivePath"
 }
 finally {
-  $archive.Dispose()
+  if ($frontendBuildStarted) {
+    $restoreOutput = & git -C $repositoryRoot restore --worktree --source=HEAD -- $frontendIndexRelativePath 2>&1
+    if ($LASTEXITCODE -ne 0) {
+      throw "Unable to restore the tracked frontend build placeholder: $($restoreOutput -join ' ')"
+    }
+  }
+  $finalWorktreeStatus = (& git -C $repositoryRoot status --porcelain=v1 --untracked-files=all)
+  if ($LASTEXITCODE -ne 0) {
+    throw "Unable to verify the source worktree after native release packaging."
+  }
+  if (-not [string]::IsNullOrWhiteSpace(($finalWorktreeStatus -join "`n").Trim())) {
+    throw "Native release packaging changed the source worktree. Inspect git status before using the archive."
+  }
 }
-
-Write-Output "Created native release package: $archivePath"

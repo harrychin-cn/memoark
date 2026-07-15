@@ -110,6 +110,55 @@ func TestCacheEviction(t *testing.T) {
 	}
 }
 
+func TestCacheEvictionUsesWriteOrderWhenExpirationsMatch(t *testing.T) {
+	ctx := context.Background()
+	config := DefaultConfig()
+	config.MaxItems = 5
+	cache := New(config)
+	defer cache.Close()
+
+	expiration := time.Now().Add(time.Hour)
+	for i := 0; i < 6; i++ {
+		key := fmt.Sprintf("key%d", i)
+		cache.data.Store(key, item{
+			value:      i,
+			expiration: expiration,
+			sequence:   uint64(i + 1),
+		})
+	}
+	cache.itemCount.Store(6)
+
+	cache.cleanupOldest()
+	if _, ok := cache.Get(ctx, "key0"); ok {
+		t.Error("Oldest write should be evicted when expirations match")
+	}
+	for i := 1; i < 6; i++ {
+		key := fmt.Sprintf("key%d", i)
+		if _, ok := cache.Get(ctx, key); !ok {
+			t.Errorf("Newer key %q should remain in the cache", key)
+		}
+	}
+	if got := cache.Size(); got != 5 {
+		t.Errorf("Expected cache size 5 after first eviction, got %d", got)
+	}
+
+	cache.data.Store("key6", item{value: 6, expiration: expiration, sequence: 7})
+	cache.itemCount.Add(1)
+	cache.cleanupOldest()
+	if _, ok := cache.Get(ctx, "key1"); ok {
+		t.Error("Second-oldest write should be evicted when expirations match")
+	}
+	for i := 2; i < 7; i++ {
+		key := fmt.Sprintf("key%d", i)
+		if _, ok := cache.Get(ctx, key); !ok {
+			t.Errorf("Newer key %q should remain in the cache", key)
+		}
+	}
+	if got := cache.Size(); got != 5 {
+		t.Errorf("Expected cache size 5 after second eviction, got %d", got)
+	}
+}
+
 func TestCacheConcurrency(t *testing.T) {
 	ctx := context.Background()
 	cache := NewDefault()

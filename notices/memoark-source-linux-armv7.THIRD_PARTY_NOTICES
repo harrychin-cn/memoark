@@ -7,14 +7,13 @@ It records the MemoArk application source dependencies' declared or detected lic
 Scope:
 - Go modules linked by ./cmd/memos for linux/arm/v7 with CGO_ENABLED=0, plus the statically linked Go standard library and runtime.
 - Packages in the resolved pnpm production dependency tree used to build the embedded browser application.
-- Alpine and other container operating-system packages are outside this notice file and are inventoried separately in sbom/memoark-image-linux-armv7.spdx.json when a matching Linux image SBOM is generated.
+- Alpine and other container operating-system packages are outside this notice file and are inventoried separately in the matching Linux image SBOM release record.
 
 The source-build component inventory is in the matching CycloneDX file under sbom/.
 The source SBOM is intentionally a build-input inventory; the image SBOM is the artifact inventory for the Linux container.
 
 Generation inputs:
-- application version: git-d3c0765d4942
-- git revision: d3c0765d49426ef062b2dca199b1cfce3ce1621d
+- release provenance: source baseline; exact application version and Git revision are recorded only in release artifacts.
 - Go target: linux/arm/v7
 - Go dependency analysis toolchain: go1.26.4
 - Go binary build toolchain: go1.26.2

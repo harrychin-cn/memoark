@@ -17,8 +17,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # Copy source code (use .dockerignore to exclude unnecessary files)
 COPY . .
 
-# Commercial release builds must opt into this check. It rejects a source notice or SBOM
-# generated for a different target, version, revision, Go build toolchain, or dependency manifest before compiling the binary.
+# Commercial release builds must opt into this check. package-container-release.ps1 prepares
+# exact source notices and SBOMs in a disposable worktree; this gate rejects inputs generated
+# for a different target, version, revision, Go build toolchain, or dependency manifest before compiling the binary.
 RUN if [ "$COMPLIANCE_CHECK" = "true" ]; then \
       source_suffix="${TARGETOS}-${TARGETARCH}${TARGETVARIANT}"; \
       source_target="${TARGETOS}/${TARGETARCH}"; \
