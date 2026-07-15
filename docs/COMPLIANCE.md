@@ -118,9 +118,14 @@ The script rejects local tracked or untracked changes, builds the embedded front
 the tracked frontend placeholder afterward, and verifies the source worktree is clean before accepting
 the archive. It writes an inspectable staging folder and ZIP under build/releases/, generates
 release-provenance notices/SBOMs in the staging folder, builds the native binary with the same version
-and Git revision, and verifies that the final ZIP contains every required disclosure file. It is
-intentionally limited to Windows archives; POSIX archive permissions must be packaged and checked from
-a native target environment before Linux or macOS binary distribution is supported.
+and Git revision, and verifies that the final ZIP contains every required disclosure file.
+
+The Windows archive includes `START-MemoArk.cmd` and `README-LOCAL-zh-CN.txt`. The launcher forces
+`127.0.0.1` binding and uses `%LOCALAPPDATA%\MemoArk` unless the user explicitly supplies an override.
+It also includes a version/revision/target `RELEASE-MANIFEST.json`, internal `SHA256SUMS.txt`, and an
+adjacent `<archive>.zip.sha256` checksum for the final ZIP. It is intentionally limited to Windows
+archives; POSIX archive permissions must be packaged and checked from a native target environment before
+Linux or macOS binary distribution is supported.
 
 ## Remaining release review / 尚待完成的发行审查
 

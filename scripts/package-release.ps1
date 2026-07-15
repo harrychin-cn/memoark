@@ -32,6 +32,20 @@ function Restore-EnvironmentValue {
   }
 }
 
+function Get-ReleaseFileRecord {
+  param(
+    [string]$Root,
+    [System.IO.FileInfo]$File
+  )
+
+  $relativePath = $File.FullName.Substring($Root.Length + 1).Replace("\", "/")
+  [ordered]@{
+    path = $relativePath
+    bytes = [int64]$File.Length
+    sha256 = (Get-FileHash -Algorithm SHA256 -LiteralPath $File.FullName).Hash.ToLowerInvariant()
+  }
+}
+
 $repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
 $initialWorktreeStatus = (& git -C $repositoryRoot status --porcelain=v1 --untracked-files=all)
 if ($LASTEXITCODE -ne 0) {
@@ -87,6 +101,9 @@ $binaryName = if ($GoOS -eq "windows") { "memos.exe" } else { "memos" }
 $binaryPath = Join-Path $stagingDirectory $binaryName
 $noticesPath = Join-Path $stagingDirectory "THIRD_PARTY_NOTICES"
 $sbomPath = Join-Path $stagingDirectory "sbom/SBOM.cdx.json"
+$releaseManifestPath = Join-Path $stagingDirectory "RELEASE-MANIFEST.json"
+$checksumsPath = Join-Path $stagingDirectory "SHA256SUMS.txt"
+$archiveName = "memoark-$Version-$target.zip"
 
 try {
   Push-Location (Join-Path $repositoryRoot "web")
@@ -166,6 +183,8 @@ try {
       "TRADEMARKS.md" = "TRADEMARKS.md"
       "PRIVACY.md" = "PRIVACY.md"
       "docs/ADVERTISING.md" = "ADVERTISING.md"
+      "scripts/windows/START-MemoArk.cmd" = "START-MemoArk.cmd"
+      "scripts/windows/README-LOCAL-zh-CN.txt" = "README-LOCAL-zh-CN.txt"
     }
     foreach ($entry in $releaseFiles.GetEnumerator()) {
       $sourcePath = Join-Path $repositoryRoot $entry.Key
@@ -177,21 +196,66 @@ try {
     Pop-Location
   }
 
+  $releasePayload = @(
+    Get-ChildItem -LiteralPath $stagingDirectory -File -Recurse |
+      Sort-Object FullName |
+      ForEach-Object { Get-ReleaseFileRecord -Root $stagingDirectory -File $_ }
+  )
+  $releaseManifest = [ordered]@{
+    format = "memoark.native-release"
+    formatVersion = 1
+    application = [ordered]@{
+      name = "MemoArk"
+      version = $Version
+      gitRevision = $gitRevision
+      target = "$GoOS/$GoArch"
+      binary = $binaryName
+    }
+    build = [ordered]@{
+      goToolchainVersion = $goToolchainVersion
+    }
+    localRuntime = [ordered]@{
+      url = "http://127.0.0.1:5230/"
+      dataDirectory = "%LOCALAPPDATA%\MemoArk"
+      loopbackOnly = $true
+    }
+    archive = [ordered]@{
+      fileName = $archiveName
+      checksumFile = "$archiveName.sha256"
+    }
+    files = $releasePayload
+  }
+  $releaseManifest | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $releaseManifestPath -Encoding UTF8
+
+  $checksums = @(
+    Get-ChildItem -LiteralPath $stagingDirectory -File -Recurse |
+      Sort-Object FullName |
+      ForEach-Object {
+        $record = Get-ReleaseFileRecord -Root $stagingDirectory -File $_
+        "{0} *{1}" -f $record.sha256, $record.path
+      }
+  )
+  Set-Content -LiteralPath $checksumsPath -Value $checksums -Encoding ASCII
+
   $requiredArchiveEntries = @(
     $binaryName,
+    "START-MemoArk.cmd",
+    "README-LOCAL-zh-CN.txt",
     "LICENSE",
     "NOTICE",
     "TRADEMARKS.md",
     "PRIVACY.md",
     "ADVERTISING.md",
     "THIRD_PARTY_NOTICES",
-    "sbom/SBOM.cdx.json"
+    "sbom/SBOM.cdx.json",
+    "RELEASE-MANIFEST.json",
+    "SHA256SUMS.txt"
   )
   foreach ($entry in $requiredArchiveEntries) {
     Require-File (Join-Path $stagingDirectory $entry)
   }
 
-  $archivePath = Join-Path $resolvedOutputDirectory "memoark-$Version-$target.zip"
+  $archivePath = Join-Path $resolvedOutputDirectory $archiveName
   Compress-Archive -LiteralPath (Get-ChildItem -LiteralPath $stagingDirectory -Force | Select-Object -ExpandProperty FullName) -DestinationPath $archivePath -Force
 
   Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -208,7 +272,18 @@ try {
     $archive.Dispose()
   }
 
+  $manifest = Get-Content -LiteralPath $releaseManifestPath -Raw | ConvertFrom-Json
+  if ($manifest.application.version -ne $Version -or $manifest.application.gitRevision -ne $gitRevision -or
+      $manifest.application.target -ne "$GoOS/$GoArch" -or $manifest.localRuntime.loopbackOnly -ne $true) {
+    throw "Release manifest does not match the native package version, revision, target, or loopback-only runtime settings."
+  }
+
+  $archiveHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $archivePath).Hash.ToLowerInvariant()
+  $archiveChecksumPath = "$archivePath.sha256"
+  Set-Content -LiteralPath $archiveChecksumPath -Value ("{0} *{1}" -f $archiveHash, $archiveName) -Encoding ASCII
+
   Write-Output "Created native release package: $archivePath"
+  Write-Output "Created native release checksum: $archiveChecksumPath"
 }
 finally {
   if ($frontendBuildStarted) {

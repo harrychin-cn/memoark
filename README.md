@@ -49,6 +49,22 @@ Before upgrading an existing SQLite database, MemoArk creates and verifies a bac
 [SQLite migration backups and restore](docs/operations/sqlite-migration-backups.md) for the backup location, Docker behavior, and manual
 restore procedure.
 
+## Windows local use (no Docker or server)
+
+MemoArk can also run as a Windows native archive. It still opens in a browser, but the program, database, and attachments stay on the
+same Windows computer; no Docker, VPS, or public server is required. The included `START-MemoArk.cmd` launcher binds only to
+`127.0.0.1`, opens the local UI, and stores data under `%LOCALAPPDATA%\MemoArk` by default.
+
+Build a Windows `amd64` archive from a clean source worktree:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-release.ps1 -GoOS windows -GoArch amd64 -Version 0.29.1-memoark.10
+```
+
+Extract the generated ZIP and double-click `START-MemoArk.cmd`. Keep its command window open while using MemoArk and press `Ctrl+C`
+there to stop it safely. The archive includes `SHA256SUMS.txt`, a release manifest, notices, and a CycloneDX SBOM; the adjacent
+`.zip.sha256` file verifies the downloaded archive.
+
 ## Development
 
 Frontend:
