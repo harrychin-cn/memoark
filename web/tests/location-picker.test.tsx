@@ -67,6 +67,10 @@ vi.mock("@/components/map/map-utils", () => ({
   useThemedTileUrl: () => leafletMocks.tileUrl,
 }));
 
+vi.mock("@/utils/i18n", () => ({
+  useTranslate: () => (key: string) => key,
+}));
+
 beforeEach(() => {
   leafletMocks.markerPosition = undefined;
   leafletMocks.tileUrl = "https://tiles.example/light/{z}/{x}/{y}.png";
