@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 
 // must be compatible with JS Date.parse(), we use ISO 8601 (almost)
 const DATE_TIME_FORMAT = "YYYY-MM-DD HH:mm:ss";
@@ -16,6 +17,7 @@ interface Props {
 }
 
 const DateTimeInput: React.FC<Props> = ({ value, onChange }) => {
+  const t = useTranslate();
   return (
     <input
       type="datetime-local"
@@ -30,7 +32,7 @@ const DateTimeInput: React.FC<Props> = ({ value, onChange }) => {
           if (!isNaN(date.getTime())) {
             onChange(date);
           } else {
-            toast.error("Invalid datetime format. Use format: 2023-12-31 23:59:59");
+            toast.error(t("ui.invalid-datetime"));
             e.target.value = formatDate(value);
           }
         }

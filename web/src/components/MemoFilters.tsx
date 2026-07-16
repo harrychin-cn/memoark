@@ -90,7 +90,7 @@ const MemoFilters = () => {
             <button
               onClick={() => handleRemoveFilter(filter)}
               className="ml-0.5 -mr-1 p-0.5 text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 rounded-full transition-colors"
-              aria-label="Remove filter"
+              aria-label={t("ui.remove-filter")}
             >
               <XIcon className="w-3 h-3" />
             </button>

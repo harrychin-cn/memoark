@@ -4,9 +4,11 @@ import { MemoPreview } from "@/components/MemoPreview";
 import { extractMemoIdFromName } from "@/helpers/resource-names";
 import { useMemoComments } from "@/hooks/useMemoQueries";
 import { useUsersByNames } from "@/hooks/useUserQueries";
+import { useTranslate } from "@/utils/i18n";
 import { useMemoViewContext, useMemoViewDerived } from "../MemoViewContext";
 
 const MemoCommentListView: React.FC = () => {
+  const t = useTranslate();
   const { memo } = useMemoViewContext();
   const { isInMemoDetailPage, commentAmount } = useMemoViewDerived();
 
@@ -22,12 +24,15 @@ const MemoCommentListView: React.FC = () => {
   return (
     <div className="border border-t-0 border-border rounded-b-lg px-4 pt-2 pb-3 flex flex-col gap-1">
       <div className="flex items-center justify-between mb-1">
-        <span className="text-xs text-muted-foreground">Comments{commentAmount > 1 ? ` (${commentAmount})` : ""}</span>
+        <span className="text-xs text-muted-foreground">
+          {t("memo.comment.self")}
+          {commentAmount > 1 ? ` (${commentAmount})` : ""}
+        </span>
         <Link
           to={`/${memo.name}#comments`}
           className="flex items-center gap-0.5 text-xs text-muted-foreground/80 hover:underline underline-offset-2 transition-colors"
         >
-          View all
+          {t("ui.view-all")}
           <ArrowUpRightIcon className="w-3 h-3" />
         </Link>
       </div>

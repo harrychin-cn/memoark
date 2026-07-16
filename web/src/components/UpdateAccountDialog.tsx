@@ -62,7 +62,7 @@ function UpdateAccountDialog({ open, onOpenChange, onSuccess }: Props) {
     if (files && files.length > 0) {
       const image = files[0];
       if (image.size > 2 * 1024 * 1024) {
-        toast.error("Max file size is 2MB");
+        toast.error(t("ui.max-file-size-2mb"));
         return;
       }
       try {
@@ -72,7 +72,7 @@ function UpdateAccountDialog({ open, onOpenChange, onSuccess }: Props) {
         });
       } catch (error) {
         console.error(error);
-        toast.error(`Failed to convert image to base64`);
+        toast.error(t("ui.image-base64-failed"));
       }
     }
   };

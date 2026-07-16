@@ -4,6 +4,7 @@ import { CheckIcon, CopyIcon } from "lucide-react";
 import { isValidElement, type ReactElement, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 import { getThemeWithFallback, resolveTheme } from "@/utils/theme";
 import { MermaidBlock } from "./MermaidBlock";
 import type { ReactMarkdownProps } from "./markdown/types";
@@ -15,6 +16,7 @@ interface CodeBlockProps extends ReactMarkdownProps {
 }
 
 export const CodeBlock = ({ children, className, node: _node, ...props }: CodeBlockProps) => {
+  const t = useTranslate();
   const { userGeneralSetting } = useAuth();
   const [copied, setCopied] = useState(false);
 
@@ -127,18 +129,18 @@ export const CodeBlock = ({ children, className, node: _node, ...props }: CodeBl
             "hover:bg-accent active:scale-95",
             copied ? "text-primary" : "text-muted-foreground hover:text-foreground",
           )}
-          aria-label={copied ? "Copied" : "Copy code"}
-          title={copied ? "Copied!" : "Copy code"}
+          aria-label={copied ? t("message.copied") : t("ui.copy-code")}
+          title={copied ? t("ui.copied-exclamation") : t("ui.copy-code")}
         >
           {copied ? (
             <>
               <CheckIcon className="w-3.5 h-3.5" />
-              <span>Copied</span>
+              <span>{t("message.copied")}</span>
             </>
           ) : (
             <>
               <CopyIcon className="w-3.5 h-3.5" />
-              <span>Copy</span>
+              <span>{t("common.copy")}</span>
             </>
           )}
         </button>

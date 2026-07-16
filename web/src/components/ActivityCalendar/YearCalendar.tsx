@@ -27,13 +27,16 @@ const YearNavigation = memo(({ selectedYear, currentYear, onPrev, onNext, onToda
     <div className="flex items-center justify-between px-1">
       <h2 className="text-2xl font-semibold text-foreground tracking-tight">{selectedYear}</h2>
 
-      <nav className="inline-flex items-center gap-0.5 rounded-lg border border-border/30 bg-muted/10 p-0.5" aria-label="Year navigation">
+      <nav
+        className="inline-flex items-center gap-0.5 rounded-lg border border-border/30 bg-muted/10 p-0.5"
+        aria-label={t("ui.year-navigation")}
+      >
         <Button
           variant="ghost"
           size="sm"
           onClick={onPrev}
           disabled={!canGoPrev}
-          aria-label="Previous year"
+          aria-label={t("ui.previous-year")}
           className="h-7 w-7 p-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40"
         >
           <ChevronLeftIcon className="w-4 h-4" />
@@ -58,7 +61,7 @@ const YearNavigation = memo(({ selectedYear, currentYear, onPrev, onNext, onToda
           size="sm"
           onClick={onNext}
           disabled={!canGoNext}
-          aria-label="Next year"
+          aria-label={t("ui.next-year")}
           className="h-7 w-7 p-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40"
         >
           <ChevronRightIcon className="w-4 h-4" />

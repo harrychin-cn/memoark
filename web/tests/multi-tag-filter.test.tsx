@@ -29,7 +29,7 @@ vi.mock("@/hooks", () => ({
 
 vi.mock("@/utils/i18n", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/utils/i18n")>()),
-  useTranslate: () => (key: string) => key,
+  useTranslate: () => (key: string) => (key === "ui.remove-filter" ? "Remove filter" : key),
 }));
 
 const FilterProbe = () => {

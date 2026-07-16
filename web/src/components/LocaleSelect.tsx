@@ -2,7 +2,7 @@ import { GlobeIcon } from "lucide-react";
 import { FC } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { locales } from "@/i18n";
-import { getLocaleDisplayName, loadLocale } from "@/utils/i18n";
+import { getLocaleDisplayName, loadLocale, useTranslate } from "@/utils/i18n";
 
 interface Props {
   value: Locale;
@@ -10,6 +10,7 @@ interface Props {
 }
 
 const LocaleSelect: FC<Props> = (props: Props) => {
+  const t = useTranslate();
   const { onChange, value } = props;
 
   const handleSelectChange = async (locale: Locale) => {
@@ -24,7 +25,7 @@ const LocaleSelect: FC<Props> = (props: Props) => {
       <SelectTrigger>
         <div className="flex items-center gap-2">
           <GlobeIcon className="w-4 h-auto" />
-          <SelectValue placeholder="Select language" />
+          <SelectValue placeholder={t("ui.select-language")} />
         </div>
       </SelectTrigger>
       <SelectContent>

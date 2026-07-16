@@ -94,7 +94,7 @@ const Setting = () => {
                       {t("setting.version")}: {profile.version}
                       {profile.commit && (
                         <span className="block font-mono break-all">
-                          Commit:{" "}
+                          {t("ui.commit")}{" "}
                           {commitUrl ? (
                             <a className="underline hover:text-foreground" href={commitUrl} target="_blank" rel="noreferrer">
                               {profile.commit}

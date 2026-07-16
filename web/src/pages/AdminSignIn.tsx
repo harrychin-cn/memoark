@@ -1,8 +1,10 @@
 import AuthFooter from "@/components/AuthFooter";
 import PasswordSignInForm from "@/components/PasswordSignInForm";
 import { useInstance } from "@/contexts/InstanceContext";
+import { useTranslate } from "@/utils/i18n";
 
 const AdminSignIn = () => {
+  const t = useTranslate();
   const { generalSetting: instanceGeneralSetting } = useInstance();
 
   return (
@@ -12,7 +14,7 @@ const AdminSignIn = () => {
           <img className="h-14 w-auto rounded-full shadow" src={instanceGeneralSetting.customProfile?.logoUrl || "/logo.webp"} alt="" />
           <p className="ml-2 text-5xl text-foreground opacity-80">{instanceGeneralSetting.customProfile?.title || "MemoArk"}</p>
         </div>
-        <p className="w-full text-xl font-medium text-muted-foreground">Sign in with admin accounts</p>
+        <p className="w-full text-xl font-medium text-muted-foreground">{t("ui.admin-sign-in")}</p>
         <PasswordSignInForm />
       </div>
       <AuthFooter />

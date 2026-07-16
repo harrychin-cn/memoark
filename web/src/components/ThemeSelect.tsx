@@ -1,6 +1,7 @@
 import { Monitor, Moon, Palette, Sun } from "lucide-react";
 import type { ReactElement } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslate } from "@/utils/i18n";
 import { loadTheme, THEME_OPTIONS } from "@/utils/theme";
 
 interface ThemeSelectProps {
@@ -17,6 +18,7 @@ const THEME_ICONS: Record<string, ReactElement> = {
 };
 
 const ThemeSelect = ({ value, onValueChange, className }: ThemeSelectProps = {}) => {
+  const t = useTranslate();
   const currentTheme = value || "system";
 
   const handleThemeChange = (newTheme: string) => {
@@ -32,7 +34,7 @@ const ThemeSelect = ({ value, onValueChange, className }: ThemeSelectProps = {})
     <Select value={currentTheme} onValueChange={handleThemeChange}>
       <SelectTrigger className={className}>
         <div className="flex items-center gap-2">
-          <SelectValue placeholder="Select theme" />
+          <SelectValue placeholder={t("theme.select")} />
         </div>
       </SelectTrigger>
       <SelectContent>
@@ -40,7 +42,7 @@ const ThemeSelect = ({ value, onValueChange, className }: ThemeSelectProps = {})
           <SelectItem key={option.value} value={option.value}>
             <div className="flex items-center gap-2">
               {THEME_ICONS[option.value]}
-              <span>{option.label}</span>
+              <span>{t(option.labelKey)}</span>
             </div>
           </SelectItem>
         ))}

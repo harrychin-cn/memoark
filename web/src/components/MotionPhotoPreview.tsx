@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import MotionPhotoPlayer from "@/components/MotionPhotoPlayer";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 
 interface MotionPhotoPreviewProps {
   posterUrl: string;
@@ -27,6 +28,7 @@ const MotionPhotoPreview = ({
   badgeClassName,
   loop = false,
 }: MotionPhotoPreviewProps) => {
+  const t = useTranslate();
   const [motionActive, setMotionActive] = useState(false);
 
   useEffect(() => {
@@ -77,9 +79,9 @@ const MotionPhotoPreview = ({
             setMotionActive((prev) => !prev);
           }
         }}
-        aria-label="Hover or press to play live photo"
+        aria-label={t("ui.play-live-photo")}
       >
-        LIVE
+        {t("attachment-library.labels.live")}
       </div>
     </div>
   );

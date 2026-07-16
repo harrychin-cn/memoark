@@ -26,6 +26,7 @@ const AttachmentItemActions: FC<{
   canMoveUp?: boolean;
   canMoveDown?: boolean;
 }> = ({ onRemove, onMoveUp, onMoveDown, canMoveUp = true, canMoveDown = true }) => {
+  const t = useTranslate();
   const stopPropagation = (event: MouseEvent) => {
     event.stopPropagation();
   };
@@ -44,8 +45,8 @@ const AttachmentItemActions: FC<{
             "touch-manipulation rounded p-0.5 transition-colors hover:bg-accent active:bg-accent",
             !canMoveUp && "cursor-not-allowed opacity-20 hover:bg-transparent",
           )}
-          title="Move up"
-          aria-label="Move attachment up"
+          title={t("ui.move-up")}
+          aria-label={t("ui.move-attachment-up")}
         >
           <ChevronUpIcon className="h-3 w-3 text-muted-foreground" />
         </button>
@@ -63,8 +64,8 @@ const AttachmentItemActions: FC<{
             "touch-manipulation rounded p-0.5 transition-colors hover:bg-accent active:bg-accent",
             !canMoveDown && "cursor-not-allowed opacity-20 hover:bg-transparent",
           )}
-          title="Move down"
-          aria-label="Move attachment down"
+          title={t("ui.move-down")}
+          aria-label={t("ui.move-attachment-down")}
         >
           <ChevronDownIcon className="h-3 w-3 text-muted-foreground" />
         </button>
@@ -78,8 +79,8 @@ const AttachmentItemActions: FC<{
             onRemove();
           }}
           className="ml-0.5 touch-manipulation rounded p-0.5 transition-colors hover:bg-destructive/10 active:bg-destructive/10"
-          title="Remove"
-          aria-label="Remove attachment"
+          title={t("common.delete")}
+          aria-label={t("ui.remove-attachment")}
         >
           <XIcon className="h-3 w-3 text-muted-foreground hover:text-destructive" />
         </button>
@@ -148,7 +149,7 @@ const AttachmentItemCard: FC<{
                 onPreview?.();
               }}
               className={cn("h-full w-full overflow-hidden", isPreviewable ? "cursor-pointer" : "cursor-default")}
-              aria-label={`Preview ${filename}`}
+              aria-label={t("ui.preview-attachment", { filename })}
             >
               <img src={thumbnailUrl} alt="" className="h-full w-full object-cover" />
             </button>
@@ -191,7 +192,7 @@ const AttachmentItemCard: FC<{
           )}
           {category === "motion" && (
             <span className="absolute inset-x-0 bottom-0 bg-black/70 text-center text-[7px] font-semibold uppercase tracking-wide text-white">
-              Live
+              {t("attachment-library.labels.live")}
             </span>
           )}
         </div>
@@ -230,6 +231,7 @@ const AttachmentListEditor: FC<AttachmentListEditorProps> = ({
   onLocalFilesChange,
   onRemoveLocalFile,
 }) => {
+  const t = useTranslate();
   const [previewState, setPreviewState] = useState<{ open: boolean; initialIndex: number }>({ open: false, initialIndex: 0 });
   const items = toAttachmentItems(attachments, localFiles);
   const attachmentItems = items.filter((item) => !item.isLocal);
@@ -323,7 +325,12 @@ const AttachmentListEditor: FC<AttachmentListEditorProps> = ({
 
   return (
     <>
-      <MetadataSection icon={PaperclipIcon} title="Attachments" count={items.length} contentClassName="flex flex-col gap-1 p-1 sm:p-1.5">
+      <MetadataSection
+        icon={PaperclipIcon}
+        title={t("common.attachments")}
+        count={items.length}
+        contentClassName="flex flex-col gap-1 p-1 sm:p-1.5"
+      >
         {items.map((item) => {
           const itemList = item.isLocal ? localItems : attachmentItems;
           const itemIndex = itemList.findIndex((entry) => entry.id === item.id);

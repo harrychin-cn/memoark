@@ -447,7 +447,7 @@ function CreateIdentityProviderDialog({ open, onOpenChange, identityProvider, on
                 <FormField label={t("setting.sso.provider-id")} required description={t("setting.sso.provider-id-description")}>
                   <Input
                     className="font-mono"
-                    placeholder="e.g. github, okta-corp"
+                    placeholder={t("ui.identity-provider-id-placeholder")}
                     maxLength={32}
                     value={basicInfo.identifier}
                     onChange={(e) =>

@@ -2,6 +2,7 @@ import { MapPinIcon, XIcon } from "lucide-react";
 import type { FC } from "react";
 import { cn } from "@/lib/utils";
 import type { Location } from "@/types/proto/api/v1/memo_service_pb";
+import { useTranslate } from "@/utils/i18n";
 import { getLocationCoordinatesText, getLocationDisplayText } from "./locationHelpers";
 
 interface LocationDisplayEditorProps {
@@ -11,6 +12,7 @@ interface LocationDisplayEditorProps {
 }
 
 const LocationDisplayEditor: FC<LocationDisplayEditorProps> = ({ location, onRemove, className }) => {
+  const t = useTranslate();
   const displayText = getLocationDisplayText(location);
 
   return (
@@ -34,8 +36,8 @@ const LocationDisplayEditor: FC<LocationDisplayEditorProps> = ({ location, onRem
           type="button"
           onClick={onRemove}
           className="p-0.5 rounded hover:bg-destructive/10 active:bg-destructive/10 transition-colors touch-manipulation shrink-0 ml-auto"
-          title="Remove"
-          aria-label="Remove location"
+          title={t("common.delete")}
+          aria-label={t("ui.remove-location")}
         >
           <XIcon className="w-3 h-3 text-muted-foreground hover:text-destructive" />
         </button>

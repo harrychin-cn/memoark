@@ -71,7 +71,7 @@ function UpdateCustomizedProfileDialog({ open, onOpenChange, onSuccess }: Props)
 
   const handleSaveButtonClick = async () => {
     if (customProfile.title === "") {
-      toast.error("Title cannot be empty.");
+      toast.error(t("ui.title-required"));
       return;
     }
 
@@ -107,18 +107,30 @@ function UpdateCustomizedProfileDialog({ open, onOpenChange, onSuccess }: Props)
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t("setting.system.customize-server.title")}</DialogTitle>
-          <DialogDescription>Customize your instance appearance and settings.</DialogDescription>
+          <DialogDescription>{t("ui.custom-profile-description")}</DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4">
           <div className="grid gap-2">
             <Label htmlFor="server-name">{t("setting.system.server-name")}</Label>
-            <Input id="server-name" type="text" value={customProfile.title} onChange={handleNameChanged} placeholder="Enter server name" />
+            <Input
+              id="server-name"
+              type="text"
+              value={customProfile.title}
+              onChange={handleNameChanged}
+              placeholder={t("ui.enter-server-name")}
+            />
           </div>
 
           <div className="grid gap-2">
             <Label htmlFor="icon-url">{t("setting.system.customize-server.icon-url")}</Label>
-            <Input id="icon-url" type="text" value={customProfile.logoUrl} onChange={handleLogoUrlChanged} placeholder="Enter icon URL" />
+            <Input
+              id="icon-url"
+              type="text"
+              value={customProfile.logoUrl}
+              onChange={handleLogoUrlChanged}
+              placeholder={t("ui.enter-icon-url")}
+            />
           </div>
 
           <div className="grid gap-2">
@@ -128,7 +140,7 @@ function UpdateCustomizedProfileDialog({ open, onOpenChange, onSuccess }: Props)
               rows={3}
               value={customProfile.description}
               onChange={handleDescriptionChanged}
-              placeholder="Enter description"
+              placeholder={t("ui.enter-description")}
             />
           </div>
         </div>

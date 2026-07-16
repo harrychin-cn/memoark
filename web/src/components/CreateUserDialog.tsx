@@ -45,7 +45,7 @@ function CreateUserDialog({ open, onOpenChange, user: initialUser, onSuccess }: 
 
   const handleConfirm = async () => {
     if (isCreating && (!user.username || !user.password)) {
-      toast.error("Username and password cannot be empty");
+      toast.error(t("ui.username-password-required"));
       return;
     }
 
@@ -53,7 +53,7 @@ function CreateUserDialog({ open, onOpenChange, user: initialUser, onSuccess }: 
       requestState.setLoading();
       if (isCreating) {
         await userServiceClient.createUser({ user });
-        toast.success("Create user successfully");
+        toast.success(t("ui.user-created"));
       } else {
         const updateMask = [];
         if (user.username !== initialUser?.username) {
@@ -67,7 +67,7 @@ function CreateUserDialog({ open, onOpenChange, user: initialUser, onSuccess }: 
         }
         const userToUpdate = create(UserSchema, { ...user, name: initialUser?.name ?? user.name });
         await userServiceClient.updateUser({ user: userToUpdate, updateMask: create(FieldMaskSchema, { paths: updateMask }) });
-        toast.success("Update user successfully");
+        toast.success(t("ui.user-updated"));
       }
       requestState.setFinish();
       onSuccess?.();

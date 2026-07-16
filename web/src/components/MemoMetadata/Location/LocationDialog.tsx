@@ -43,7 +43,7 @@ export const LocationDialog = ({
           <DialogTitle>{t("tooltip.select-location")}</DialogTitle>
         </VisuallyHidden>
         <VisuallyHidden>
-          <DialogDescription>Select a location on the map or enter coordinates manually</DialogDescription>
+          <DialogDescription>{t("ui.select-location-description")}</DialogDescription>
         </VisuallyHidden>
         <div className="flex flex-col">
           <div className="w-full h-64 overflow-hidden rounded-t-md bg-muted/30">
@@ -53,11 +53,11 @@ export const LocationDialog = ({
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-1">
                 <Label htmlFor="memo-location-lat" className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Lat
+                  {t("ui.latitude")}
                 </Label>
                 <Input
                   id="memo-location-lat"
-                  placeholder="Lat"
+                  placeholder={t("ui.latitude")}
                   type="number"
                   step="any"
                   min="-90"
@@ -69,11 +69,11 @@ export const LocationDialog = ({
               </div>
               <div className="grid gap-1">
                 <Label htmlFor="memo-location-lng" className="text-xs uppercase tracking-wide text-muted-foreground">
-                  Lng
+                  {t("ui.longitude")}
                 </Label>
                 <Input
                   id="memo-location-lng"
-                  placeholder="Lng"
+                  placeholder={t("ui.longitude")}
                   type="number"
                   step="any"
                   min="-180"
@@ -90,7 +90,7 @@ export const LocationDialog = ({
               </Label>
               <Textarea
                 id="memo-location-placeholder"
-                placeholder="Choose a position first."
+                placeholder={t("ui.choose-position-first")}
                 value={placeholder}
                 disabled={!position}
                 onChange={(e) => onPlaceholderChange(e.target.value)}

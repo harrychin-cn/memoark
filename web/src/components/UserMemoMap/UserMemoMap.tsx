@@ -13,6 +13,7 @@ import { useInfiniteMemos } from "@/hooks/useMemoQueries";
 import { cn } from "@/lib/utils";
 import { State } from "@/types/proto/api/v1/common_pb";
 import { Memo } from "@/types/proto/api/v1/memo_service_pb";
+import { useTranslate } from "@/utils/i18n";
 
 interface Props {
   creator: string;
@@ -51,12 +52,13 @@ const createClusterCustomIcon = (cluster: ClusterGroup) => {
 };
 
 const MemoPopup = ({ memo }: { memo: Memo }) => {
+  const t = useTranslate();
   return (
     <div className="flex flex-col gap-2.5 p-3">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
           <span className="inline-flex rounded-full border border-border/70 bg-muted/50 px-2 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-            Memo
+            {t("common.memo")}
           </span>
           <span className="block text-[11px] font-medium text-muted-foreground">
             {memo.createTime &&
@@ -71,12 +73,12 @@ const MemoPopup = ({ memo }: { memo: Memo }) => {
           to={`/memos/${memo.name.split("/").pop()}`}
           className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] font-medium text-foreground transition-all hover:border-primary/40 hover:text-primary"
         >
-          Open
+          {t("attachment-library.actions.open")}
           <ArrowUpRightIcon className="h-3.5 w-3.5" />
         </Link>
       </div>
       <div className="space-y-1">
-        <div className="line-clamp-3 text-sm leading-snug font-medium text-foreground">{memo.snippet || "No content"}</div>
+        <div className="line-clamp-3 text-sm leading-snug font-medium text-foreground">{memo.snippet || t("ui.no-content")}</div>
         <div className="text-[11px] text-muted-foreground">
           {memo.location!.latitude.toFixed(2)}°, {memo.location!.longitude.toFixed(2)}°
         </div>
@@ -170,6 +172,7 @@ const MemoMapCanvas = ({ memos, tileUrl }: MemoMapCanvasProps) => {
 };
 
 const UserMemoMap = ({ creator, className }: Props) => {
+  const t = useTranslate();
   const creatorFilter = useMemo(() => buildMemoCreatorFilter(creator), [creator]);
 
   const { data, isLoading } = useInfiniteMemos(
@@ -197,7 +200,7 @@ const UserMemoMap = ({ creator, className }: Props) => {
         <div className="absolute inset-0 z-[1000] flex items-center justify-center pointer-events-none">
           <div className="flex flex-col items-center gap-1.5 rounded-xl border border-border bg-background/92 px-5 py-3 shadow-sm backdrop-blur-sm">
             <MapPinIcon className="h-5 w-5 text-muted-foreground opacity-70" />
-            <p className="text-xs font-medium tracking-[0.02em] text-muted-foreground">No location data found</p>
+            <p className="text-xs font-medium tracking-[0.02em] text-muted-foreground">{t("ui.no-location-data")}</p>
           </div>
         </div>
       )}
@@ -208,8 +211,8 @@ const UserMemoMap = ({ creator, className }: Props) => {
             <MapPinIcon className="size-3.5" />
           </span>
           <div className="min-w-0">
-            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">Mapped memos</p>
-            <p className="text-sm font-semibold text-foreground">{memosWithLocation.length} places pinned</p>
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">{t("ui.mapped-memos")}</p>
+            <p className="text-sm font-semibold text-foreground">{t("ui.mapped-places", { count: memosWithLocation.length })}</p>
           </div>
         </div>
       </div>
