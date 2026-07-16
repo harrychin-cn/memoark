@@ -96,6 +96,11 @@ web/src/
 - **Proto changes:** Run `buf generate`. Generated code: `proto/gen/` and `web/src/types/proto/`.
 - **Public endpoints:** Add to `server/router/api/v1/acl_config.go`.
 
+### User Documentation
+- **Keep guides synchronized:** Any user-visible behavior change must update both `docs/user-guide-zh-CN.md` and
+  `docs/user-guide-en.md` in the same change.
+- **Preserve parity:** Keep the two guides' numbered sections, warnings, limitations, and language-switch links aligned.
+
 ## CI/CD
 
 - **backend-tests.yml:** Go 1.26.2, `go mod tidy -go=1.26.2`, golangci-lint v2.11.3, tests parallelized by group (store, server, internal, other)
