@@ -1,38 +1,73 @@
-# MemoArk
+<p align="center">
+  <img height="112" src="web/public/memoark-logo.svg" alt="MemoArk logo" />
+</p>
 
-<img align="right" height="96" src="web/public/memoark-logo.svg" alt="MemoArk logo" />
+<h1 align="center">MemoArk</h1>
 
-**Reliable, self-hosted notes with draft safety and portable data.**
+<p align="center">
+  <strong>无需服务器也能使用的本地笔记应用</strong><br />
+  Windows、Android 和自托管均可用，核心功能离线运行，数据由自己保管。
+</p>
 
-MemoArk is an independent open-source project based on [Memos](https://github.com/usememos/memos). It keeps the lightweight,
-Markdown-first experience while focusing on the failure cases that make people lose trust in note apps.
+<p align="center">
+  <a href="https://github.com/harrychin-cn/memoark/releases/latest"><strong>下载最新版</strong></a>
+  · <a href="docs/user-guide-zh-CN.md">中文使用说明</a>
+  · <a href="ROADMAP.md">开发路线</a>
+  · <a href="https://github.com/harrychin-cn/memoark/issues/new?template=bug_report.yml">反馈问题</a>
+</p>
 
-> **Project status:** early development. The current baseline is Memos `v0.29.1` at commit `5f194da`.
+MemoArk 是一个基于 [Memos](https://github.com/usememos/memos) 的独立开源项目，保留轻量、Markdown 优先的体验，重点加强
+本地使用、草稿保护、故障恢复和数据迁移能力。
 
-> **普通用户：** 请查看 [中文功能使用说明](docs/user-guide-zh-CN.md)，或前往
-> [GitHub 最新版本页面](https://github.com/harrychin-cn/memoark/releases/latest) 下载 Windows 安装包、Windows 便携版和 Android APK。
+> **项目状态：** 正在持续完善。当前基线为 Memos `v0.29.1`，已经提供可直接安装的 Windows 和 Android 完整本地版。
 
-## What MemoArk adds
+## 为什么选择 MemoArk
 
-- **Edit draft protection** — unsaved edits are cached locally while you type.
-- **Visible recovery** — restore or discard a recovered draft instead of silently overwriting server content.
-- **Conflict awareness** — warns when the server copy changed after the local draft was created.
-- **Portable export** — download normal and archived notes as versioned JSON.
-- **Self-hosted by default** — your database stays on infrastructure you control.
+| 能力 | 说明 |
+| --- | --- |
+| **开箱即用** | Windows 安装包和 Android APK 内含运行所需组件，普通用户不需要部署服务器。 |
+| **核心功能离线可用** | 本地后端和 SQLite 数据库随应用运行，没有网络也能启动、编辑和读取笔记。 |
+| **草稿安全** | 未保存内容自动缓存在当前设备，可恢复、丢弃，并在版本冲突时明确提醒。 |
+| **完整笔记体验** | 支持 Markdown、标签、待办、附件、录音、位置、评论、搜索、过滤、归档和分享图片。 |
+| **数据可迁移** | 支持 JSON 导入导出；Windows 用户还可以完整备份本地数据目录。 |
+| **多语言界面** | 提供 33 种界面语言，并支持浅色、深色、纸张和跟随系统主题。 |
+
+## 界面预览
+
+<table>
+  <tr>
+    <td width="70%"><img src="docs/assets/screenshots/home-desktop-zh-CN.png" alt="MemoArk Windows 中文首页" /></td>
+    <td width="30%"><img src="docs/assets/screenshots/home-mobile-zh-CN.png" alt="MemoArk Android 中文首页" /></td>
+  </tr>
+  <tr>
+    <td align="center">Windows / 桌面界面</td>
+    <td align="center">Android / 手机界面</td>
+  </tr>
+</table>
+
+## 下载和开始使用
+
+前往 [GitHub 最新版本页面](https://github.com/harrychin-cn/memoark/releases/latest)，按设备选择文件：
+
+| 使用方式 | 下载文件 | 安装方法 |
+| --- | --- | --- |
+| Windows 普通用户 | `MemoArk-Setup.exe` | 双击安装，自动创建桌面和开始菜单快捷方式。 |
+| Windows 便携使用 | `windows-amd64.zip` | 完整解压后运行 `START-MemoArk.cmd`。 |
+| Android 手机 | `Android.apk` | 允许当前下载应用“安装未知应用”后安装。 |
+
+第一次打开时创建管理员账号即可开始记录。Windows 默认数据目录为 `%LOCALAPPDATA%\MemoArk`；Android 数据保存在 App 私有目录。
+升级时直接覆盖安装，不要先卸载旧版本。
+
+安装、编辑、附件、分享、备份、升级和排错请查看完整的 [中文功能使用说明](docs/user-guide-zh-CN.md)。
+
+### English
+
+MemoArk is a reliable, Markdown-first note app with installable Windows and Android local editions plus a self-hosted edition. Its local
+packages include the frontend, backend, and SQLite database, while draft recovery and portable exports help protect unfinished work and
+keep data under the user's control.
 
 Development priorities are tracked in the [MemoArk roadmap](ROADMAP.md), with the public upstream feedback behind each decision kept
 in [the research snapshot](docs/product/upstream-feedback-2026-07-13.md).
-
-## Desktop and mobile use
-
-MemoArk provides complete local packages that do not require Docker, Node.js, Go, a VPS, or an external server:
-
-- **Windows installer:** download `MemoArk-Setup.exe`; it creates desktop and Start menu shortcuts and runs without a console window.
-- **Windows portable:** download the `windows-amd64.zip` archive and run `START-MemoArk.cmd` after extracting it.
-- **Android:** download the `Android.apk`; the frontend, local backend, and SQLite database are included in the app.
-
-See the [Chinese user guide / 中文功能使用说明](docs/user-guide-zh-CN.md) for installation, first use, memo editing, attachments,
-sharing, import/export, backup, upgrades, uninstallation, and troubleshooting.
 
 ## Server quick start
 
