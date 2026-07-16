@@ -41,7 +41,7 @@ export const LinkMemoDialog = ({
           <DialogTitle>{t("tooltip.link-memo")}</DialogTitle>
         </VisuallyHidden>
         <VisuallyHidden>
-          <DialogDescription>Search and select a memo to link</DialogDescription>
+          <DialogDescription>{t("ui.link-memo-description")}</DialogDescription>
         </VisuallyHidden>
         <div className="flex flex-col">
           <div className="p-3">

@@ -1,5 +1,6 @@
 import defaultDarkThemeContent from "../themes/default-dark.css?raw";
 import paperThemeContent from "../themes/paper.css?raw";
+import type { Translations } from "./i18n";
 
 // ============================================================================
 // Types and Constants
@@ -11,8 +12,8 @@ export type Theme = (typeof VALID_THEMES)[number];
 export type ResolvedTheme = Exclude<Theme, "system">;
 
 export interface ThemeOption {
-  value: string;
-  label: string;
+  value: Theme;
+  labelKey: Translations;
 }
 
 const STORAGE_KEY = "memos-theme";
@@ -31,10 +32,10 @@ const THEME_COLORS: Record<ResolvedTheme, string> = {
 };
 
 export const THEME_OPTIONS: ThemeOption[] = [
-  { value: "system", label: "Sync with system" },
-  { value: "default", label: "Light" },
-  { value: "default-dark", label: "Dark" },
-  { value: "paper", label: "Paper" },
+  { value: "system", labelKey: "theme.system" },
+  { value: "default", labelKey: "theme.light" },
+  { value: "default-dark", labelKey: "theme.dark" },
+  { value: "paper", labelKey: "theme.paper" },
 ];
 
 // ============================================================================

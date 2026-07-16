@@ -9,7 +9,7 @@ import { addMonths, formatMonth, getMonthFromDate, getYearFromDate, setYearAndMo
 import type { MonthNavigatorProps } from "@/types/statistics";
 
 export const MonthNavigator = memo(({ visibleMonth, onMonthChange, activityStats, timeBasis }: MonthNavigatorProps) => {
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const { currentMonth, currentYear, currentMonthNum } = useMemo(
@@ -58,7 +58,7 @@ export const MonthNavigator = memo(({ visibleMonth, onMonthChange, activityStats
           size="2xl"
           showCloseButton={false}
         >
-          <DialogTitle className="sr-only">Select Month</DialogTitle>
+          <DialogTitle className="sr-only">{t("ui.select-month")}</DialogTitle>
           <YearCalendar
             selectedYear={currentYear}
             data={activityStats}
@@ -69,12 +69,12 @@ export const MonthNavigator = memo(({ visibleMonth, onMonthChange, activityStats
         </DialogContent>
       </Dialog>
 
-      <nav className="flex items-center shrink-0" aria-label="Month navigation">
+      <nav className="flex items-center shrink-0" aria-label={t("ui.month-navigation")}>
         <Button
           variant="ghost"
           size="sm"
           onClick={handlePrevMonth}
-          aria-label="Previous month"
+          aria-label={t("ui.previous-month")}
           className="h-7 w-7 p-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40"
         >
           <ChevronLeftIcon className="w-4 h-4" />
@@ -83,7 +83,7 @@ export const MonthNavigator = memo(({ visibleMonth, onMonthChange, activityStats
           variant="ghost"
           size="sm"
           onClick={handleNextMonth}
-          aria-label="Next month"
+          aria-label={t("ui.next-month")}
           className="h-7 w-7 p-0 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/40"
         >
           <ChevronRightIcon className="w-4 h-4" />

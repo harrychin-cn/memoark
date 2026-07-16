@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 import { VisuallyHidden } from "@/components/ui/visually-hidden";
 import useMediaQuery from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 import type { PreviewMediaItem } from "@/utils/media-item";
 
 interface Props {
@@ -24,6 +25,7 @@ const DOUBLE_TAP_ZOOM = 2;
 const clampZoom = (scale: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scale));
 
 function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIndex = 0 }: Props) {
+  const t = useTranslate();
   const sm = useMediaQuery("sm");
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [zoomScale, setZoomScale] = useState(MIN_ZOOM);
@@ -110,17 +112,14 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
         className="!h-[100vh] !w-[100vw] !max-h-[100vh] !max-w-[100vw] overflow-hidden border-0 bg-black/92 p-0 shadow-none"
       >
         <VisuallyHidden>
-          <DialogTitle>{currentItem.filename || "Attachment preview"}</DialogTitle>
-          <DialogDescription>
-            Attachment preview dialog. Press Escape to close, use left or right arrow keys to switch items, and zoom images with the
-            controls, mouse wheel, or double tap.
-          </DialogDescription>
+          <DialogTitle>{currentItem.filename || t("ui.attachment-preview")}</DialogTitle>
+          <DialogDescription>{t("ui.preview-dialog-description")}</DialogDescription>
         </VisuallyHidden>
 
         <div className="absolute inset-x-0 top-0 z-20 bg-linear-to-b from-black/70 via-black/35 to-transparent px-3 pb-6 pt-3 sm:px-5 sm:pt-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 text-white">
-              <div className="truncate text-sm font-medium">{currentItem.filename || "Attachment"}</div>
+              <div className="truncate text-sm font-medium">{currentItem.filename || t("ui.attachment")}</div>
               {hasMultiple && (
                 <div className="mt-1 text-xs text-white/70">
                   {safeIndex + 1} / {itemCount}
@@ -134,7 +133,7 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
               variant="ghost"
               size="icon"
               className="shrink-0 rounded-full bg-white/10 text-white hover:bg-white/16 hover:text-white"
-              aria-label="Close preview"
+              aria-label={t("ui.close-preview")}
             >
               <X className="h-4 w-4" />
             </Button>
@@ -170,7 +169,7 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
                 key={currentItem.id}
                 posterUrl={currentItem.posterUrl}
                 motionUrl={currentItem.motionUrl}
-                alt={`Preview live photo ${safeIndex + 1} of ${itemCount}`}
+                alt={t("ui.preview-live-photo", { current: safeIndex + 1, total: itemCount })}
                 presentationTimestampUs={currentItem.presentationTimestampUs}
                 badgeClassName="left-3 top-3 sm:left-4 sm:top-4"
                 mediaClassName="max-h-[calc(100vh-8rem)] max-w-[calc(100vw-1.5rem)] rounded-md object-contain sm:max-h-[calc(100vh-7rem)] sm:max-w-[calc(100vw-8rem)]"
@@ -178,7 +177,7 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
             ) : (
               <img
                 src={currentItem.sourceUrl}
-                alt={`Preview image ${safeIndex + 1} of ${itemCount}`}
+                alt={t("ui.preview-image", { current: safeIndex + 1, total: itemCount })}
                 className="max-h-[calc(100vh-8rem)] max-w-[calc(100vw-1.5rem)] rounded-md object-contain select-none sm:max-h-[calc(100vh-7rem)] sm:max-w-[calc(100vw-8rem)]"
                 style={{
                   transform: `translate3d(0px, 0px, 0) scale(${zoomScale})`,
@@ -199,27 +198,27 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
             <div className="mx-auto flex w-fit items-center gap-1 rounded-full bg-black/60 px-2 py-2 text-white shadow-lg backdrop-blur-sm">
               {hasMultiple && !sm && (
                 <>
-                  <ZoomButton label="Previous item" onClick={handlePrevious} disabled={!canGoPrevious}>
+                  <ZoomButton label={t("ui.previous-item")} onClick={handlePrevious} disabled={!canGoPrevious}>
                     <ChevronLeft className="h-4 w-4" />
                   </ZoomButton>
                   <div className="min-w-9 px-1 text-center text-xs font-medium tabular-nums text-white/75">
                     {safeIndex + 1}/{itemCount}
                   </div>
-                  <ZoomButton label="Next item" onClick={handleNext} disabled={!canGoNext}>
+                  <ZoomButton label={t("ui.next-item")} onClick={handleNext} disabled={!canGoNext}>
                     <ChevronRight className="h-4 w-4" />
                   </ZoomButton>
                   <div className="mx-1 h-5 w-px bg-white/18" />
                 </>
               )}
-              <ZoomButton label="Zoom out" onClick={handleZoomOut} disabled={zoomScale === MIN_ZOOM}>
+              <ZoomButton label={t("ui.zoom-out")} onClick={handleZoomOut} disabled={zoomScale === MIN_ZOOM}>
                 <ZoomOut className="h-4 w-4" />
               </ZoomButton>
               <div className="min-w-12 px-2 text-center text-xs font-medium tabular-nums text-white/80">{zoomPercent}%</div>
-              <ZoomButton label="Zoom in" onClick={handleZoomIn} disabled={zoomScale === MAX_ZOOM}>
+              <ZoomButton label={t("ui.zoom-in")} onClick={handleZoomIn} disabled={zoomScale === MAX_ZOOM}>
                 <ZoomIn className="h-4 w-4" />
               </ZoomButton>
               <div className="mx-1 h-5 w-px bg-white/18" />
-              <ZoomButton label="Reset zoom" onClick={resetZoom} disabled={!isZoomed}>
+              <ZoomButton label={t("ui.reset-zoom")} onClick={resetZoom} disabled={!isZoomed}>
                 <RotateCcw className="h-4 w-4" />
               </ZoomButton>
             </div>
@@ -231,14 +230,14 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
             <NavButton
               side="left"
               disabled={!canGoPrevious}
-              label="Previous item"
+              label={t("ui.previous-item")}
               onClick={handlePrevious}
               icon={<ChevronLeft className="h-5 w-5" />}
             />
             <NavButton
               side="right"
               disabled={!canGoNext}
-              label="Next item"
+              label={t("ui.next-item")}
               onClick={handleNext}
               icon={<ChevronRight className="h-5 w-5" />}
             />
@@ -256,7 +255,7 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
                 disabled={!canGoPrevious}
                 className="rounded-full px-3 text-white hover:bg-white/10 hover:text-white disabled:text-white/35"
               >
-                Prev
+                {t("ui.previous")}
               </Button>
               <div className="px-3 text-xs text-white/75">
                 {safeIndex + 1} / {itemCount}
@@ -269,7 +268,7 @@ function PreviewImageDialog({ open, onOpenChange, imgUrls = [], items, initialIn
                 disabled={!canGoNext}
                 className="rounded-full px-3 text-white hover:bg-white/10 hover:text-white disabled:text-white/35"
               >
-                Next
+                {t("ui.next")}
               </Button>
             </div>
           </div>

@@ -4,6 +4,7 @@ import i18n, { locales, TLocale } from "@/i18n";
 import enTranslation from "@/locales/en.json";
 
 const LOCALE_STORAGE_KEY = "memos-locale";
+const RTL_LOCALES: ReadonlySet<Locale> = new Set(["ar", "fa"]);
 
 const getStoredLocale = (): Locale | null => {
   try {
@@ -97,6 +98,7 @@ export const loadLocale = (locale: string): Locale => {
   setStoredLocale(validLocale);
   i18n.changeLanguage(validLocale);
   document.documentElement.lang = validLocale;
+  document.documentElement.dir = RTL_LOCALES.has(validLocale) ? "rtl" : "ltr";
   return validLocale;
 };
 

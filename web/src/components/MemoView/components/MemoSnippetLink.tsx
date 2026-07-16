@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { extractMemoIdFromName } from "@/helpers/resource-names";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 
 interface MemoSnippetLinkProps {
   name: string;
@@ -11,6 +12,7 @@ interface MemoSnippetLinkProps {
 }
 
 const MemoSnippetLink = ({ name, snippet, to, state, className }: MemoSnippetLinkProps) => {
+  const t = useTranslate();
   const memoId = extractMemoIdFromName(name);
 
   return (
@@ -26,7 +28,7 @@ const MemoSnippetLink = ({ name, snippet, to, state, className }: MemoSnippetLin
       <span className="text-[8px] font-mono px-1 py-0.5 rounded border border-border bg-muted/40 group-hover:bg-accent/30 transition-colors shrink-0">
         {memoId.slice(0, 6)}
       </span>
-      <span className="truncate">{snippet || <span className="italic opacity-60">No content</span>}</span>
+      <span className="truncate">{snippet || <span className="italic opacity-60">{t("ui.no-content")}</span>}</span>
     </Link>
   );
 };

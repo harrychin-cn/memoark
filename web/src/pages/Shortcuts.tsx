@@ -34,55 +34,55 @@ import useLoading from "@/hooks/useLoading";
 import { handleError } from "@/lib/error";
 import { cn } from "@/lib/utils";
 import { Shortcut, ShortcutSchema } from "@/types/proto/api/v1/shortcut_service_pb";
-import { useTranslate } from "@/utils/i18n";
+import { type Translations, useTranslate } from "@/utils/i18n";
 
-const shortcutExamples = [
+const shortcutExamples: { titleKey: Translations; filter: string; descriptionKey: Translations; icon: typeof PinIcon }[] = [
   {
-    title: "Pinned",
+    titleKey: "ui.example-pinned",
     filter: "pinned",
-    description: "Only pinned memos.",
+    descriptionKey: "ui.example-pinned-description",
     icon: PinIcon,
   },
   {
-    title: "Recent notes",
+    titleKey: "ui.example-recent-notes",
     filter: "created_ts >= now() - 60 * 60",
-    description: "Memos created in the last hour.",
+    descriptionKey: "ui.example-recent-notes-description",
     icon: Clock3Icon,
   },
   {
-    title: "Public memos",
+    titleKey: "ui.example-public-memos",
     filter: 'visibility == "PUBLIC"',
-    description: "Only public memos.",
+    descriptionKey: "ui.example-public-memos-description",
     icon: ShieldIcon,
   },
   {
-    title: "Project tags",
+    titleKey: "ui.example-project-tags",
     filter: 'tag in ["work", "personal"]',
-    description: "Match one or more exact tags.",
+    descriptionKey: "ui.example-project-tags-description",
     icon: TagsIcon,
   },
   {
-    title: "Archive tree",
+    titleKey: "ui.example-archive-tree",
     filter: 'tags.exists(t, t.startsWith("archive"))',
-    description: "Match hierarchical tags by prefix.",
+    descriptionKey: "ui.example-archive-tree-description",
     icon: TagsIcon,
   },
   {
-    title: "Open tasks",
+    titleKey: "ui.example-open-tasks",
     filter: "has_task_list && has_incomplete_tasks",
-    description: "Memos with unfinished tasks.",
+    descriptionKey: "ui.example-open-tasks-description",
     icon: ClipboardCheckIcon,
   },
   {
-    title: "Links or code",
+    titleKey: "ui.example-links-code",
     filter: "has_link || has_code",
-    description: "Memos containing links or code blocks.",
+    descriptionKey: "ui.example-links-code-description",
     icon: FilterIcon,
   },
   {
-    title: "Content search",
+    titleKey: "ui.example-content-search",
     filter: 'content.contains("TODO")',
-    description: "Search text inside memo content.",
+    descriptionKey: "ui.example-content-search-description",
     icon: SearchIcon,
   },
 ];
@@ -123,10 +123,11 @@ interface ShortcutsRouteState {
 }
 
 const ShortcutGuide = ({ onUseExample }: ShortcutGuideProps) => {
+  const t = useTranslate();
   return (
     <aside className="flex flex-col gap-5">
       <div className="rounded-lg border border-border p-4">
-        <h2 className="text-sm font-semibold text-foreground">Expression examples</h2>
+        <h2 className="text-sm font-semibold text-foreground">{t("ui.expression-examples")}</h2>
         <div className="mt-3 flex flex-col gap-2">
           {shortcutExamples.map((example) => {
             const Icon = example.icon;
@@ -139,10 +140,10 @@ const ShortcutGuide = ({ onUseExample }: ShortcutGuideProps) => {
               >
                 <span className="flex items-center gap-2 text-sm font-medium text-foreground">
                   <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
-                  {example.title}
+                  {t(example.titleKey)}
                 </span>
                 <span className="mt-1 block font-mono text-xs leading-5 text-muted-foreground">{example.filter}</span>
-                <span className="mt-1 block text-xs leading-5 text-muted-foreground">{example.description}</span>
+                <span className="mt-1 block text-xs leading-5 text-muted-foreground">{t(example.descriptionKey)}</span>
               </button>
             );
           })}
@@ -150,7 +151,7 @@ const ShortcutGuide = ({ onUseExample }: ShortcutGuideProps) => {
       </div>
 
       <div className="rounded-lg border border-border p-4">
-        <h2 className="text-sm font-semibold text-foreground">Supported fields</h2>
+        <h2 className="text-sm font-semibold text-foreground">{t("ui.supported-fields")}</h2>
         <div className="mt-3 flex flex-wrap gap-2">
           {filterFields.map((field) => (
             <Badge key={field} variant="secondary" className="font-mono">
@@ -207,7 +208,7 @@ const Shortcuts = () => {
     setDraft(
       create(ShortcutSchema, {
         name: draft.name,
-        title: draft.title || example.title,
+        title: draft.title || t(example.titleKey),
         filter: example.filter,
       }),
     );
@@ -237,11 +238,11 @@ const Shortcuts = () => {
 
   const validateDraft = async () => {
     if (!draft.title || !draft.filter) {
-      toast.error("Title and filter cannot be empty");
+      toast.error(t("ui.shortcut-required"));
       return false;
     }
     if (!user?.name) {
-      toast.error("No current user");
+      toast.error(t("ui.no-current-user"));
       return false;
     }
 
@@ -253,7 +254,7 @@ const Shortcuts = () => {
         validateOnly: true,
       });
       validateState.setFinish();
-      toast.success("Filter expression looks valid");
+      toast.success(t("ui.filter-valid"));
       return true;
     } catch (error: unknown) {
       await handleError(error, toast.error, {
@@ -266,11 +267,11 @@ const Shortcuts = () => {
 
   const handleCreateShortcut = async () => {
     if (!draft.title || !draft.filter) {
-      toast.error("Title and filter cannot be empty");
+      toast.error(t("ui.shortcut-required"));
       return;
     }
     if (!user?.name) {
-      toast.error("No current user");
+      toast.error(t("ui.no-current-user"));
       return;
     }
 
@@ -284,7 +285,7 @@ const Shortcuts = () => {
       createState.setFinish();
       setDraft(createEmptyShortcut());
       setIsCreateFormOpen(false);
-      toast.success("Create shortcut successfully");
+      toast.success(t("ui.shortcut-created"));
     } catch (error: unknown) {
       await handleError(error, toast.error, {
         context: "Create shortcut",
@@ -295,7 +296,7 @@ const Shortcuts = () => {
 
   const handleUpdateShortcut = async () => {
     if (!draft.title || !draft.filter) {
-      toast.error("Title and filter cannot be empty");
+      toast.error(t("ui.shortcut-required"));
       return;
     }
 
@@ -309,7 +310,7 @@ const Shortcuts = () => {
       updateState.setFinish();
       setDraft(createEmptyShortcut());
       setIsCreateFormOpen(false);
-      toast.success("Update shortcut successfully");
+      toast.success(t("ui.shortcut-updated"));
     } catch (error: unknown) {
       await handleError(error, toast.error, {
         context: "Update shortcut",
@@ -350,11 +351,8 @@ const Shortcuts = () => {
             <FilterIcon className="h-4 w-4" />
             <span className="text-sm font-medium">{t("common.shortcuts")}</span>
           </div>
-          <h1 className="text-2xl font-semibold tracking-normal text-foreground">Shortcut filters</h1>
-          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-            Create reusable memo filters with fields, operators, time helpers, and tag matching. Use examples as starting points, then
-            validate before saving.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-normal text-foreground">{t("ui.shortcut-filters")}</h1>
+          <p className="max-w-2xl text-sm leading-6 text-muted-foreground">{t("ui.shortcut-description")}</p>
         </div>
         <Button onClick={isCreateFormOpen ? handleCloseForm : handleOpenCreateForm}>
           {isCreateFormOpen ? <XIcon className="h-4 w-4" /> : <PlusIcon className="h-4 w-4" />}
@@ -373,10 +371,8 @@ const Shortcuts = () => {
             <div className="grid gap-5 p-4 sm:p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-base font-semibold text-foreground">{isEditing ? "Edit shortcut" : "Create shortcut"}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Name the shortcut and define the memo filter expression it should apply.
-                  </p>
+                  <h2 className="text-base font-semibold text-foreground">{t(isEditing ? "ui.edit-shortcut" : "ui.create-shortcut")}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">{t("ui.shortcut-form-description")}</p>
                 </div>
                 <a
                   className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
@@ -384,7 +380,7 @@ const Shortcuts = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Upstream docs
+                  {t("ui.upstream-docs")}
                   <ExternalLinkIcon className="h-3.5 w-3.5" />
                 </a>
               </div>
@@ -395,12 +391,10 @@ const Shortcuts = () => {
                   <Input
                     id="shortcut-title"
                     value={draft.title}
-                    placeholder="Pinned, Recent notes, Work"
+                    placeholder={t("ui.shortcut-title-placeholder")}
                     onChange={(event) => setDraftState({ title: event.target.value })}
                   />
-                  <p className="text-xs leading-5 text-muted-foreground">
-                    Prefix the title with an emoji if you want it to appear in the sidebar.
-                  </p>
+                  <p className="text-xs leading-5 text-muted-foreground">{t("ui.shortcut-emoji-tip")}</p>
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="shortcut-filter">{t("common.filter")}</Label>
@@ -412,17 +406,14 @@ const Shortcuts = () => {
                     placeholder='pinned && tag in ["work"]'
                     onChange={(event) => setDraftState({ filter: event.target.value })}
                   />
-                  <p className="text-xs leading-5 text-muted-foreground">
-                    Combine expressions with <span className="font-mono">&&</span>, <span className="font-mono">||</span>, and{" "}
-                    <span className="font-mono">!</span>. Time fields use Unix seconds and support <span className="font-mono">now()</span>.
-                  </p>
+                  <p className="text-xs leading-5 text-muted-foreground">{t("ui.shortcut-expression-tip")}</p>
                 </div>
               </div>
 
               <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
                 <Button variant="outline" disabled={validateState.isLoading || isSaving} onClick={validateDraft}>
                   <CheckCircle2Icon className="h-4 w-4" />
-                  Validate
+                  {t("ui.validate")}
                 </Button>
                 <Button disabled={isSaving || validateState.isLoading} onClick={handleSaveShortcut}>
                   <SaveIcon className="h-4 w-4" />
@@ -434,14 +425,14 @@ const Shortcuts = () => {
 
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-foreground">All shortcuts</h2>
+              <h2 className="text-base font-semibold text-foreground">{t("ui.all-shortcuts")}</h2>
               <Badge variant="outline">{shortcuts.length}</Badge>
             </div>
 
             {shortcuts.length === 0 ? (
               <div className="rounded-lg border border-dashed border-border px-4 py-10 text-center">
-                <p className="text-sm font-medium text-foreground">No shortcuts yet</p>
-                <p className="mt-1 text-sm text-muted-foreground">Open the create form to choose an example and add your first filter.</p>
+                <p className="text-sm font-medium text-foreground">{t("ui.no-shortcuts")}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{t("ui.no-shortcuts-description")}</p>
               </div>
             ) : (
               <div className="divide-y divide-border overflow-hidden rounded-lg border border-border">

@@ -4,6 +4,7 @@ import { ExternalLinkIcon, MinusIcon, PlusIcon } from "lucide-react";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 import { defaultMarkerIcon, observeMapSize, useThemedTileUrl } from "./map-utils";
 import type { MapPoint } from "./types";
 
@@ -48,18 +49,29 @@ interface ControlButtonsProps {
 }
 
 const ControlButtons = ({ position, onZoomIn, onZoomOut, onOpenGoogleMaps }: ControlButtonsProps) => {
+  const t = useTranslate();
   return (
     <div className="flex flex-col gap-1.5">
       {position && (
         <GlassButton
           icon={<ExternalLinkIcon size={16} className="text-foreground" />}
           onClick={onOpenGoogleMaps}
-          ariaLabel="Open location in Google Maps"
-          title="Open in Google Maps"
+          ariaLabel={t("ui.open-location-google-maps")}
+          title={t("ui.open-google-maps")}
         />
       )}
-      <GlassButton icon={<PlusIcon size={16} className="text-foreground" />} onClick={onZoomIn} ariaLabel="Zoom in" title="Zoom in" />
-      <GlassButton icon={<MinusIcon size={16} className="text-foreground" />} onClick={onZoomOut} ariaLabel="Zoom out" title="Zoom out" />
+      <GlassButton
+        icon={<PlusIcon size={16} className="text-foreground" />}
+        onClick={onZoomIn}
+        ariaLabel={t("ui.zoom-in")}
+        title={t("ui.zoom-in")}
+      />
+      <GlassButton
+        icon={<MinusIcon size={16} className="text-foreground" />}
+        onClick={onZoomOut}
+        ariaLabel={t("ui.zoom-out")}
+        title={t("ui.zoom-out")}
+      />
     </div>
   );
 };

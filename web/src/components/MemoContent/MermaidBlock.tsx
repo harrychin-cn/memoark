@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 import { getThemeWithFallback, resolveTheme, setupSystemThemeListener } from "@/utils/theme";
 import { extractCodeContent } from "./utils";
 
@@ -22,6 +23,7 @@ const formatErrorMessage = (err: unknown): string => {
 };
 
 export const MermaidBlock = ({ children, className }: MermaidBlockProps) => {
+  const t = useTranslate();
   const { userGeneralSetting } = useAuth();
   const [svg, setSvg] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -84,7 +86,9 @@ export const MermaidBlock = ({ children, className }: MermaidBlockProps) => {
   if (error) {
     return (
       <div className="w-full">
-        <div className="text-sm text-destructive mb-2 whitespace-normal break-words">Mermaid Error: {error}</div>
+        <div className="text-sm text-destructive mb-2 whitespace-normal break-words">
+          {t("ui.mermaid-error")} {error}
+        </div>
         <code className="block language-mermaid whitespace-pre text-sm">{codeContent}</code>
       </div>
     );

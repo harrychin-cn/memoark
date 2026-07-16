@@ -1,12 +1,14 @@
 import { Minimize2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTranslate } from "@/utils/i18n";
 import { FOCUS_MODE_STYLES } from "../constants";
 import type { FocusModeExitButtonProps, FocusModeOverlayProps } from "../types";
 
 export function FocusModeOverlay({ isActive, onToggle }: FocusModeOverlayProps) {
+  const t = useTranslate();
   if (!isActive) return null;
 
-  return <button type="button" className={FOCUS_MODE_STYLES.backdrop} onClick={onToggle} aria-label="Exit focus mode" />;
+  return <button type="button" className={FOCUS_MODE_STYLES.backdrop} onClick={onToggle} aria-label={t("editor.exit-focus-mode")} />;
 }
 
 export function FocusModeExitButton({ isActive, onToggle, title }: FocusModeExitButtonProps) {

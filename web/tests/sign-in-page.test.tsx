@@ -41,7 +41,11 @@ vi.mock("@/lib/error", () => ({
 }));
 
 vi.mock("@/utils/i18n", () => ({
-  useTranslate: () => (key: string, values?: { provider?: string }) => (values?.provider ? `${key}: ${values.provider}` : key),
+  useTranslate: () => (key: string, values?: { provider?: string }) => {
+    if (values?.provider) return `${key}: ${values.provider}`;
+    if (key === "ui.password-auth-disabled") return "Password authentication is not allowed.";
+    return key;
+  },
 }));
 
 vi.mock("@/utils/oauth", () => ({
@@ -79,7 +83,7 @@ describe("<SignIn>", () => {
     const { container } = renderPage();
 
     expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
-    expect(screen.queryByText("Password auth is not allowed.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Password authentication is not allowed.")).not.toBeInTheDocument();
     expect(screen.queryByTestId("password-sign-in")).not.toBeInTheDocument();
 
     response.resolve({
@@ -87,7 +91,7 @@ describe("<SignIn>", () => {
     });
 
     await waitFor(() => expect(screen.getByRole("button", { name: "common.sign-in-with: Acme SSO" })).toBeInTheDocument());
-    expect(screen.queryByText("Password auth is not allowed.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Password authentication is not allowed.")).not.toBeInTheDocument();
   });
 
   it("shows the password-auth-disabled state only after an empty provider response", async () => {
@@ -95,7 +99,7 @@ describe("<SignIn>", () => {
 
     renderPage();
 
-    await waitFor(() => expect(screen.getByText("Password auth is not allowed.")).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText("Password authentication is not allowed.")).toBeInTheDocument());
   });
 
   it("shows password sign-in immediately when password auth is allowed", () => {

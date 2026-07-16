@@ -1,7 +1,14 @@
 import { render, screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { BIRD_ILLUSTRATIONS } from "@/components/Placeholder/birdIllustrations";
 import About from "@/pages/About";
+
+vi.mock("@/utils/i18n", async () => {
+  const { default: english } = await import("@/locales/en.json");
+  return {
+    useTranslate: () => (key: string) => key.split(".").reduce<unknown>((value, part) => (value as Record<string, unknown>)[part], english) as string,
+  };
+});
 
 describe("<About>", () => {
   it("renders the MemoArk product story, attribution, and current vector bird family", () => {
@@ -17,8 +24,8 @@ describe("<About>", () => {
     const birds = screen.getByRole("region", { name: "Birds" });
     expect(within(birds).getAllByTestId("about-bird-illustration")).toHaveLength(BIRD_ILLUSTRATIONS.length);
 
-    for (const illustration of BIRD_ILLUSTRATIONS) {
-      expect(within(birds).getByText(illustration.name)).toBeInTheDocument();
-    }
+    expect(within(birds).getByText("Owl note")).toBeInTheDocument();
+    expect(within(birds).getByText("Eagle letter")).toBeInTheDocument();
+    expect(within(birds).getByText("Toucan bookmark")).toBeInTheDocument();
   });
 });

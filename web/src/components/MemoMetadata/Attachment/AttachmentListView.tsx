@@ -7,6 +7,7 @@ import VideoPoster from "@/components/VideoPoster";
 import { cn } from "@/lib/utils";
 import type { Attachment } from "@/types/proto/api/v1/attachment_service_pb";
 import { getAttachmentUrl } from "@/utils/attachment";
+import { useTranslate } from "@/utils/i18n";
 import type { AttachmentVisualItem, PreviewMediaItem } from "@/utils/media-item";
 import { buildAttachmentVisualItems } from "@/utils/media-item";
 import AudioAttachmentItem from "./AudioAttachmentItem";
@@ -239,6 +240,7 @@ const DocsList = ({ attachments }: { attachments: Attachment[] }) => (
 const Divider = () => <div className="border-t border-border/70 opacity-80" />;
 
 const AttachmentListView = ({ attachments, onImagePreview }: AttachmentListViewProps) => {
+  const t = useTranslate();
   const { visual, audio, docs } = useMemo(() => separateAttachments(attachments), [attachments]);
   const visualItems = useMemo(() => buildAttachmentVisualItems(visual), [visual]);
   const previewItems = useMemo(() => visualItems.map((item) => item.previewItem), [visualItems]);
@@ -259,7 +261,7 @@ const AttachmentListView = ({ attachments, onImagePreview }: AttachmentListViewP
   return (
     <MetadataSection
       icon={PaperclipIcon}
-      title="Attachments"
+      title={t("common.attachments")}
       count={visualItems.length + audio.length + docs.length}
       contentClassName="flex flex-col gap-2 p-2"
     >

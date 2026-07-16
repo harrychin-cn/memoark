@@ -59,7 +59,7 @@ const SignIn = () => {
       const redirectUri = absolutifyLink("/auth/callback");
       const oauth2Config = identityProvider.config?.config?.case === "oauth2Config" ? identityProvider.config.config.value : undefined;
       if (!oauth2Config) {
-        toast.error("Identity provider configuration is invalid.");
+        toast.error(t("ui.invalid-identity-provider"));
         return;
       }
 
@@ -104,7 +104,9 @@ const SignIn = () => {
         ) : identityProviderListLoading ? (
           <div className="h-10 w-full animate-pulse rounded-md bg-muted/60" aria-hidden="true" />
         ) : (
-          identityProviderList.length === 0 && <p className="w-full text-2xl mt-2 text-muted-foreground">Password auth is not allowed.</p>
+          identityProviderList.length === 0 && (
+            <p className="w-full text-2xl mt-2 text-muted-foreground">{t("ui.password-auth-disabled")}</p>
+          )
         )}
         {!instanceGeneralSetting.disallowUserRegistration && !instanceGeneralSetting.disallowPasswordAuth && (
           <p className="w-full mt-4 text-sm">

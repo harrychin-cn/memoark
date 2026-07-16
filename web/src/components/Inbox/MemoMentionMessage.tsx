@@ -98,11 +98,13 @@ function MemoMentionMessage({ notification }: Props) {
           <div className="flex items-center justify-between gap-3 mb-1">
             <div className="flex items-center gap-1.5 flex-wrap min-w-0">
               <span className="font-semibold text-sm text-foreground/95">{sender?.displayName || sender?.username}</span>
-              <span className="text-sm text-muted-foreground/80">mentioned you {isCommentMention ? "in a comment" : "in a memo"}</span>
+              <span className="text-sm text-muted-foreground/80">
+                {t(isCommentMention ? "ui.mentioned-you-in-comment" : "ui.mentioned-you-in-memo")}
+              </span>
               <span className="text-xs text-muted-foreground/60">
                 {notification.createTime &&
                   timestampDate(notification.createTime)?.toLocaleDateString([], { month: "short", day: "numeric" })}{" "}
-                at{" "}
+                {t("ui.at")}{" "}
                 {notification.createTime &&
                   timestampDate(notification.createTime)?.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </span>
@@ -131,8 +133,8 @@ function MemoMentionMessage({ notification }: Props) {
           {mentionPayload.relatedMemo && (
             <div className="pl-3 border-l-2 border-muted-foreground/20 mb-3">
               <p className="text-sm text-foreground/60 line-clamp-1 leading-relaxed">
-                <span className="text-xs text-muted-foreground/50 font-medium mr-2 uppercase tracking-wide">Memo:</span>
-                {mentionPayload.relatedMemoSnippet || <span className="italic text-muted-foreground/40">Empty memo</span>}
+                <span className="text-xs text-muted-foreground/50 font-medium mr-2 uppercase tracking-wide">{t("ui.memo-label")}</span>
+                {mentionPayload.relatedMemoSnippet || <span className="italic text-muted-foreground/40">{t("ui.empty-memo")}</span>}
               </p>
             </div>
           )}
@@ -147,10 +149,10 @@ function MemoMentionMessage({ notification }: Props) {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-primary/60 font-semibold mb-1 uppercase tracking-wider">
-                  {isCommentMention ? "Comment" : "Memo"}
+                  {isCommentMention ? t("ui.comment") : t("common.memo")}
                 </p>
                 <p className="text-sm text-foreground/90 line-clamp-2">
-                  {mentionPayload.memoSnippet || <span className="italic text-muted-foreground/50">Empty memo</span>}
+                  {mentionPayload.memoSnippet || <span className="italic text-muted-foreground/50">{t("ui.empty-memo")}</span>}
                 </p>
               </div>
             </div>
