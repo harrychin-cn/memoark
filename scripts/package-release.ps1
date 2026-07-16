@@ -99,6 +99,8 @@ New-Item -ItemType Directory -Path (Join-Path $stagingDirectory "sbom") -Force |
 
 $binaryName = if ($GoOS -eq "windows") { "memos.exe" } else { "memos" }
 $binaryPath = Join-Path $stagingDirectory $binaryName
+$desktopBinaryName = "MemoArk.exe"
+$desktopBinaryPath = Join-Path $stagingDirectory $desktopBinaryName
 $noticesPath = Join-Path $stagingDirectory "THIRD_PARTY_NOTICES"
 $sbomPath = Join-Path $stagingDirectory "sbom/SBOM.cdx.json"
 $releaseManifestPath = Join-Path $stagingDirectory "RELEASE-MANIFEST.json"
@@ -109,13 +111,26 @@ try {
   Push-Location (Join-Path $repositoryRoot "web")
   try {
     $frontendBuildStarted = $true
-    & corepack pnpm install --frozen-lockfile
-    if ($LASTEXITCODE -ne 0) {
-      throw "pnpm install failed with exit code $LASTEXITCODE."
+    $previousErrorActionPreference = $ErrorActionPreference
+    try {
+      # Windows PowerShell 5.1 converts native stderr into ErrorRecord objects.
+      # pnpm can write normal lifecycle output there, so trust its exit code.
+      $ErrorActionPreference = "Continue"
+      & corepack pnpm install --frozen-lockfile
+      $pnpmInstallExitCode = $LASTEXITCODE
+      if ($pnpmInstallExitCode -eq 0) {
+        & corepack pnpm release
+        $pnpmReleaseExitCode = $LASTEXITCODE
+      }
     }
-    & corepack pnpm release
-    if ($LASTEXITCODE -ne 0) {
-      throw "pnpm release failed with exit code $LASTEXITCODE."
+    finally {
+      $ErrorActionPreference = $previousErrorActionPreference
+    }
+    if ($pnpmInstallExitCode -ne 0) {
+      throw "pnpm install failed with exit code $pnpmInstallExitCode."
+    }
+    if ($pnpmReleaseExitCode -ne 0) {
+      throw "pnpm release failed with exit code $pnpmReleaseExitCode."
     }
   }
   finally {
@@ -170,6 +185,10 @@ try {
     if ($LASTEXITCODE -ne 0) {
       throw "go build failed with exit code $LASTEXITCODE."
     }
+    & go build -trimpath -ldflags "$ldflags -H windowsgui" -o $desktopBinaryPath ./cmd/memoark-desktop
+    if ($LASTEXITCODE -ne 0) {
+      throw "desktop go build failed with exit code $LASTEXITCODE."
+    }
   }
   finally {
     Restore-EnvironmentValue -Name "GOOS" -Value $previousGoOS
@@ -185,6 +204,7 @@ try {
       "docs/ADVERTISING.md" = "ADVERTISING.md"
       "scripts/windows/START-MemoArk.cmd" = "START-MemoArk.cmd"
       "scripts/windows/README-LOCAL-zh-CN.txt" = "README-LOCAL-zh-CN.txt"
+      "scripts/windows/memoark.ico" = "memoark.ico"
     }
     foreach ($entry in $releaseFiles.GetEnumerator()) {
       $sourcePath = Join-Path $repositoryRoot $entry.Key
@@ -239,6 +259,7 @@ try {
 
   $requiredArchiveEntries = @(
     $binaryName,
+    $desktopBinaryName,
     "START-MemoArk.cmd",
     "README-LOCAL-zh-CN.txt",
     "LICENSE",
@@ -256,9 +277,26 @@ try {
   }
 
   $archivePath = Join-Path $resolvedOutputDirectory $archiveName
-  Compress-Archive -LiteralPath (Get-ChildItem -LiteralPath $stagingDirectory -Force | Select-Object -ExpandProperty FullName) -DestinationPath $archivePath -Force
-
+  Add-Type -AssemblyName System.IO.Compression
   Add-Type -AssemblyName System.IO.Compression.FileSystem
+  $archive = [System.IO.Compression.ZipFile]::Open($archivePath, [System.IO.Compression.ZipArchiveMode]::Create)
+  try {
+    Get-ChildItem -LiteralPath $stagingDirectory -File -Recurse |
+      Sort-Object FullName |
+      ForEach-Object {
+        $entryName = $_.FullName.Substring($stagingDirectory.Length).TrimStart("\", "/").Replace("\", "/")
+        [void][System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+          $archive,
+          $_.FullName,
+          $entryName,
+          [System.IO.Compression.CompressionLevel]::Optimal
+        )
+      }
+  }
+  finally {
+    $archive.Dispose()
+  }
+
   $archive = [System.IO.Compression.ZipFile]::OpenRead($archivePath)
   try {
     $archiveEntries = @($archive.Entries | ForEach-Object { $_.FullName.Replace("\", "/") })
@@ -282,8 +320,41 @@ try {
   $archiveChecksumPath = "$archivePath.sha256"
   Set-Content -LiteralPath $archiveChecksumPath -Value ("{0} *{1}" -f $archiveHash, $archiveName) -Encoding ASCII
 
+  $innoCompilerCandidates = @(
+    (Join-Path $env:LOCALAPPDATA "Programs\Inno Setup 6\ISCC.exe"),
+    (Join-Path ${env:ProgramFiles(x86)} "Inno Setup 6\ISCC.exe"),
+    (Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe")
+  )
+  $innoCompiler = @($innoCompilerCandidates | Where-Object { Test-Path -LiteralPath $_ })[0]
+  if ([string]::IsNullOrWhiteSpace($innoCompiler)) {
+    throw "Inno Setup 6 compiler was not found. Install JRSoftware.InnoSetup before building the Windows installer."
+  }
+  $installerScript = Join-Path $repositoryRoot "scripts/windows/MemoArk.iss"
+  Require-File $installerScript
+  $numericVersion = if ($Version -match '^(\d+)\.(\d+)\.(\d+)') {
+    "$($Matches[1]).$($Matches[2]).$($Matches[3]).0"
+  } else {
+    "0.0.0.0"
+  }
+  & $innoCompiler `
+    "/DMyAppVersion=$Version" `
+    "/DNumericVersion=$numericVersion" `
+    "/DSourceDir=$stagingDirectory" `
+    "/DOutputDir=$resolvedOutputDirectory" `
+    $installerScript
+  if ($LASTEXITCODE -ne 0) {
+    throw "Inno Setup compilation failed with exit code $LASTEXITCODE."
+  }
+  $installerPath = Join-Path $resolvedOutputDirectory "MemoArk-Setup.exe"
+  Require-File $installerPath
+  $installerHash = (Get-FileHash -Algorithm SHA256 -LiteralPath $installerPath).Hash.ToLowerInvariant()
+  $installerChecksumPath = "$installerPath.sha256"
+  Set-Content -LiteralPath $installerChecksumPath -Value ("{0} *{1}" -f $installerHash, "MemoArk-Setup.exe") -Encoding ASCII
+
   Write-Output "Created native release package: $archivePath"
   Write-Output "Created native release checksum: $archiveChecksumPath"
+  Write-Output "Created Windows installer: $installerPath"
+  Write-Output "Created Windows installer checksum: $installerChecksumPath"
 }
 finally {
   if ($frontendBuildStarted) {

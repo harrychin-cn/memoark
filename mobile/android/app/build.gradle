@@ -1,0 +1,79 @@
+plugins {
+    id "com.android.application"
+}
+
+def memoArkVersionName = providers.gradleProperty("memoarkVersionName").getOrElse("0.29.1-memoark.11-dev")
+def memoArkVersionCode = providers.gradleProperty("memoarkVersionCode").getOrElse("11").toInteger()
+def releaseKeystorePath = providers.gradleProperty("memoarkKeystorePath").orNull
+def releaseKeystorePassword = providers.gradleProperty("memoarkKeystorePassword").orNull
+def releaseKeyAlias = providers.gradleProperty("memoarkKeyAlias").orNull
+def releaseKeyPassword = providers.gradleProperty("memoarkKeyPassword").orNull
+def hasReleaseSigning = [releaseKeystorePath, releaseKeystorePassword, releaseKeyAlias, releaseKeyPassword].every { it }
+
+android {
+    namespace "com.memoark.app"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.memoark.app"
+        minSdk 26
+        targetSdk 35
+        versionCode memoArkVersionCode
+        versionName memoArkVersionName
+
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    if (hasReleaseSigning) {
+        signingConfigs {
+            release {
+                storeFile file(releaseKeystorePath)
+                storePassword releaseKeystorePassword
+                keyAlias releaseKeyAlias
+                keyPassword releaseKeyPassword
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        resources {
+            excludes += ["META-INF/LICENSE*", "META-INF/NOTICE*"]
+        }
+    }
+}
+
+dependencies {
+    implementation files("libs/mobilebackend.aar")
+}
+
+tasks.configureEach {
+    if (name == "packageRelease") {
+        doFirst {
+            if (!hasReleaseSigning) {
+                throw new GradleException("Release signing properties are required; use assembleDebug only for local validation.")
+            }
+        }
+    }
+}

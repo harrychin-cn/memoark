@@ -3,6 +3,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { downloadFileFromBlob, hasAndroidNativeBridge, shareFileWithNativeHost } from "@/helpers/utils";
 import { useTranslate } from "@/utils/i18n";
 import { useMemoViewContext } from "../MemoView/MemoViewContext";
 import MemoShareImagePreview from "./MemoShareImagePreview";
@@ -42,12 +43,7 @@ const MemoShareImageDialog = ({ open, onOpenChange }: MemoShareImageDialogProps)
     setIsRendering(true);
     try {
       const blob = await createShareBlob();
-      const url = URL.createObjectURL(blob);
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = buildMemoShareImageFileName(memo.name);
-      anchor.click();
-      URL.revokeObjectURL(url);
+      await downloadFileFromBlob(blob, buildMemoShareImageFileName(memo.name));
       toast.success(t("memo.share.image-downloaded"));
     } catch {
       toast.error(t("memo.share.image-download-failed"));
@@ -57,14 +53,18 @@ const MemoShareImageDialog = ({ open, onOpenChange }: MemoShareImageDialogProps)
   }, [createShareBlob, memo.name, t]);
 
   const handleNativeShare = useCallback(async () => {
-    if (typeof navigator.share !== "function") {
-      return;
-    }
-
     setIsRendering(true);
     try {
       const blob = await createShareBlob();
-      const file = new File([blob], buildMemoShareImageFileName(memo.name), { type: "image/png" });
+      const filename = buildMemoShareImageFileName(memo.name);
+      if (await shareFileWithNativeHost(blob, filename, memo.content.slice(0, 60))) {
+        return;
+      }
+
+      if (typeof navigator.share !== "function") {
+        return;
+      }
+      const file = new File([blob], filename, { type: "image/png" });
       if (typeof navigator.canShare === "function" && !navigator.canShare({ files: [file] })) {
         toast.error(t("memo.share.image-share-failed"));
         return;
@@ -84,7 +84,8 @@ const MemoShareImageDialog = ({ open, onOpenChange }: MemoShareImageDialogProps)
   }, [createShareBlob, memo.content, memo.name, t]);
 
   const supportsNativeShare =
-    typeof navigator !== "undefined" && typeof navigator.share === "function" && typeof navigator.canShare === "function";
+    hasAndroidNativeBridge() ||
+    (typeof navigator !== "undefined" && typeof navigator.share === "function" && typeof navigator.canShare === "function");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

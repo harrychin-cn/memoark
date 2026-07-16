@@ -189,12 +189,12 @@ func TestGetMemoByShare_ReturnsNotFoundForExpiredShare(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	expiredTs := time.Now().Add(-time.Hour).Unix()
+	expiredSec := time.Now().Add(-time.Hour).Unix()
 	expiredShare, err := ts.Store.CreateMemoShare(ctx, &store.MemoShare{
 		UID:       "expired-share-token",
 		MemoID:    parseMemoIDFromNameForTest(t, ts, memo.Name),
 		CreatorID: user.ID,
-		ExpiresTs: &expiredTs,
+		ExpiresTs: &expiredSec,
 	})
 	require.NoError(t, err)
 
