@@ -128,6 +128,7 @@ const DEFAULT_CENTER: MapPoint = { lat: 48.8584, lng: 2.2945 };
 const noopOnLocationChange = () => {};
 
 const LocationPicker = ({ readonly: readOnly = false, latlng, onChange = noopOnLocationChange, className }: LocationPickerProps) => {
+  const t = useTranslate();
   const tileUrl = useThemedTileUrl();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<L.Map | null>(null);
@@ -231,7 +232,7 @@ const LocationPicker = ({ readonly: readOnly = false, latlng, onChange = noopOnL
     renderMapControls(controlRoot, currentMap, latlng);
   }, [latlng?.lat, latlng?.lng]);
 
-  const statusLabel = readOnly ? "Pinned location" : latlng ? "Selected location" : "Choose a location";
+  const statusLabel = readOnly ? t("ui.pinned-location") : latlng ? t("ui.selected-location") : t("ui.choose-location");
 
   return (
     <div

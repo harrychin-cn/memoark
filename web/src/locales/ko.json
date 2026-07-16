@@ -154,7 +154,8 @@
     "username": "유저네임",
     "version": "버전",
     "visibility": "공개 범위",
-    "yourself": "자기 자신"
+    "yourself": "자기 자신",
+    "loading": "로드 중..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "비밀번호 인증은 허용되지 않습니다.",
     "password-sign-up-disabled": "비밀번호 등록이 불가능합니다.",
     "sign-up-disabled": "가입이 허용되지 않습니다.",
-    "identity-provider-id-placeholder": "예를 들어 github, okta-corp"
+    "identity-provider-id-placeholder": "예를 들어 github, okta-corp",
+    "selected-label": "{{label}}, 선택됨",
+    "calendar-for": "{{month}}용 달력",
+    "year-calendar": "연도 {{year}} 달력",
+    "days-count": "{{count}}일",
+    "pinned-location": "고정된 위치",
+    "selected-location": "선택한 위치",
+    "choose-location": "위치를 선택하세요",
+    "generic-error": "오류가 발생했습니다",
+    "cannot-save": "저장할 수 없습니다",
+    "download-attachment": "{{filename}} 다운로드",
+    "seek-audio": "{{filename}} 찾기",
+    "pause-audio": "{{title}} 일시중지",
+    "play-audio": "{{title}} 재생",
+    "playback-speed": "{{title}}의 재생 속도 {{rate}}x",
+    "inbox-unread-count": "{{inbox}}, {{count}} 읽지 않음",
+    "failed-sign-in": "로그인하지 못했습니다.",
+    "failed-link-identity": "계정 연결을 시작하지 못했습니다. 다시 시도해 주세요.",
+    "failed-unlink-identity": "ID 공급업체의 연결을 해제하지 못했습니다.",
+    "failed-update-profile": "프로필을 업데이트하지 못했습니다.",
+    "oauth-error": "OAuth 오류: {{error}}",
+    "more-info": "추가 정보: {{uri}}",
+    "auth-missing-parameters": "승인하지 못했습니다. 인증 코드 또는 상태 매개변수가 누락되었습니다.",
+    "auth-invalid-state": "승인하지 못했습니다. 유효하지 않거나 만료된 상태 매개변수입니다.",
+    "auth-link-sign-in-required": "계정을 연결하지 못했습니다. MemoArk에 다시 로그인한 후 다시 시도해 주세요.",
+    "auth-user-changed": "OAuth 콜백이 완료되기 전에 로그인한 사용자가 변경되었습니다. 계정 설정에서 연결을 다시 시도하세요.",
+    "failed-authenticate": "인증에 실패했습니다.",
+    "sign-in-options-load-failed": "로그인 옵션을 로드하지 못했습니다. 다시 시도해 주세요.",
+    "sign-in-initiate-failed": "로그인을 시작하지 못했습니다. 다시 시도해 주세요.",
+    "sign-up-failed": "가입 실패"
   }
 }

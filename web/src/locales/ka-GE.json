@@ -154,7 +154,8 @@
     "username": "მომხმარებლის სახელი",
     "version": "ვერსია",
     "visibility": "ხილვადობა",
-    "yourself": "თქვენ"
+    "yourself": "თქვენ",
+    "loading": "იტვირთება..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "პაროლის ავთენტიფიკაცია დაუშვებელია.",
     "password-sign-up-disabled": "პაროლის რეგისტრაცია დაუშვებელია.",
     "sign-up-disabled": "რეგისტრაცია დაუშვებელია.",
-    "identity-provider-id-placeholder": "მაგ. github, okta-corp"
+    "identity-provider-id-placeholder": "მაგ. github, okta-corp",
+    "selected-label": "{{label}}, არჩეულია",
+    "calendar-for": "კალენდარი {{month}}-სთვის",
+    "year-calendar": "წელი {{year}} კალენდარი",
+    "days-count": "{{count}} დღე",
+    "pinned-location": "ჩამაგრებული მდებარეობა",
+    "selected-location": "არჩეული ადგილმდებარეობა",
+    "choose-location": "აირჩიეთ ადგილმდებარეობა",
+    "generic-error": "მოხდა შეცდომა",
+    "cannot-save": "შენახვა შეუძლებელია",
+    "download-attachment": "ჩამოტვირთეთ {{filename}}",
+    "seek-audio": "მოიძიეთ {{filename}}",
+    "pause-audio": "შეაჩერეთ {{title}}",
+    "play-audio": "ითამაშეთ {{title}}",
+    "playback-speed": "დაკვრის სიჩქარე {{rate}}x {{title}}-ისთვის",
+    "inbox-unread-count": "{{inbox}}, {{count}} წაუკითხავი",
+    "failed-sign-in": "შესვლა ვერ მოხერხდა.",
+    "failed-link-identity": "ანგარიშის მიბმის დაწყება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+    "failed-unlink-identity": "პირადობის პროვაიდერის მიბმის გაუქმება ვერ მოხერხდა.",
+    "failed-update-profile": "პროფილის განახლება ვერ მოხერხდა",
+    "oauth-error": "OAuth შეცდომა: {{error}}",
+    "more-info": "დამატებითი ინფორმაცია: {{uri}}",
+    "auth-missing-parameters": "ავტორიზაცია ვერ მოხერხდა. აკლია ავტორიზაციის კოდი ან სახელმწიფო პარამეტრი.",
+    "auth-invalid-state": "ავტორიზაცია ვერ მოხერხდა. არასწორი ან ვადაგასული მდგომარეობის პარამეტრი.",
+    "auth-link-sign-in-required": "ანგარიშის მიბმა ვერ მოხერხდა. გთხოვთ, ხელახლა შეხვიდეთ MemoArk-ში და ხელახლა სცადოთ.",
+    "auth-user-changed": "შესული მომხმარებელი შეიცვალა OAuth გამოძახების დასრულებამდე. გთხოვთ, ხელახლა სცადოთ ანგარიშის პარამეტრებიდან დაკავშირება.",
+    "failed-authenticate": "ავთენტიფიკაცია ვერ მოხერხდა.",
+    "sign-in-options-load-failed": "შესვლის ვარიანტების ჩატვირთვა ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+    "sign-in-initiate-failed": "შესვლის დაწყება ვერ მოხერხდა. გთხოვთ, სცადოთ ხელახლა.",
+    "sign-up-failed": "რეგისტრაცია ვერ მოხერხდა"
   }
 }

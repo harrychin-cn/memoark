@@ -154,7 +154,8 @@
     "username": "Nom d'utilisateur",
     "version": "Version",
     "visibility": "Visibilité",
-    "yourself": "Vous-même"
+    "yourself": "Vous-même",
+    "loading": "Chargement..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "L'authentification par mot de passe n'est pas autorisée.",
     "password-sign-up-disabled": "L'inscription par mot de passe n'est pas autorisée.",
     "sign-up-disabled": "L'inscription n'est pas autorisée.",
-    "identity-provider-id-placeholder": "par ex. github, okta-corp"
+    "identity-provider-id-placeholder": "par ex. github, okta-corp",
+    "selected-label": "{{label}}, sélectionné",
+    "calendar-for": "Calendrier pour {{month}}",
+    "year-calendar": "Calendrier année {{year}}",
+    "days-count": "{{count}} jours",
+    "pinned-location": "Emplacement épinglé",
+    "selected-location": "Emplacement sélectionné",
+    "choose-location": "Choisissez un emplacement",
+    "generic-error": "Une erreur s'est produite",
+    "cannot-save": "Impossible d'enregistrer",
+    "download-attachment": "Télécharger {{filename}}",
+    "seek-audio": "Rechercher {{filename}}",
+    "pause-audio": "Pause {{title}}",
+    "play-audio": "Jouer à {{title}}",
+    "playback-speed": "Vitesse de lecture {{rate}}x pour {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} non lu",
+    "failed-sign-in": "Échec de la connexion.",
+    "failed-link-identity": "Échec de la création de l'association du compte. Veuillez réessayer.",
+    "failed-unlink-identity": "Échec de la dissociation du fournisseur d'identité.",
+    "failed-update-profile": "Échec de la mise à jour du profil",
+    "oauth-error": "Erreur OAuth : {{error}}",
+    "more-info": "Plus d'informations : {{uri}}",
+    "auth-missing-parameters": "Échec de l'autorisation. Code d'autorisation ou paramètre d'état manquant.",
+    "auth-invalid-state": "Échec de l'autorisation. Paramètre d'état invalide ou expiré.",
+    "auth-link-sign-in-required": "Échec de l'association du compte. Veuillez vous reconnecter à MemoArk et réessayer.",
+    "auth-user-changed": "L'utilisateur connecté a changé avant la fin du rappel OAuth. Veuillez réessayer l'association à partir des paramètres du compte.",
+    "failed-authenticate": "Échec de l'authentification.",
+    "sign-in-options-load-failed": "Échec du chargement des options de connexion. Veuillez réessayer.",
+    "sign-in-initiate-failed": "Échec de la connexion. Veuillez réessayer.",
+    "sign-up-failed": "Échec de l'inscription"
   }
 }

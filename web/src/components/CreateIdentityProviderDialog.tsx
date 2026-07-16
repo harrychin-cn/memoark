@@ -23,6 +23,7 @@ import {
 import { useTranslate } from "@/utils/i18n";
 
 const DEFAULT_TEMPLATE = "GitHub";
+const CUSTOM_TEMPLATE = "custom";
 
 const templateList: IdentityProvider[] = [
   create(IdentityProviderSchema, {
@@ -99,7 +100,7 @@ const templateList: IdentityProvider[] = [
   }),
   create(IdentityProviderSchema, {
     name: "",
-    title: "Custom",
+    title: CUSTOM_TEMPLATE,
     type: IdentityProvider_Type.OAUTH2,
     identifierFilter: "",
     config: create(IdentityProviderConfigSchema, {
@@ -180,8 +181,9 @@ function normalizeScopes(value: string): string[] {
     .filter(Boolean);
 }
 
-function buildDialogStateFromTemplate(templateName: string) {
+function buildDialogStateFromTemplate(templateName: string, customTitle: string) {
   const template = templateList.find((item) => item.title === templateName) ?? templateList[0];
+  const templateTitle = template.title === CUSTOM_TEMPLATE ? customTitle : template.title;
   const oauth2Config =
     template.type === IdentityProvider_Type.OAUTH2 && template.config?.config.case === "oauth2Config"
       ? create(OAuth2ConfigSchema, template.config.config.value)
@@ -189,7 +191,7 @@ function buildDialogStateFromTemplate(templateName: string) {
 
   return {
     basicInfo: {
-      title: template.title,
+      title: templateTitle,
       identifier: sanitizeIdentifier(template.title),
       identifierFilter: template.identifierFilter,
     },
@@ -275,12 +277,14 @@ function CreateIdentityProviderDialog({ open, onOpenChange, identityProvider, on
       return;
     }
 
-    const nextState = isCreating ? buildDialogStateFromTemplate(selectedTemplate) : buildDialogStateFromProvider(identityProvider!);
+    const nextState = isCreating
+      ? buildDialogStateFromTemplate(selectedTemplate, t("setting.sso.custom"))
+      : buildDialogStateFromProvider(identityProvider!);
     setBasicInfo(nextState.basicInfo);
     setType(nextState.type);
     setOAuth2Config(nextState.oauth2Config);
     setOAuth2Scopes(nextState.oauth2Scopes);
-  }, [open, isCreating, identityProvider, selectedTemplate]);
+  }, [open, isCreating, identityProvider, selectedTemplate, t]);
 
   const handleDialogClose = (nextOpen: boolean) => {
     if (isSubmitting && !nextOpen) {
@@ -433,7 +437,7 @@ function CreateIdentityProviderDialog({ open, onOpenChange, identityProvider, on
                     <SelectContent>
                       {templateList.map((template) => (
                         <SelectItem key={template.title} value={template.title}>
-                          {template.title}
+                          {template.title === CUSTOM_TEMPLATE ? t("setting.sso.custom") : template.title}
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -117,7 +117,7 @@ const LinkedIdentitySection = () => {
     } catch (error) {
       handleError(error, toast.error, {
         context: "Failed to initiate OAuth flow",
-        fallbackMessage: "Failed to initiate account linking. Please try again.",
+        fallbackMessage: t("ui.failed-link-identity"),
       });
     }
   };
@@ -135,7 +135,7 @@ const LinkedIdentitySection = () => {
     } catch (error) {
       handleError(error, toast.error, {
         context: "Delete linked identity",
-        fallbackMessage: "Failed to unlink identity provider.",
+        fallbackMessage: t("ui.failed-unlink-identity"),
       });
     }
   };

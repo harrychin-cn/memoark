@@ -154,7 +154,8 @@
     "username": "उपयोगकर्ता नाम",
     "version": "संस्करण",
     "visibility": "दृश्यता",
-    "yourself": "खुद"
+    "yourself": "खुद",
+    "loading": "लोड हो रहा है..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "पासवर्ड प्रमाणीकरण की अनुमति नहीं है.",
     "password-sign-up-disabled": "पासवर्ड साइन अप की अनुमति नहीं है.",
     "sign-up-disabled": "साइन अप की अनुमति नहीं है.",
-    "identity-provider-id-placeholder": "जैसे github, okta-corp"
+    "identity-provider-id-placeholder": "जैसे github, okta-corp",
+    "selected-label": "{{label}}, चयनित",
+    "calendar-for": "{{month}} के लिए कैलेंडर",
+    "year-calendar": "वर्ष {{year}} कैलेंडर",
+    "days-count": "{{count}} दिन",
+    "pinned-location": "पिन किया गया स्थान",
+    "selected-location": "चयनित स्थान",
+    "choose-location": "एक स्थान चुनें",
+    "generic-error": "एक त्रुटि हुई",
+    "cannot-save": "सहेजा नहीं जा सकता",
+    "download-attachment": "{{filename}} डाउनलोड करें",
+    "seek-audio": "{{filename}} खोजें",
+    "pause-audio": "{{title}} रोकें",
+    "play-audio": "{{title}} चलायें",
+    "playback-speed": "{{title}} के लिए प्लेबैक गति {{rate}}x",
+    "inbox-unread-count": "{{inbox}}, {{count}} अपठित",
+    "failed-sign-in": "साइन इन करने में विफल.",
+    "failed-link-identity": "खाता लिंक करना आरंभ करने में विफल. कृपया पुन: प्रयास करें।",
+    "failed-unlink-identity": "पहचान प्रदाता को अनलिंक करने में विफल.",
+    "failed-update-profile": "प्रोफ़ाइल अपडेट करने में विफल",
+    "oauth-error": "OAuth त्रुटि: {{error}}",
+    "more-info": "अधिक जानकारी: {{uri}}",
+    "auth-missing-parameters": "अधिकृत करने में विफल. अनुपलब्ध प्राधिकरण कोड या राज्य पैरामीटर।",
+    "auth-invalid-state": "अधिकृत करने में विफल. अमान्य या समाप्त हो चुका राज्य पैरामीटर.",
+    "auth-link-sign-in-required": "खाता लिंक करने में विफल. कृपया मेमोआर्क में दोबारा साइन इन करें और पुनः प्रयास करें।",
+    "auth-user-changed": "OAuth कॉलबैक पूरा होने से पहले साइन-इन किया गया उपयोगकर्ता बदल गया। कृपया खाता सेटिंग से लिंक करने का पुनः प्रयास करें।",
+    "failed-authenticate": "प्रमाणित करने में विफल.",
+    "sign-in-options-load-failed": "साइन-इन विकल्प लोड करने में विफल. कृपया पुन: प्रयास करें।",
+    "sign-in-initiate-failed": "साइन-इन आरंभ करने में विफल. कृपया पुन: प्रयास करें।",
+    "sign-up-failed": "साइन अप विफल रहा"
   }
 }

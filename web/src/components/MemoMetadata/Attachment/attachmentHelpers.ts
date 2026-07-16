@@ -38,8 +38,8 @@ export const separateAttachments = (attachments: Attachment[]): AttachmentGroups
   );
 };
 
-export const getAttachmentMetadata = (attachment: Attachment): AttachmentMetadata => ({
-  fileTypeLabel: getFileTypeLabel(attachment.type),
+export const getAttachmentMetadata = (attachment: Attachment, fallbackFileLabel = ""): AttachmentMetadata => ({
+  fileTypeLabel: getFileTypeLabel(attachment.type, fallbackFileLabel),
   fileSizeLabel: attachment.size ? formatFileSize(Number(attachment.size)) : undefined,
 });
 

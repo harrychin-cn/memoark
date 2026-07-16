@@ -154,7 +154,8 @@
     "username": "Ім'я користувача",
     "version": "Версія",
     "visibility": "Видимість",
-    "yourself": "Ви"
+    "yourself": "Ви",
+    "loading": "Завантаження..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Автентифікація за паролем заборонена.",
     "password-sign-up-disabled": "Реєстрація за паролем заборонена.",
     "sign-up-disabled": "Реєстрація не дозволяється.",
-    "identity-provider-id-placeholder": "напр. github, okta-corp"
+    "identity-provider-id-placeholder": "напр. github, okta-corp",
+    "selected-label": "{{label}}, вибрано",
+    "calendar-for": "Календар для {{month}}",
+    "year-calendar": "Річний календар {{year}}",
+    "days-count": "{{count}} днів",
+    "pinned-location": "Закріплене місцезнаходження",
+    "selected-location": "Вибране місце",
+    "choose-location": "Виберіть локацію",
+    "generic-error": "Сталася помилка",
+    "cannot-save": "Неможливо зберегти",
+    "download-attachment": "Завантажити {{filename}}",
+    "seek-audio": "Шукайте {{filename}}",
+    "pause-audio": "Призупинити {{title}}",
+    "play-audio": "Грати в {{title}}",
+    "playback-speed": "Швидкість відтворення {{rate}}x для {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} непрочитано",
+    "failed-sign-in": "Не вдалося ввійти.",
+    "failed-link-identity": "Не вдалося розпочати зв’язування облікового запису. Спробуйте ще раз.",
+    "failed-unlink-identity": "Не вдалося від’єднати постачальника ідентифікаційної інформації.",
+    "failed-update-profile": "Не вдалося оновити профіль",
+    "oauth-error": "Помилка OAuth: {{error}}",
+    "more-info": "Додаткова інформація: {{uri}}",
+    "auth-missing-parameters": "Не вдалося авторизуватися. Відсутній код авторизації або параметр стану.",
+    "auth-invalid-state": "Не вдалося авторизуватися. Недійсний або прострочений параметр стану.",
+    "auth-link-sign-in-required": "Не вдалося пов’язати обліковий запис. Увійдіть у MemoArk знову та повторіть спробу.",
+    "auth-user-changed": "Користувач, який увійшов, змінився до завершення зворотного виклику OAuth. Повторіть спробу зв’язування з налаштувань облікового запису.",
+    "failed-authenticate": "Не вдалося автентифікувати.",
+    "sign-in-options-load-failed": "Не вдалося завантажити параметри входу. Спробуйте ще раз.",
+    "sign-in-initiate-failed": "Не вдалося розпочати вхід. Спробуйте ще раз.",
+    "sign-up-failed": "Зареєструватися не вдалося"
   }
 }

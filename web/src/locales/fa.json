@@ -154,7 +154,8 @@
     "username": "نام کاربری",
     "version": "نسخه",
     "visibility": "قابل مشاهده توسط",
-    "yourself": "خودتان"
+    "yourself": "خودتان",
+    "loading": "در حال بارگیری..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "احراز هویت رمز عبور مجاز نیست.",
     "password-sign-up-disabled": "ثبت نام با رمز عبور مجاز نیست.",
     "sign-up-disabled": "ثبت نام مجاز نیست.",
-    "identity-provider-id-placeholder": "به عنوان مثال github، okta-corp"
+    "identity-provider-id-placeholder": "به عنوان مثال github، okta-corp",
+    "selected-label": "{{label}}، انتخاب شده است",
+    "calendar-for": "تقویم برای {{month}}",
+    "year-calendar": "تقویم سال {{year}}",
+    "days-count": "{{count}} روز",
+    "pinned-location": "مکان پین شده",
+    "selected-location": "مکان انتخاب شده",
+    "choose-location": "یک مکان را انتخاب کنید",
+    "generic-error": "خطایی رخ داد",
+    "cannot-save": "ذخیره نمی شود",
+    "download-attachment": "دانلود {{filename}}",
+    "seek-audio": "{{filename}} را جستجو کنید",
+    "pause-audio": "مکث {{title}}",
+    "play-audio": "بازی {{title}}",
+    "playback-speed": "سرعت پخش {{rate}}x برای {{title}}",
+    "inbox-unread-count": "{{inbox}}، {{count}} خوانده نشده",
+    "failed-sign-in": "وارد سیستم نشد.",
+    "failed-link-identity": "پیوند حساب آغاز نشد. لطفا دوباره امتحان کنید.",
+    "failed-unlink-identity": "پیوند ارائه دهنده هویت لغو نشد.",
+    "failed-update-profile": "نمایه به‌روزرسانی نشد",
+    "oauth-error": "خطای OAuth: {{error}}",
+    "more-info": "اطلاعات بیشتر: {{uri}}",
+    "auth-missing-parameters": "مجوز صادر نشد. کد مجوز یا پارامتر وضعیت موجود نیست.",
+    "auth-invalid-state": "مجوز صادر نشد. پارامتر حالت نامعتبر یا منقضی شده است.",
+    "auth-link-sign-in-required": "پیوند حساب انجام نشد. لطفاً دوباره وارد MemoArk شوید و دوباره امتحان کنید.",
+    "auth-user-changed": "کاربر وارد شده قبل از تکمیل تماس OAuth تغییر کرد. لطفاً دوباره سعی کنید از تنظیمات حساب پیوند دهید.",
+    "failed-authenticate": "احراز هویت ناموفق بود.",
+    "sign-in-options-load-failed": "گزینه های ورود به سیستم بارگیری نشد. لطفا دوباره امتحان کنید.",
+    "sign-in-initiate-failed": "ورود به سیستم آغاز نشد. لطفا دوباره امتحان کنید.",
+    "sign-up-failed": "ثبت نام انجام نشد"
   }
 }

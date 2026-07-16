@@ -154,7 +154,8 @@
     "username": "Korisničko ime",
     "version": "Verzija",
     "visibility": "Vidljivost",
-    "yourself": "Ti"
+    "yourself": "Ti",
+    "loading": "Učitavanje..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Provjera autentičnosti lozinke nije dopuštena.",
     "password-sign-up-disabled": "Prijava lozinkom nije dopuštena.",
     "sign-up-disabled": "Prijava nije dopuštena.",
-    "identity-provider-id-placeholder": "npr. github, okta-corp"
+    "identity-provider-id-placeholder": "npr. github, okta-corp",
+    "selected-label": "{{label}}, odabrano",
+    "calendar-for": "Kalendar za {{month}}",
+    "year-calendar": "Godina {{year}} kalendar",
+    "days-count": "{{count}} dana",
+    "pinned-location": "Prikvačena lokacija",
+    "selected-location": "Odabrana lokacija",
+    "choose-location": "Odaberite mjesto",
+    "generic-error": "Došlo je do pogreške",
+    "cannot-save": "Nije moguće spremiti",
+    "download-attachment": "Preuzmite {{filename}}",
+    "seek-audio": "Tražite {{filename}}",
+    "pause-audio": "Pauziraj {{title}}",
+    "play-audio": "Igrajte {{title}}",
+    "playback-speed": "Brzina reprodukcije {{rate}}x za {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} nepročitano",
+    "failed-sign-in": "Prijava nije uspjela.",
+    "failed-link-identity": "Pokretanje povezivanja računa nije uspjelo. Molimo pokušajte ponovo.",
+    "failed-unlink-identity": "Prekid veze s pružateljem identiteta nije uspio.",
+    "failed-update-profile": "Ažuriranje profila nije uspjelo",
+    "oauth-error": "OAuth pogreška: {{error}}",
+    "more-info": "Više informacija: {{uri}}",
+    "auth-missing-parameters": "Autorizacija nije uspjela. Nedostaje autorizacijski kod ili parametar stanja.",
+    "auth-invalid-state": "Autorizacija nije uspjela. Nevažeći ili istekao parametar stanja.",
+    "auth-link-sign-in-required": "Povezivanje računa nije uspjelo. Prijavite se ponovno na MemoArk i pokušajte ponovo.",
+    "auth-user-changed": "Prijavljeni korisnik se promijenio prije dovršetka OAuth povratnog poziva. Pokušajte se ponovno povezati iz postavki računa.",
+    "failed-authenticate": "Provjera autentičnosti nije uspjela.",
+    "sign-in-options-load-failed": "Učitavanje opcija prijave nije uspjelo. Molimo pokušajte ponovo.",
+    "sign-in-initiate-failed": "Pokretanje prijave nije uspjelo. Molimo pokušajte ponovo.",
+    "sign-up-failed": "Prijava nije uspjela"
   }
 }

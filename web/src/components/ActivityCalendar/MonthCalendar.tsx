@@ -64,7 +64,7 @@ export const MonthCalendar = memo((props: MonthCalendarProps) => {
   const flatDays = useMemo(() => weeks.flatMap((week) => week.days), [weeks]);
 
   return (
-    <div className={cn("flex flex-col", className)} role="grid" aria-label={`Calendar for ${month}`}>
+    <div className={cn("flex flex-col", className)} role="grid" aria-label={t("ui.calendar-for", { month })}>
       <WeekdayHeader weekDays={rotatedWeekDays} size={size} />
 
       <div className={cn("grid grid-cols-7", gridStyle.gap)} role="rowgroup">

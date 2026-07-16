@@ -154,7 +154,8 @@
     "username": "Nazwa użytkownika",
     "version": "Wersja",
     "visibility": "Widoczność",
-    "yourself": "Ty sam"
+    "yourself": "Ty sam",
+    "loading": "Ładowanie..."
   },
   "editor": {
     "draft-recovery": {
@@ -370,7 +371,7 @@
       "upload-method": "Metoda przesyłania"
     },
     "delete-all-unused": "Usuń wszystkie nieużywane",
-    "delete-all-unused-confirm": "Na pewno chcesz usunąć wszystkie nieużywane zasoby?? TA AKCJA JEST NIEODWRACALNA",
+    "delete-all-unused-confirm": "Na pewno chcesz usunąć wszystkie nieużywane zasoby? TA AKCJA JEST NIEODWRACALNA",
     "delete-all-unused-error": "Nie udało się usunąć nieużywanych zasobów",
     "delete-all-unused-success": "Zasoby zostały pomyślnie usunięte",
     "delete-resource": "Usuń zasób",
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Uwierzytelnianie hasłem jest niedozwolone.",
     "password-sign-up-disabled": "Rejestracja za pomocą hasła nie jest dozwolona.",
     "sign-up-disabled": "Rejestracja nie jest dozwolona.",
-    "identity-provider-id-placeholder": "np. github, okta-corp"
+    "identity-provider-id-placeholder": "np. github, okta-corp",
+    "selected-label": "Wybrano {{label}}",
+    "calendar-for": "Kalendarz dla {{month}}",
+    "year-calendar": "Rok kalendarzowy {{year}}",
+    "days-count": "{{count}} dni",
+    "pinned-location": "Przypięta lokalizacja",
+    "selected-location": "Wybrana lokalizacja",
+    "choose-location": "Wybierz lokalizację",
+    "generic-error": "Wystąpił błąd",
+    "cannot-save": "Nie można zapisać",
+    "download-attachment": "Pobierz {{filename}}",
+    "seek-audio": "Szukaj {{filename}}",
+    "pause-audio": "Wstrzymaj {{title}}",
+    "play-audio": "Zagraj w {{title}}",
+    "playback-speed": "Prędkość odtwarzania {{rate}}x dla {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} nieprzeczytane",
+    "failed-sign-in": "Nie udało się zalogować.",
+    "failed-link-identity": "Nie udało się zainicjować łączenia kont. Spróbuj ponownie.",
+    "failed-unlink-identity": "Nie udało się odłączyć dostawcy tożsamości.",
+    "failed-update-profile": "Nie udało się zaktualizować profilu",
+    "oauth-error": "Błąd OAuth: {{error}}",
+    "more-info": "Więcej informacji: {{uri}}",
+    "auth-missing-parameters": "Nie udało się autoryzować. Brak kodu autoryzacyjnego lub parametru stanu.",
+    "auth-invalid-state": "Nie udało się autoryzować. Nieprawidłowy parametr stanu lub wygasł.",
+    "auth-link-sign-in-required": "Nie udało się połączyć konta. Zaloguj się ponownie do MemoArk i spróbuj ponownie.",
+    "auth-user-changed": "Zalogowany użytkownik zmienił się przed zakończeniem wywołania zwrotnego OAuth. Spróbuj ponownie połączyć się w ustawieniach konta.",
+    "failed-authenticate": "Nie udało się uwierzytelnić.",
+    "sign-in-options-load-failed": "Nie udało się załadować opcji logowania. Spróbuj ponownie.",
+    "sign-in-initiate-failed": "Nie udało się zainicjować logowania. Spróbuj ponownie.",
+    "sign-up-failed": "Rejestracja nie powiodła się"
   }
 }

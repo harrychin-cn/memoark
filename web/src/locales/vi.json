@@ -154,7 +154,8 @@
     "username": "Tên người dùng",
     "version": "Phiên bản",
     "visibility": "Quyền xem",
-    "yourself": "Bản thân"
+    "yourself": "Bản thân",
+    "loading": "Đang tải..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Xác thực mật khẩu không được phép.",
     "password-sign-up-disabled": "Đăng ký mật khẩu không được phép.",
     "sign-up-disabled": "Đăng ký không được phép.",
-    "identity-provider-id-placeholder": "ví dụ. github, okta-corp"
+    "identity-provider-id-placeholder": "ví dụ. github, okta-corp",
+    "selected-label": "{{label}}, đã chọn",
+    "calendar-for": "Lịch cho {{month}}",
+    "year-calendar": "Năm lịch {{year}}",
+    "days-count": "{{count}} ngày",
+    "pinned-location": "Vị trí đã ghim",
+    "selected-location": "Vị trí đã chọn",
+    "choose-location": "Chọn một vị trí",
+    "generic-error": "Đã xảy ra lỗi",
+    "cannot-save": "Không thể lưu",
+    "download-attachment": "Tải xuống {{filename}}",
+    "seek-audio": "Tìm kiếm {{filename}}",
+    "pause-audio": "Tạm dừng {{title}}",
+    "play-audio": "Chơi {{title}}",
+    "playback-speed": "Tốc độ phát lại {{rate}}x cho {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} chưa đọc",
+    "failed-sign-in": "Không thể đăng nhập.",
+    "failed-link-identity": "Không thể bắt đầu liên kết tài khoản. Vui lòng thử lại.",
+    "failed-unlink-identity": "Không thể hủy liên kết nhà cung cấp danh tính.",
+    "failed-update-profile": "Không thể cập nhật hồ sơ",
+    "oauth-error": "Lỗi OAuth: {{error}}",
+    "more-info": "Thông tin thêm: {{uri}}",
+    "auth-missing-parameters": "Không thể ủy quyền. Thiếu mã ủy quyền hoặc tham số trạng thái.",
+    "auth-invalid-state": "Không thể ủy quyền. Tham số trạng thái không hợp lệ hoặc đã hết hạn.",
+    "auth-link-sign-in-required": "Không thể liên kết tài khoản. Vui lòng đăng nhập lại vào MemoArk và thử lại.",
+    "auth-user-changed": "Người dùng đã đăng nhập đã thay đổi trước khi lệnh gọi lại OAuth hoàn tất. Vui lòng thử liên kết lại từ cài đặt tài khoản.",
+    "failed-authenticate": "Không thể xác thực.",
+    "sign-in-options-load-failed": "Không tải được tùy chọn đăng nhập. Vui lòng thử lại.",
+    "sign-in-initiate-failed": "Không thể bắt đầu đăng nhập. Vui lòng thử lại.",
+    "sign-up-failed": "Đăng ký không thành công"
   }
 }

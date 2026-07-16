@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useTranslate } from "@/utils/i18n";
 import { DEFAULT_CELL_SIZE, SMALL_CELL_SIZE } from "./constants";
 import type { CalendarDayCell, CalendarSize } from "./types";
 import { getCalendarCellStateClass, getCellIntensityClass } from "./utils";
@@ -16,6 +17,7 @@ export interface CalendarCellProps {
 
 export const CalendarCell = memo((props: CalendarCellProps) => {
   const { day, maxCount, tooltipText, onClick, size = "default", disableTooltip = false } = props;
+  const t = useTranslate();
 
   const handleClick = () => {
     if (onClick) {
@@ -33,7 +35,7 @@ export const CalendarCell = memo((props: CalendarCellProps) => {
     smallExtraClasses,
   );
   const isInteractive = Boolean(onClick);
-  const ariaLabel = day.isSelected ? `${tooltipText} (selected)` : tooltipText;
+  const ariaLabel = day.isSelected ? t("ui.selected-label", { label: tooltipText }) : tooltipText;
 
   if (!day.isCurrentMonth) {
     return <div className={cn(baseClasses, "text-muted-foreground/30 bg-transparent border-transparent cursor-default")}>{day.label}</div>;

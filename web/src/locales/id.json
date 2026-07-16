@@ -154,7 +154,8 @@
     "username": "Nama pengguna",
     "version": "Versi",
     "visibility": "Visibilitas",
-    "yourself": "Anda sendiri"
+    "yourself": "Anda sendiri",
+    "loading": "Memuat..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Otentikasi kata sandi tidak diperbolehkan.",
     "password-sign-up-disabled": "Pendaftaran kata sandi tidak diperbolehkan.",
     "sign-up-disabled": "Mendaftar tidak diperbolehkan.",
-    "identity-provider-id-placeholder": "misalnya github, okta-corp"
+    "identity-provider-id-placeholder": "misalnya github, okta-corp",
+    "selected-label": "{{label}}, dipilih",
+    "calendar-for": "Kalender untuk {{month}}",
+    "year-calendar": "Kalender Tahun {{year}}",
+    "days-count": "{{count}} hari",
+    "pinned-location": "Lokasi yang disematkan",
+    "selected-location": "Lokasi yang dipilih",
+    "choose-location": "Pilih lokasi",
+    "generic-error": "Terjadi kesalahan",
+    "cannot-save": "Tidak dapat menyimpan",
+    "download-attachment": "Unduh {{filename}}",
+    "seek-audio": "Carilah {{filename}}",
+    "pause-audio": "Jeda {{title}}",
+    "play-audio": "Mainkan {{title}}",
+    "playback-speed": "Kecepatan pemutaran {{rate}}x untuk {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} belum dibaca",
+    "failed-sign-in": "Gagal masuk.",
+    "failed-link-identity": "Gagal memulai penautan akun. Silakan coba lagi.",
+    "failed-unlink-identity": "Gagal membatalkan tautan penyedia identitas.",
+    "failed-update-profile": "Gagal memperbarui profil",
+    "oauth-error": "Kesalahan OAuth: {{error}}",
+    "more-info": "Informasi lebih lanjut: {{uri}}",
+    "auth-missing-parameters": "Gagal memberi otorisasi. Kode otorisasi atau parameter status tidak ada.",
+    "auth-invalid-state": "Gagal memberi otorisasi. Parameter status tidak valid atau kedaluwarsa.",
+    "auth-link-sign-in-required": "Gagal menautkan akun. Silakan masuk ke MemoArk lagi dan coba lagi.",
+    "auth-user-changed": "Pengguna yang masuk berubah sebelum panggilan balik OAuth selesai. Silakan coba lagi menautkan dari pengaturan akun.",
+    "failed-authenticate": "Gagal mengautentikasi.",
+    "sign-in-options-load-failed": "Gagal memuat opsi masuk. Silakan coba lagi.",
+    "sign-in-initiate-failed": "Gagal memulai proses masuk. Silakan coba lagi.",
+    "sign-up-failed": "Pendaftaran gagal"
   }
 }

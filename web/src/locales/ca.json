@@ -154,7 +154,8 @@
     "username": "Nom d'usuari",
     "version": "Versió",
     "visibility": "Visibilitat",
-    "yourself": "Tu mateix"
+    "yourself": "Tu mateix",
+    "loading": "Carregant..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "No es permet l'autenticació de contrasenya.",
     "password-sign-up-disabled": "No es permet registrar-se amb contrasenya.",
     "sign-up-disabled": "No es permet la inscripció.",
-    "identity-provider-id-placeholder": "p. ex. github, okta-corp"
+    "identity-provider-id-placeholder": "p. ex. github, okta-corp",
+    "selected-label": "{{label}}, seleccionat",
+    "calendar-for": "Calendari per a {{month}}",
+    "year-calendar": "Calendari de l'any {{year}}",
+    "days-count": "{{count}} dies",
+    "pinned-location": "Ubicació fixada",
+    "selected-location": "Ubicació seleccionada",
+    "choose-location": "Trieu una ubicació",
+    "generic-error": "S'ha produït un error",
+    "cannot-save": "No es pot desar",
+    "download-attachment": "Descarrega {{filename}}",
+    "seek-audio": "Busqueu {{filename}}",
+    "pause-audio": "Pausa {{title}}",
+    "play-audio": "Juga a {{title}}",
+    "playback-speed": "Velocitat de reproducció {{rate}}x per a {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} sense llegir",
+    "failed-sign-in": "No s'ha pogut iniciar la sessió.",
+    "failed-link-identity": "No s'ha pogut iniciar l'enllaç del compte. Si us plau, torna-ho a provar.",
+    "failed-unlink-identity": "No s'ha pogut desenllaçar el proveïdor d'identitat.",
+    "failed-update-profile": "No s'ha pogut actualitzar el perfil",
+    "oauth-error": "Error d'OAuth: {{error}}",
+    "more-info": "Més informació: {{uri}}",
+    "auth-missing-parameters": "No s'ha pogut autoritzar. Falta el codi d'autorització o el paràmetre d'estat.",
+    "auth-invalid-state": "No s'ha pogut autoritzar. Paràmetre d'estat no vàlid o caducat.",
+    "auth-link-sign-in-required": "No s'ha pogut enllaçar el compte. Si us plau, torneu a iniciar la sessió a MemoArk i torneu-ho a provar.",
+    "auth-user-changed": "L'usuari que ha iniciat la sessió ha canviat abans que es completés la devolució de trucada d'OAuth. Torneu a provar d'enllaçar des de la configuració del compte.",
+    "failed-authenticate": "No s'ha pogut autenticar.",
+    "sign-in-options-load-failed": "No s'han pogut carregar les opcions d'inici de sessió. Si us plau, torna-ho a provar.",
+    "sign-in-initiate-failed": "No s'ha pogut iniciar l'inici de sessió. Si us plau, torna-ho a provar.",
+    "sign-up-failed": "La inscripció ha fallat"
   }
 }

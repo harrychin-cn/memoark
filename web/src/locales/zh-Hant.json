@@ -36,7 +36,7 @@
     },
     "labels": {
       "live": "即時",
-      "live-photo": "Live Photo",
+      "live-photo": "原況照片",
       "memo": "備忘錄",
       "not-linked": "未連結",
       "unknown-date": "未知日期",
@@ -154,7 +154,8 @@
     "username": "帳號",
     "version": "版本",
     "visibility": "瀏覽權限",
-    "yourself": "您自己"
+    "yourself": "您自己",
+    "loading": "載入中..."
   },
   "editor": {
     "draft-recovery": {
@@ -246,8 +247,8 @@
     },
     "copy-content": "複製內容",
     "copy-link": "複製連結",
-    "count-memos-in-date": "{{count}} 條{{memos}}於 {{date}}",
-    "count-memos-updated-in-date": "{{count}} 條{{memos}}更新於 {{date}}",
+    "count-memos-in-date": "{{date}} 有 {{count}} 則{{memos}}",
+    "count-memos-updated-in-date": "{{date}} 更新了 {{count}} 則{{memos}}",
     "delete-confirm": "您確定要刪除此備忘錄嗎？",
     "delete-confirm-description": "此操作無法恢復。附件、連結和引用將一併被移除。",
     "direction": "排序",
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "密碼登入已停用。",
     "password-sign-up-disabled": "密碼註冊已停用。",
     "sign-up-disabled": "註冊功能已停用。",
-    "identity-provider-id-placeholder": "?? github?okta-corp"
+    "identity-provider-id-placeholder": "例如 github、okta-corp",
+    "selected-label": "{{label}}，已選取",
+    "calendar-for": "{{month}} 月曆",
+    "year-calendar": "{{year}} 年月曆",
+    "days-count": "{{count}} 天",
+    "pinned-location": "已固定的位置",
+    "selected-location": "已選取的位置",
+    "choose-location": "選擇位置",
+    "generic-error": "發生錯誤",
+    "cannot-save": "無法儲存",
+    "download-attachment": "下載 {{filename}}",
+    "seek-audio": "調整 {{filename}} 的播放進度",
+    "pause-audio": "暫停 {{title}}",
+    "play-audio": "播放 {{title}}",
+    "playback-speed": "{{title}} 的播放速度：{{rate}} 倍",
+    "inbox-unread-count": "{{inbox}}，{{count}} 則未讀",
+    "failed-sign-in": "登入失敗。",
+    "failed-link-identity": "連結帳戶失敗，請再試一次。",
+    "failed-unlink-identity": "取消連結身分提供者失敗。",
+    "failed-update-profile": "更新資料失敗",
+    "oauth-error": "OAuth 錯誤：{{error}}",
+    "more-info": "更多資訊：{{uri}}",
+    "auth-missing-parameters": "授權失敗：缺少授權碼或狀態參數。",
+    "auth-invalid-state": "授權失敗：狀態參數無效或已過期。",
+    "auth-link-sign-in-required": "帳戶連結失敗，請重新登入 MemoArk 後再試一次。",
+    "auth-user-changed": "OAuth 回呼完成前登入使用者已變更，請從帳戶設定重新連結。",
+    "failed-authenticate": "身分驗證失敗。",
+    "sign-in-options-load-failed": "載入登入選項失敗，請再試一次。",
+    "sign-in-initiate-failed": "啟動登入失敗，請再試一次。",
+    "sign-up-failed": "註冊失敗"
   }
 }

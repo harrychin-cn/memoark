@@ -154,7 +154,8 @@
     "username": "Nome utente",
     "version": "Versione",
     "visibility": "Visibilità",
-    "yourself": "Te stesso"
+    "yourself": "Te stesso",
+    "loading": "Caricamento..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "L'autenticazione della password non è consentita.",
     "password-sign-up-disabled": "Non è consentita la registrazione con password.",
     "sign-up-disabled": "Non è consentita l'iscrizione.",
-    "identity-provider-id-placeholder": "per esempio. github, okta-corp"
+    "identity-provider-id-placeholder": "per esempio. github, okta-corp",
+    "selected-label": "{{label}}, selezionato",
+    "calendar-for": "Calendario per {{month}}",
+    "year-calendar": "Calendario dell'anno {{year}}",
+    "days-count": "{{count}} giorni",
+    "pinned-location": "Posizione appuntata",
+    "selected-location": "Località selezionata",
+    "choose-location": "Scegli una posizione",
+    "generic-error": "Si è verificato un errore",
+    "cannot-save": "Impossibile salvare",
+    "download-attachment": "Scarica {{filename}}",
+    "seek-audio": "Cerca {{filename}}",
+    "pause-audio": "Pausa {{title}}",
+    "play-audio": "Riproduci {{title}}",
+    "playback-speed": "Velocità di riproduzione {{rate}}x per {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} non letto",
+    "failed-sign-in": "Impossibile accedere.",
+    "failed-link-identity": "Impossibile avviare il collegamento dell'account. Per favore riprova.",
+    "failed-unlink-identity": "Impossibile scollegare il provider di identità.",
+    "failed-update-profile": "Impossibile aggiornare il profilo",
+    "oauth-error": "Errore OAuth: {{error}}",
+    "more-info": "Maggiori informazioni: {{uri}}",
+    "auth-missing-parameters": "Autorizzazione non riuscita. Codice di autorizzazione o parametro di stato mancante.",
+    "auth-invalid-state": "Autorizzazione non riuscita. Parametro di stato non valido o scaduto.",
+    "auth-link-sign-in-required": "Impossibile collegare l'account. Accedi nuovamente a MemoArk e riprova.",
+    "auth-user-changed": "L'utente che ha effettuato l'accesso è cambiato prima del completamento della richiamata OAuth. Riprova a collegarti dalle impostazioni dell'account.",
+    "failed-authenticate": "Impossibile autenticarsi.",
+    "sign-in-options-load-failed": "Impossibile caricare le opzioni di accesso. Per favore riprova.",
+    "sign-in-initiate-failed": "Impossibile avviare l'accesso. Per favore riprova.",
+    "sign-up-failed": "La registrazione non è riuscita"
   }
 }

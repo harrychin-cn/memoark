@@ -154,7 +154,8 @@
     "username": "Brukernavn",
     "version": "Versjon",
     "visibility": "Synlighet",
-    "yourself": "Deg selv"
+    "yourself": "Deg selv",
+    "loading": "Laster inn..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Passordautentisering er ikke tillatt.",
     "password-sign-up-disabled": "Passordregistrering er ikke tillatt.",
     "sign-up-disabled": "Påmelding er ikke tillatt.",
-    "identity-provider-id-placeholder": "f.eks. github, okta-corp"
+    "identity-provider-id-placeholder": "f.eks. github, okta-corp",
+    "selected-label": "{{label}}, valgt",
+    "calendar-for": "Kalender for {{month}}",
+    "year-calendar": "År {{year}} kalender",
+    "days-count": "{{count}} dager",
+    "pinned-location": "Festet plassering",
+    "selected-location": "Valgt sted",
+    "choose-location": "Velg et sted",
+    "generic-error": "Det oppstod en feil",
+    "cannot-save": "Kan ikke lagre",
+    "download-attachment": "Last ned {{filename}}",
+    "seek-audio": "Søk {{filename}}",
+    "pause-audio": "Sett {{title}} på pause",
+    "play-audio": "Spill {{title}}",
+    "playback-speed": "Avspillingshastighet {{rate}}x for {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} ulest",
+    "failed-sign-in": "Kunne ikke logge på.",
+    "failed-link-identity": "Kunne ikke starte kontotilknytning. Vennligst prøv igjen.",
+    "failed-unlink-identity": "Kunne ikke koble fra identitetsleverandøren.",
+    "failed-update-profile": "Kunne ikke oppdatere profilen",
+    "oauth-error": "OAuth-feil: {{error}}",
+    "more-info": "Mer info: {{uri}}",
+    "auth-missing-parameters": "Kunne ikke godkjenne. Mangler autorisasjonskode eller tilstandsparameter.",
+    "auth-invalid-state": "Kunne ikke godkjenne. Ugyldig eller utløpt tilstandsparameter.",
+    "auth-link-sign-in-required": "Kunne ikke koble kontoen. Logg på MemoArk igjen og prøv på nytt.",
+    "auth-user-changed": "Den påloggede brukeren endret seg før tilbakeringingen av OAuth ble fullført. Prøv å koble fra kontoinnstillingene på nytt.",
+    "failed-authenticate": "Kunne ikke autentisere.",
+    "sign-in-options-load-failed": "Kunne ikke laste inn påloggingsalternativer. Vennligst prøv igjen.",
+    "sign-in-initiate-failed": "Kunne ikke starte pålogging. Vennligst prøv igjen.",
+    "sign-up-failed": "Registreringen mislyktes"
   }
 }
