@@ -9,6 +9,9 @@ Markdown-first experience while focusing on the failure cases that make people l
 
 > **Project status:** early development. The current baseline is Memos `v0.29.1` at commit `5f194da`.
 
+> **普通用户：** 请查看 [中文功能使用说明](docs/user-guide-zh-CN.md)，或前往
+> [GitHub 最新版本页面](https://github.com/harrychin-cn/memoark/releases/latest) 下载 Windows 安装包、Windows 便携版和 Android APK。
+
 ## What MemoArk adds
 
 - **Edit draft protection** — unsaved edits are cached locally while you type.
@@ -20,7 +23,18 @@ Markdown-first experience while focusing on the failure cases that make people l
 Development priorities are tracked in the [MemoArk roadmap](ROADMAP.md), with the public upstream feedback behind each decision kept
 in [the research snapshot](docs/product/upstream-feedback-2026-07-13.md).
 
-## Quick start
+## Desktop and mobile use
+
+MemoArk provides complete local packages that do not require Docker, Node.js, Go, a VPS, or an external server:
+
+- **Windows installer:** download `MemoArk-Setup.exe`; it creates desktop and Start menu shortcuts and runs without a console window.
+- **Windows portable:** download the `windows-amd64.zip` archive and run `START-MemoArk.cmd` after extracting it.
+- **Android:** download the `Android.apk`; the frontend, local backend, and SQLite database are included in the app.
+
+See the [Chinese user guide / 中文功能使用说明](docs/user-guide-zh-CN.md) for installation, first use, memo editing, attachments,
+sharing, import/export, backup, upgrades, uninstallation, and troubleshooting.
+
+## Server quick start
 
 Prerequisites: Git, Node.js 24+, pnpm 11+, and Docker.
 
@@ -49,21 +63,20 @@ Before upgrading an existing SQLite database, MemoArk creates and verifies a bac
 [SQLite migration backups and restore](docs/operations/sqlite-migration-backups.md) for the backup location, Docker behavior, and manual
 restore procedure.
 
-## Windows local use (no Docker or server)
+## Windows local development package
 
-MemoArk can also run as a Windows native archive. It still opens in a browser, but the program, database, and attachments stay on the
-same Windows computer; no Docker, VPS, or public server is required. The included `START-MemoArk.cmd` launcher binds only to
-`127.0.0.1`, opens the local UI, and stores data under `%LOCALAPPDATA%\MemoArk` by default.
+The release page provides a normal Windows installer and a portable archive. The program, database, and attachments stay on the same
+Windows computer, and the local service binds only to `127.0.0.1`. User data is stored under `%LOCALAPPDATA%\MemoArk` by default and
+is retained across upgrades and uninstallation.
 
-Build a Windows `amd64` archive from a clean source worktree:
+Maintainers can build the complete Windows and Android release set from a clean source worktree:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-release.ps1 -GoOS windows -GoArch amd64 -Version 0.29.1-memoark.10
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/package-complete-release.ps1 -Version 0.29.1-memoark.12 -AndroidVersionCode 12
 ```
 
-Extract the generated ZIP and double-click `START-MemoArk.cmd`. Keep its command window open while using MemoArk and press `Ctrl+C`
-there to stop it safely. The archive includes `SHA256SUMS.txt`, a release manifest, notices, and a CycloneDX SBOM; the adjacent
-`.zip.sha256` file verifies the downloaded archive.
+The output includes `MemoArk-Setup.exe`, the portable ZIP, a signed Android APK, SHA-256 checksums, release manifests, notices, and
+CycloneDX SBOMs. See the [user guide](docs/user-guide-zh-CN.md) for end-user instructions.
 
 ## Development
 
