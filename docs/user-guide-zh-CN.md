@@ -1,5 +1,7 @@
 # MemoArk 功能使用说明
 
+**中文说明** | [English Guide](user-guide-en.md)
+
 本文面向直接安装 Windows 或 Android 版本的普通用户。两种版本都把后端、前端和 SQLite 数据库放在本机，不需要
 Docker、Node.js、Go、VPS 或外部服务器。
 
