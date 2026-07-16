@@ -38,7 +38,7 @@ const SignIn = () => {
         if (isActive) {
           handleError(error, toast.error, {
             context: "Failed to load sign-in options",
-            fallbackMessage: "Failed to load sign-in options. Please try again.",
+            fallbackMessage: t("ui.sign-in-options-load-failed"),
           });
         }
       } finally {
@@ -86,7 +86,7 @@ const SignIn = () => {
       } catch (error) {
         handleError(error, toast.error, {
           context: "Failed to initiate OAuth flow",
-          fallbackMessage: "Failed to initiate sign-in. Please try again.",
+          fallbackMessage: t("ui.sign-in-initiate-failed"),
         });
       }
     }

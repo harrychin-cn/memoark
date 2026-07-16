@@ -57,7 +57,7 @@ export const LinkMemoDialog = ({
           <div className="max-h-[320px] overflow-y-auto">
             {filteredMemos.length === 0 ? (
               <div className="py-8 text-center text-sm text-muted-foreground">
-                {isFetching ? "Loading..." : t("reference.no-memos-found")}
+                {isFetching ? t("common.loading") : t("reference.no-memos-found")}
               </div>
             ) : (
               filteredMemos.map((memo) => {

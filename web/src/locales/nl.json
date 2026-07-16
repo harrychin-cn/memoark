@@ -154,7 +154,8 @@
     "username": "Gebruikersnaam",
     "version": "Versie",
     "visibility": "Zichtbaarheid",
-    "yourself": "Jijzelf"
+    "yourself": "Jijzelf",
+    "loading": "Laden..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Wachtwoordverificatie is niet toegestaan.",
     "password-sign-up-disabled": "Wachtwoordaanmelding is niet toegestaan.",
     "sign-up-disabled": "Aanmelden is niet toegestaan.",
-    "identity-provider-id-placeholder": "bijv. github, okta-corp"
+    "identity-provider-id-placeholder": "bijv. github, okta-corp",
+    "selected-label": "{{label}}, geselecteerd",
+    "calendar-for": "Kalender voor {{month}}",
+    "year-calendar": "Jaar {{year}} kalender",
+    "days-count": "{{count}} dagen",
+    "pinned-location": "Vastgezette locatie",
+    "selected-location": "Geselecteerde locatie",
+    "choose-location": "Kies een locatie",
+    "generic-error": "Er is een fout opgetreden",
+    "cannot-save": "Kan niet opslaan",
+    "download-attachment": "{{filename}} downloaden",
+    "seek-audio": "Zoek {{filename}}",
+    "pause-audio": "Pauzeer {{title}}",
+    "play-audio": "Speel {{title}}",
+    "playback-speed": "Afspeelsnelheid {{rate}}x voor {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} ongelezen",
+    "failed-sign-in": "Inloggen is mislukt.",
+    "failed-link-identity": "Kan accountkoppeling niet starten. Probeer het opnieuw.",
+    "failed-unlink-identity": "Kan de identiteitsprovider niet ontkoppelen.",
+    "failed-update-profile": "Kan profiel niet updaten",
+    "oauth-error": "OAuth-fout: {{error}}",
+    "more-info": "Meer info: {{uri}}",
+    "auth-missing-parameters": "Autoriseren is niet gelukt. Ontbrekende autorisatiecode of statusparameter.",
+    "auth-invalid-state": "Autoriseren is niet gelukt. Ongeldige of verlopen statusparameter.",
+    "auth-link-sign-in-required": "Kan account niet koppelen. Meld u opnieuw aan bij MemoArk en probeer het opnieuw.",
+    "auth-user-changed": "De ingelogde gebruiker is gewijzigd voordat de OAuth-callback is voltooid. Probeer opnieuw te koppelen vanuit de accountinstellingen.",
+    "failed-authenticate": "Authenticatie mislukt.",
+    "sign-in-options-load-failed": "Kan aanmeldingsopties niet laden. Probeer het opnieuw.",
+    "sign-in-initiate-failed": "Kan het inloggen niet starten. Probeer het opnieuw.",
+    "sign-up-failed": "Aanmelden mislukt"
   }
 }

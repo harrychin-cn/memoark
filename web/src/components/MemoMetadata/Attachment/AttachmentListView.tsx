@@ -33,7 +33,8 @@ interface AttachmentListViewProps {
 type VisualItem = AttachmentVisualItem;
 
 const AttachmentMeta = ({ attachment }: { attachment: Attachment }) => {
-  const { fileTypeLabel, fileSizeLabel } = getAttachmentMetadata(attachment);
+  const t = useTranslate();
+  const { fileTypeLabel, fileSizeLabel } = getAttachmentMetadata(attachment, t("common.file"));
 
   return (
     <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-muted-foreground">
@@ -227,15 +228,24 @@ const AudioList = ({ attachments, compact = false }: { attachments: Attachment[]
   </div>
 );
 
-const DocsList = ({ attachments }: { attachments: Attachment[] }) => (
-  <div className="flex flex-col gap-2">
-    {attachments.map((attachment) => (
-      <a key={attachment.name} href={getAttachmentUrl(attachment)} download title={`Download ${attachment.filename}`}>
-        <DocumentItem attachment={attachment} />
-      </a>
-    ))}
-  </div>
-);
+const DocsList = ({ attachments }: { attachments: Attachment[] }) => {
+  const t = useTranslate();
+
+  return (
+    <div className="flex flex-col gap-2">
+      {attachments.map((attachment) => (
+        <a
+          key={attachment.name}
+          href={getAttachmentUrl(attachment)}
+          download
+          title={t("ui.download-attachment", { filename: attachment.filename })}
+        >
+          <DocumentItem attachment={attachment} />
+        </a>
+      ))}
+    </div>
+  );
+};
 
 const Divider = () => <div className="border-t border-border/70 opacity-80" />;
 

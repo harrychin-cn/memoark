@@ -95,7 +95,7 @@ function UpdateCustomizedProfileDialog({ open, onOpenChange, onSuccess }: Props)
     } catch (error) {
       handleError(error, toast.error, {
         context: "Update customized profile",
-        fallbackMessage: "Failed to update profile",
+        fallbackMessage: t("ui.failed-update-profile"),
       });
     } finally {
       setIsLoading(false);
@@ -154,7 +154,7 @@ function UpdateCustomizedProfileDialog({ open, onOpenChange, onSuccess }: Props)
               {t("common.cancel")}
             </Button>
             <Button onClick={handleSaveButtonClick} disabled={isLoading} className="flex-1 sm:flex-initial">
-              {isLoading ? "Saving..." : t("common.save")}
+              {isLoading ? t("editor.saving") : t("common.save")}
             </Button>
           </div>
         </DialogFooter>

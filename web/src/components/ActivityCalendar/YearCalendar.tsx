@@ -1,5 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { memo, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import type { MemoTimeBasis } from "@/contexts/ViewContext";
 import { cn } from "@/lib/utils";
@@ -80,15 +81,30 @@ interface MonthCardProps {
   timeBasis?: MemoTimeBasis;
 }
 
-const MonthCard = memo(({ month, data, maxCount, onDateClick, timeBasis }: MonthCardProps) => (
-  <article className="flex flex-col gap-2 rounded-xl border border-border/20 bg-muted/5 p-3 transition-colors hover:bg-muted/10">
-    <header className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-widest">{getMonthLabel(month)}</header>
-    <MonthCalendar month={month} data={data} maxCount={maxCount} size="small" onClick={onDateClick} disableTooltips timeBasis={timeBasis} />
-  </article>
-));
+const MonthCard = memo(({ month, data, maxCount, onDateClick, timeBasis }: MonthCardProps) => {
+  const { i18n } = useTranslation();
+
+  return (
+    <article className="flex flex-col gap-2 rounded-xl border border-border/20 bg-muted/5 p-3 transition-colors hover:bg-muted/10">
+      <header className="text-[10px] font-medium text-muted-foreground/80 uppercase tracking-widest">
+        {getMonthLabel(month, i18n.resolvedLanguage ?? i18n.language)}
+      </header>
+      <MonthCalendar
+        month={month}
+        data={data}
+        maxCount={maxCount}
+        size="small"
+        onClick={onDateClick}
+        disableTooltips
+        timeBasis={timeBasis}
+      />
+    </article>
+  );
+});
 MonthCard.displayName = "MonthCard";
 
 export const YearCalendar = memo(({ selectedYear, data, onYearChange, onDateClick, className, timeBasis }: YearCalendarProps) => {
+  const t = useTranslate();
   const currentYear = useMemo(() => new Date().getFullYear(), []);
   const yearData = useMemo(() => filterDataByYear(data, selectedYear), [data, selectedYear]);
   const months = useMemo(() => generateMonthsForYear(selectedYear), [selectedYear]);
@@ -98,7 +114,10 @@ export const YearCalendar = memo(({ selectedYear, data, onYearChange, onDateClic
   const canGoNext = selectedYear < getMaxYear();
 
   return (
-    <section className={cn("w-full flex flex-col gap-5 px-4 py-4 select-none", className)} aria-label={`Year ${selectedYear} calendar`}>
+    <section
+      className={cn("w-full flex flex-col gap-5 px-4 py-4 select-none", className)}
+      aria-label={t("ui.year-calendar", { year: selectedYear })}
+    >
       <YearNavigation
         selectedYear={selectedYear}
         currentYear={currentYear}

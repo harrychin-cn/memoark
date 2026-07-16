@@ -154,7 +154,8 @@
     "username": "Имя пользователя",
     "version": "Версия",
     "visibility": "Видимость",
-    "yourself": "Вы"
+    "yourself": "Вы",
+    "loading": "Загрузка..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Аутентификация по паролю не допускается.",
     "password-sign-up-disabled": "Регистрация с паролем не разрешена.",
     "sign-up-disabled": "Регистрация не разрешена.",
-    "identity-provider-id-placeholder": "например github, okta-corp"
+    "identity-provider-id-placeholder": "например github, okta-corp",
+    "selected-label": "{{label}}, выбрано",
+    "calendar-for": "Календарь для {{month}}",
+    "year-calendar": "Годовой календарь {{year}}",
+    "days-count": "{{count}} дней",
+    "pinned-location": "Закрепленное местоположение",
+    "selected-location": "Выбранное местоположение",
+    "choose-location": "Выберите местоположение",
+    "generic-error": "Произошла ошибка",
+    "cannot-save": "Невозможно сохранить",
+    "download-attachment": "Скачать {{filename}}",
+    "seek-audio": "Ищите {{filename}}",
+    "pause-audio": "Пауза {{title}}",
+    "play-audio": "Играть {{title}}",
+    "playback-speed": "Скорость воспроизведения {{rate}}x для {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} непрочитаны",
+    "failed-sign-in": "Не удалось войти в систему.",
+    "failed-link-identity": "Не удалось инициировать привязку аккаунта. Пожалуйста, попробуйте еще раз.",
+    "failed-unlink-identity": "Не удалось отключить поставщика удостоверений.",
+    "failed-update-profile": "Не удалось обновить профиль",
+    "oauth-error": "Ошибка OAuth: {{error}}.",
+    "more-info": "Дополнительная информация: {{uri}}.",
+    "auth-missing-parameters": "Не удалось авторизоваться. Отсутствует код авторизации или параметр состояния.",
+    "auth-invalid-state": "Не удалось авторизоваться. Неверный или просроченный параметр состояния.",
+    "auth-link-sign-in-required": "Не удалось привязать аккаунт. Пожалуйста, войдите в MemoArk еще раз и повторите попытку.",
+    "auth-user-changed": "Вошедший в систему пользователь изменился до завершения обратного вызова OAuth. Пожалуйста, повторите попытку установления связи в настройках учетной записи.",
+    "failed-authenticate": "Не удалось пройти аутентификацию.",
+    "sign-in-options-load-failed": "Не удалось загрузить параметры входа. Пожалуйста, попробуйте еще раз.",
+    "sign-in-initiate-failed": "Не удалось начать вход. Пожалуйста, попробуйте еще раз.",
+    "sign-up-failed": "Регистрация не удалась"
   }
 }

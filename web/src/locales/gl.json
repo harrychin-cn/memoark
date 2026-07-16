@@ -154,7 +154,8 @@
     "username": "Identificador",
     "version": "Versión",
     "visibility": "Visibilidade",
-    "yourself": "Ti"
+    "yourself": "Ti",
+    "loading": "Cargando..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Non se permite a autenticación de contrasinal.",
     "password-sign-up-disabled": "O rexistro de contrasinal non está permitido.",
     "sign-up-disabled": "Non se permite rexistrarse.",
-    "identity-provider-id-placeholder": "p.ex. github, okta-corp"
+    "identity-provider-id-placeholder": "p.ex. github, okta-corp",
+    "selected-label": "{{label}}, seleccionado",
+    "calendar-for": "Calendario para {{month}}",
+    "year-calendar": "Calendario do ano {{year}}",
+    "days-count": "{{count}} días",
+    "pinned-location": "Localización fixada",
+    "selected-location": "Localización seleccionada",
+    "choose-location": "Escolle unha localización",
+    "generic-error": "Produciuse un erro",
+    "cannot-save": "Non se pode gardar",
+    "download-attachment": "Descarga: {{filename}}",
+    "seek-audio": "Busca {{filename}}",
+    "pause-audio": "Pausa {{title}}",
+    "play-audio": "Xoga a {{title}}",
+    "playback-speed": "Velocidade de reprodución {{rate}}x para {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} sen ler",
+    "failed-sign-in": "Produciuse un erro ao iniciar sesión.",
+    "failed-link-identity": "Produciuse un erro ao iniciar a vinculación da conta. Téntao de novo.",
+    "failed-unlink-identity": "Produciuse un erro ao desvincular o provedor de identidade.",
+    "failed-update-profile": "Produciuse un erro ao actualizar o perfil",
+    "oauth-error": "Erro de OAuth: {{error}}",
+    "more-info": "Máis información: {{uri}}",
+    "auth-missing-parameters": "Produciuse un erro ao autorizar. Falta o código de autorización ou o parámetro de estado.",
+    "auth-invalid-state": "Produciuse un erro ao autorizar. Parámetro de estado non válido ou caducado.",
+    "auth-link-sign-in-required": "Produciuse un erro ao ligar a conta. Inicia sesión de novo en MemoArk e téntao de novo.",
+    "auth-user-changed": "O usuario que iniciou sesión cambiou antes de que se completase a devolución de chamada de OAuth. Tenta de novo a ligazón desde a configuración da conta.",
+    "failed-authenticate": "Produciuse un erro ao autenticarse.",
+    "sign-in-options-load-failed": "Produciuse un erro ao cargar as opcións de inicio de sesión. Téntao de novo.",
+    "sign-in-initiate-failed": "Produciuse un erro ao iniciar o inicio de sesión. Téntao de novo.",
+    "sign-up-failed": "Produciuse un erro"
   }
 }

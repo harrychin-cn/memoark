@@ -81,7 +81,7 @@ const SignUp = () => {
       navigateTo(redirectTarget || ROUTES.HOME, { replace: true });
     } catch (error: unknown) {
       handleError(error, toast.error, {
-        fallbackMessage: "Sign up failed",
+        fallbackMessage: t("ui.sign-up-failed"),
       });
     }
     actionBtnLoadingState.setFinish();

@@ -154,7 +154,8 @@
     "username": "वापरकर्तानाव",
     "version": "आवृत्ती",
     "visibility": "दृश्यमानता",
-    "yourself": "स्वतः"
+    "yourself": "स्वतः",
+    "loading": "लोड करत आहे..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "पासवर्ड ऑथेंटिकेशनला परवानगी नाही.",
     "password-sign-up-disabled": "पासवर्ड साइन अप करण्याची परवानगी नाही.",
     "sign-up-disabled": "साइन अप करण्याची परवानगी नाही.",
-    "identity-provider-id-placeholder": "उदा. github, okta-corp"
+    "identity-provider-id-placeholder": "उदा. github, okta-corp",
+    "selected-label": "{{label}}, निवडले",
+    "calendar-for": "{{month}} साठी कॅलेंडर",
+    "year-calendar": "वर्ष {{year}} कॅलेंडर",
+    "days-count": "{{count}} दिवस",
+    "pinned-location": "पिन केलेले स्थान",
+    "selected-location": "निवडलेले स्थान",
+    "choose-location": "एक स्थान निवडा",
+    "generic-error": "एक त्रुटी आली",
+    "cannot-save": "जतन करू शकत नाही",
+    "download-attachment": "{{filename}} डाउनलोड करा",
+    "seek-audio": "{{filename}} शोधा",
+    "pause-audio": "{{title}} विराम द्या",
+    "play-audio": "{{title}} प्ले करा",
+    "playback-speed": "{{title}} साठी प्लेबॅक गती {{rate}}x",
+    "inbox-unread-count": "{{inbox}}, {{count}} न वाचलेले",
+    "failed-sign-in": "साइन इन करण्यात अयशस्वी.",
+    "failed-link-identity": "खाते लिंक करणे सुरू करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
+    "failed-unlink-identity": "ओळख प्रदाता अनलिंक करण्यात अयशस्वी.",
+    "failed-update-profile": "प्रोफाइल अपडेट करण्यात अयशस्वी",
+    "oauth-error": "OAuth त्रुटी: {{error}}",
+    "more-info": "अधिक माहिती: {{uri}}",
+    "auth-missing-parameters": "अधिकृत करण्यात अयशस्वी. गहाळ प्रमाणीकरण कोड किंवा राज्य पॅरामीटर.",
+    "auth-invalid-state": "अधिकृत करण्यात अयशस्वी. अवैध किंवा कालबाह्य राज्य पॅरामीटर.",
+    "auth-link-sign-in-required": "खाते लिंक करण्यात अयशस्वी. कृपया मेमोआर्कमध्ये पुन्हा साइन इन करा आणि पुन्हा प्रयत्न करा.",
+    "auth-user-changed": "OAuth कॉलबॅक पूर्ण होण्यापूर्वी साइन इन केलेला वापरकर्ता बदलला. कृपया खाते सेटिंग्जमधून लिंक करण्याचा पुन्हा प्रयत्न करा.",
+    "failed-authenticate": "प्रमाणीकरण करण्यात अयशस्वी.",
+    "sign-in-options-load-failed": "साइन-इन पर्याय लोड करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
+    "sign-in-initiate-failed": "साइन इन सुरू करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा.",
+    "sign-up-failed": "साइन अप अयशस्वी"
   }
 }

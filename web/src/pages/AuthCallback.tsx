@@ -9,7 +9,7 @@ import useNavigateTo from "@/hooks/useNavigateTo";
 import { handleError } from "@/lib/error";
 import { ROUTES } from "@/router/routes";
 import { getSafeRedirectPath } from "@/utils/auth-redirect";
-import { getLocaleWithFallback } from "@/utils/i18n";
+import { getLocaleWithFallback, useTranslate } from "@/utils/i18n";
 import { validateOAuthState } from "@/utils/oauth";
 
 interface State {
@@ -17,7 +17,10 @@ interface State {
   errorMessage: string;
 }
 
+class UserFacingAuthError extends Error {}
+
 const AuthCallback = () => {
+  const t = useTranslate();
   const navigateTo = useNavigateTo();
   const { currentUser, initialize, isInitialized } = useAuth();
   const [searchParams] = useSearchParams();
@@ -41,12 +44,12 @@ const AuthCallback = () => {
 
     if (error) {
       // OAuth provider returned an error
-      let errorMessage = `OAuth error: ${error}`;
+      let errorMessage = t("ui.oauth-error", { error });
       if (errorDescription) {
         errorMessage += `\n${decodeURIComponent(errorDescription)}`;
       }
       if (errorUri) {
-        errorMessage += `\nMore info: ${errorUri}`;
+        errorMessage += `\n${t("ui.more-info", { uri: errorUri })}`;
       }
 
       setState({
@@ -62,7 +65,7 @@ const AuthCallback = () => {
     if (!code || !state) {
       setState({
         loading: false,
-        errorMessage: "Failed to authorize. Missing authorization code or state parameter.",
+        errorMessage: t("ui.auth-missing-parameters"),
       });
       return;
     }
@@ -72,7 +75,7 @@ const AuthCallback = () => {
     if (!validatedState) {
       setState({
         loading: false,
-        errorMessage: "Failed to authorize. Invalid or expired state parameter. This may indicate a CSRF attack attempt.",
+        errorMessage: t("ui.auth-invalid-state"),
       });
       return;
     }
@@ -85,10 +88,10 @@ const AuthCallback = () => {
       try {
         if (flowMode === "link") {
           if (!currentUser?.name) {
-            throw new Error("Failed to link account. Please sign in to MemoArk again and retry.");
+            throw new UserFacingAuthError(t("ui.auth-link-sign-in-required"));
           }
           if (linkingUserName && currentUser.name !== linkingUserName) {
-            throw new Error("The signed-in user changed before the OAuth callback completed. Please retry linking from account settings.");
+            throw new UserFacingAuthError(t("ui.auth-user-changed"));
           }
           await userServiceClient.createLinkedIdentity({
             parent: currentUser.name,
@@ -125,9 +128,9 @@ const AuthCallback = () => {
         navigateTo(getSafeRedirectPath(returnUrl) ?? ROUTES.HOME);
       } catch (error: unknown) {
         handleError(error, () => {}, {
-          fallbackMessage: "Failed to authenticate.",
+          fallbackMessage: t("ui.failed-authenticate"),
           onError: (err) => {
-            const message = err instanceof Error ? err.message : "Failed to authenticate.";
+            const message = err instanceof UserFacingAuthError ? err.message : t("ui.failed-authenticate");
             setState({
               loading: false,
               errorMessage: message,
@@ -136,7 +139,7 @@ const AuthCallback = () => {
         });
       }
     })();
-  }, [currentUser?.name, initialize, isInitialized, navigateTo, searchParams]);
+  }, [currentUser?.name, initialize, isInitialized, navigateTo, searchParams, t]);
 
   if (state.loading) return null;
 

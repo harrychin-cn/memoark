@@ -154,7 +154,8 @@
     "username": "ユーザーネーム",
     "version": "バージョン",
     "visibility": "公開範囲",
-    "yourself": "あなた自身の"
+    "yourself": "あなた自身の",
+    "loading": "読み込み中..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "パスワード認証は許可されていません。",
     "password-sign-up-disabled": "パスワードによるサインアップは許可されていません。",
     "sign-up-disabled": "サインアップは許可されていません。",
-    "identity-provider-id-placeholder": "例えばgithub、okta-corp"
+    "identity-provider-id-placeholder": "例えばgithub、okta-corp",
+    "selected-label": "{{label}}、選択済み",
+    "calendar-for": "{{month}}のカレンダー",
+    "year-calendar": "年 {{year}} カレンダー",
+    "days-count": "{{count}} 日",
+    "pinned-location": "ピン留めされた場所",
+    "selected-location": "選択した場所",
+    "choose-location": "場所を選択してください",
+    "generic-error": "エラーが発生しました",
+    "cannot-save": "保存できません",
+    "download-attachment": "ダウンロード{{filename}}",
+    "seek-audio": "{{filename}}をシークします",
+    "pause-audio": "一時停止 {{title}}",
+    "play-audio": "{{title}}を再生する",
+    "playback-speed": "再生速度 {{rate}}x の場合 {{title}}",
+    "inbox-unread-count": "{{inbox}}、{{count}} 未読",
+    "failed-sign-in": "サインインに失敗しました。",
+    "failed-link-identity": "アカウントのリンクを開始できませんでした。もう一度試してください。",
+    "failed-unlink-identity": "ID プロバイダーのリンクを解除できませんでした。",
+    "failed-update-profile": "プロフィールの更新に失敗しました",
+    "oauth-error": "OAuth エラー: {{error}}",
+    "more-info": "詳細情報: {{uri}}",
+    "auth-missing-parameters": "認証に失敗しました。認証コードまたは状態パラメータが欠落しています。",
+    "auth-invalid-state": "認証に失敗しました。状態パラメータが無効または期限切れです。",
+    "auth-link-sign-in-required": "アカウントのリンクに失敗しました。もう一度 MemoArk にサインインして、再試行してください。",
+    "auth-user-changed": "OAuth コールバックが完了する前に、サインインしているユーザーが変更されました。アカウント設定からリンクを再試行してください。",
+    "failed-authenticate": "認証に失敗しました。",
+    "sign-in-options-load-failed": "サインイン オプションの読み込みに失敗しました。もう一度試してください。",
+    "sign-in-initiate-failed": "サインインを開始できませんでした。もう一度試してください。",
+    "sign-up-failed": "サインアップに失敗しました"
   }
 }

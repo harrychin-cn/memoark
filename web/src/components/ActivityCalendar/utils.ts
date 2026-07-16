@@ -40,8 +40,9 @@ export const calculateMaxCount = (data: CalendarData): number => {
   return Math.max(max, MIN_COUNT);
 };
 
-export const getMonthLabel = (month: string): string => {
-  return dayjs(month).format("MMM");
+export const getMonthLabel = (month: string, locale: string): string => {
+  const [year, monthIndex] = month.split("-").map(Number);
+  return new Intl.DateTimeFormat(locale, { month: "short", timeZone: "UTC" }).format(new Date(Date.UTC(year, monthIndex - 1, 1)));
 };
 
 export const filterDataByYear = (data: Record<string, number>, year: number): Record<string, number> => {
@@ -71,5 +72,5 @@ export const getTooltipText = (count: number, date: string, t: TranslateFunction
     count,
     memos: count === 1 ? t("common.memo") : t("common.memos"),
     date,
-  }).toLowerCase();
+  });
 };

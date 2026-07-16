@@ -154,7 +154,8 @@
     "username": "Kullanıcı adı",
     "version": "Sürüm",
     "visibility": "Görünürlük",
-    "yourself": "Kendiniz"
+    "yourself": "Kendiniz",
+    "loading": "Yükleniyor..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Parola kimlik doğrulamasına izin verilmiyor.",
     "password-sign-up-disabled": "Şifre kaydına izin verilmiyor.",
     "sign-up-disabled": "Kaydolmaya izin verilmiyor.",
-    "identity-provider-id-placeholder": "örneğin github, okta-corp"
+    "identity-provider-id-placeholder": "örneğin github, okta-corp",
+    "selected-label": "{{label}}, seçildi",
+    "calendar-for": "{{month}} takvimi",
+    "year-calendar": "Yıl {{year}} takvimi",
+    "days-count": "{{count}} gün",
+    "pinned-location": "Sabitlenmiş konum",
+    "selected-location": "Seçilen konum",
+    "choose-location": "Bir konum seçin",
+    "generic-error": "Bir hata oluştu",
+    "cannot-save": "Kaydedilemiyor",
+    "download-attachment": "{{filename}}'yi indirin",
+    "seek-audio": "{{filename}}'yi arayın",
+    "pause-audio": "{{title}}'yi duraklat",
+    "play-audio": "{{title}}'yi oynat",
+    "playback-speed": "{{title}} için oynatma hızı {{rate}}x",
+    "inbox-unread-count": "{{inbox}}, {{count}} okunmamış",
+    "failed-sign-in": "Oturum açılamadı.",
+    "failed-link-identity": "Hesap bağlama işlemi başlatılamadı. Lütfen tekrar deneyin.",
+    "failed-unlink-identity": "Kimlik sağlayıcının bağlantısı kaldırılamadı.",
+    "failed-update-profile": "Profil güncellenemedi",
+    "oauth-error": "OAuth hatası: {{error}}",
+    "more-info": "Daha fazla bilgi: {{uri}}",
+    "auth-missing-parameters": "Yetkilendirme başarısız oldu. Yetkilendirme kodu veya durum parametresi eksik.",
+    "auth-invalid-state": "Yetkilendirme başarısız oldu. Geçersiz veya süresi dolmuş durum parametresi.",
+    "auth-link-sign-in-required": "Hesap bağlanamadı. Lütfen MemoArk'ta tekrar oturum açın ve tekrar deneyin.",
+    "auth-user-changed": "Oturum açan kullanıcı, OAuth geri araması tamamlanmadan önce değişti. Lütfen hesap ayarlarından bağlanmayı yeniden deneyin.",
+    "failed-authenticate": "Kimlik doğrulaması başarısız oldu.",
+    "sign-in-options-load-failed": "Oturum açma seçenekleri yüklenemedi. Lütfen tekrar deneyin.",
+    "sign-in-initiate-failed": "Oturum açma işlemi başlatılamadı. Lütfen tekrar deneyin.",
+    "sign-up-failed": "Kayıt başarısız oldu"
   }
 }

@@ -154,7 +154,8 @@
     "username": "ชื่อผู้ใช้",
     "version": "เวอร์ชั่น",
     "visibility": "การมองเห็น",
-    "yourself": "ตัวคุณ"
+    "yourself": "ตัวคุณ",
+    "loading": "กำลังโหลด..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "ไม่อนุญาตให้ใช้การตรวจสอบรหัสผ่าน",
     "password-sign-up-disabled": "ไม่อนุญาตให้ลงทะเบียนรหัสผ่าน",
     "sign-up-disabled": "ไม่อนุญาตให้ลงทะเบียน",
-    "identity-provider-id-placeholder": "เช่น github, okta-corp"
+    "identity-provider-id-placeholder": "เช่น github, okta-corp",
+    "selected-label": "{{label}} เลือกอยู่",
+    "calendar-for": "ปฏิทินสำหรับ {{month}}",
+    "year-calendar": "ปฏิทินปี {{year}}",
+    "days-count": "{{count}} วัน",
+    "pinned-location": "ตำแหน่งที่ปักหมุดไว้",
+    "selected-location": "ตำแหน่งที่เลือก",
+    "choose-location": "เลือกสถานที่",
+    "generic-error": "เกิดข้อผิดพลาด",
+    "cannot-save": "ไม่สามารถบันทึกได้",
+    "download-attachment": "ดาวน์โหลด {{filename}}",
+    "seek-audio": "ค้นหา {{filename}}",
+    "pause-audio": "หยุด {{title}} ชั่วคราว",
+    "play-audio": "เล่น {{title}}",
+    "playback-speed": "ความเร็วในการเล่น {{rate}}x สำหรับ {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} ยังไม่ได้อ่าน",
+    "failed-sign-in": "ลงชื่อเข้าใช้ไม่สำเร็จ",
+    "failed-link-identity": "ไม่สามารถเริ่มต้นการเชื่อมโยงบัญชีได้ โปรดลองอีกครั้ง",
+    "failed-unlink-identity": "ยกเลิกการเชื่อมโยงผู้ให้บริการข้อมูลประจำตัวไม่สำเร็จ",
+    "failed-update-profile": "ไม่สามารถอัปเดตโปรไฟล์ได้",
+    "oauth-error": "ข้อผิดพลาด OAuth: {{error}}",
+    "more-info": "ข้อมูลเพิ่มเติม: {{uri}}",
+    "auth-missing-parameters": "ล้มเหลวในการอนุญาต ไม่มีรหัสอนุญาตหรือพารามิเตอร์สถานะ",
+    "auth-invalid-state": "ล้มเหลวในการอนุญาต พารามิเตอร์สถานะไม่ถูกต้องหรือหมดอายุ",
+    "auth-link-sign-in-required": "เชื่อมโยงบัญชีไม่สำเร็จ โปรดลงชื่อเข้าใช้ MemoArk อีกครั้งแล้วลองอีกครั้ง",
+    "auth-user-changed": "ผู้ใช้ที่ลงชื่อเข้าใช้มีการเปลี่ยนแปลงก่อนที่การโทรกลับ OAuth จะเสร็จสมบูรณ์ โปรดลองเชื่อมโยงอีกครั้งจากการตั้งค่าบัญชี",
+    "failed-authenticate": "การตรวจสอบสิทธิ์ล้มเหลว",
+    "sign-in-options-load-failed": "โหลดตัวเลือกการลงชื่อเข้าใช้ไม่สำเร็จ โปรดลองอีกครั้ง",
+    "sign-in-initiate-failed": "ไม่สามารถเริ่มต้นการลงชื่อเข้าใช้ได้ โปรดลองอีกครั้ง",
+    "sign-up-failed": "การลงทะเบียนล้มเหลว"
   }
 }

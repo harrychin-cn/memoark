@@ -53,7 +53,7 @@ export const useMemoActionHandlers = ({ memo, onEdit, setDeleteDialogOpen }: Use
       } catch (error: unknown) {
         handleError(error, toast.error, {
           context,
-          fallbackMessage: "An error occurred",
+          fallbackMessage: t("ui.generic-error"),
         });
       }
     },
@@ -95,7 +95,7 @@ export const useMemoActionHandlers = ({ memo, onEdit, setDeleteDialogOpen }: Use
     } catch (error: unknown) {
       handleError(error, toast.error, {
         context: `${isArchiving ? "Archive" : "Restore"} memo`,
-        fallbackMessage: "An error occurred",
+        fallbackMessage: t("ui.generic-error"),
       });
       return;
     }
@@ -136,7 +136,7 @@ export const useMemoActionHandlers = ({ memo, onEdit, setDeleteDialogOpen }: Use
     try {
       await deleteMemo(memo.name);
     } catch (error: unknown) {
-      handleError(error, toast.error, { context: "Delete memo", fallbackMessage: "An error occurred" });
+      handleError(error, toast.error, { context: "Delete memo", fallbackMessage: t("ui.generic-error") });
       return;
     }
     toast.success(t("message.deleted-successfully"));

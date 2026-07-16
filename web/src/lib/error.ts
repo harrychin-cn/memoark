@@ -23,12 +23,10 @@ export function handleError(
     onError?: (error: unknown) => void;
   },
 ): void {
-  const contextPrefix = options?.context ? `${options.context}: ` : "";
-  const fallback = options?.fallbackMessage;
+  const errorMessage = options?.fallbackMessage ?? getErrorMessage(error);
 
-  const errorMessage = options?.context ? `${contextPrefix}${getErrorMessage(error, fallback)}` : getErrorMessage(error, fallback);
-
-  console.error(error);
+  if (options?.context) console.error(`[${options.context}]`, error);
+  else console.error(error);
   toast(errorMessage);
   options?.onError?.(error);
 }

@@ -154,7 +154,8 @@
     "username": "Nome de utilizador",
     "version": "Versão",
     "visibility": "Visibilidade",
-    "yourself": "Você próprio"
+    "yourself": "Você próprio",
+    "loading": "Carregando..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "A autenticação por palavra-passe não é permitida.",
     "password-sign-up-disabled": "A inscrição com senha não é permitida.",
     "sign-up-disabled": "Não é permitido inscrever-se.",
-    "identity-provider-id-placeholder": "por exemplo github, okta-corp"
+    "identity-provider-id-placeholder": "por exemplo github, okta-corp",
+    "selected-label": "{{label}}, selecionado",
+    "calendar-for": "Calendário para {{month}}",
+    "year-calendar": "Calendário do ano {{year}}",
+    "days-count": "{{count}} dias",
+    "pinned-location": "Local fixado",
+    "selected-location": "Local selecionado",
+    "choose-location": "Escolha um local",
+    "generic-error": "Ocorreu um erro",
+    "cannot-save": "Não é possível salvar",
+    "download-attachment": "Baixar {{filename}}",
+    "seek-audio": "Procure {{filename}}",
+    "pause-audio": "Pausa {{title}}",
+    "play-audio": "Jogar {{title}}",
+    "playback-speed": "Velocidade de reprodução {{rate}}x para {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} não lida",
+    "failed-sign-in": "Falha ao fazer login.",
+    "failed-link-identity": "Falha ao iniciar a vinculação da conta. Por favor, tente novamente.",
+    "failed-unlink-identity": "Falha ao desvincular o provedor de identidade.",
+    "failed-update-profile": "Falha ao atualizar o perfil",
+    "oauth-error": "Erro OAuth: {{error}}",
+    "more-info": "Mais informações: {{uri}}",
+    "auth-missing-parameters": "Falha ao autorizar. Código de autorização ou parâmetro de estado ausente.",
+    "auth-invalid-state": "Falha ao autorizar. Parâmetro de estado inválido ou expirado.",
+    "auth-link-sign-in-required": "Falha ao vincular a conta. Faça login no MemoArk novamente e tente novamente.",
+    "auth-user-changed": "O usuário conectado foi alterado antes da conclusão do retorno de chamada do OAuth. Tente vincular novamente nas configurações da conta.",
+    "failed-authenticate": "Falha ao autenticar.",
+    "sign-in-options-load-failed": "Falha ao carregar opções de login. Por favor, tente novamente.",
+    "sign-in-initiate-failed": "Falha ao iniciar o login. Por favor, tente novamente.",
+    "sign-up-failed": "Falha na inscrição"
   }
 }

@@ -154,7 +154,8 @@
     "username": "Uporabniško ime",
     "version": "Verzija",
     "visibility": "Vidnost",
-    "yourself": "Ti"
+    "yourself": "Ti",
+    "loading": "Nalaganje..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Preverjanje pristnosti z geslom ni dovoljeno.",
     "password-sign-up-disabled": "Prijava z geslom ni dovoljena.",
     "sign-up-disabled": "Prijava ni dovoljena.",
-    "identity-provider-id-placeholder": "npr. github, okta-corp"
+    "identity-provider-id-placeholder": "npr. github, okta-corp",
+    "selected-label": "{{label}}, izbrano",
+    "calendar-for": "Koledar za {{month}}",
+    "year-calendar": "Koledar za leto {{year}}",
+    "days-count": "{{count}} dni",
+    "pinned-location": "Pripeta lokacija",
+    "selected-location": "Izbrana lokacija",
+    "choose-location": "Izberite lokacijo",
+    "generic-error": "Prišlo je do napake",
+    "cannot-save": "Ni mogoče shraniti",
+    "download-attachment": "Prenesite {{filename}}",
+    "seek-audio": "Išči {{filename}}",
+    "pause-audio": "Zaustavi {{title}}",
+    "play-audio": "Predvajaj {{title}}",
+    "playback-speed": "Hitrost predvajanja {{rate}}x za {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} neprebrano",
+    "failed-sign-in": "Prijava ni uspela.",
+    "failed-link-identity": "Povezovanja računa ni bilo mogoče začeti. prosim poskusite ponovno",
+    "failed-unlink-identity": "Prekinitev povezave s ponudnikom identitete ni uspela.",
+    "failed-update-profile": "Profila ni bilo mogoče posodobiti",
+    "oauth-error": "Napaka OAuth: {{error}}",
+    "more-info": "Več informacij: {{uri}}",
+    "auth-missing-parameters": "Pooblastitev ni uspela. Manjka avtorizacijska koda ali parameter stanja.",
+    "auth-invalid-state": "Pooblastitev ni uspela. Neveljaven ali potekel parameter stanja.",
+    "auth-link-sign-in-required": "Računa ni bilo mogoče povezati. Ponovno se prijavite v MemoArk in poskusite znova.",
+    "auth-user-changed": "Prijavljeni uporabnik se je spremenil, preden je bil povratni klic OAuth dokončan. Poskusite znova vzpostaviti povezavo iz nastavitev računa.",
+    "failed-authenticate": "Preverjanje pristnosti ni uspelo.",
+    "sign-in-options-load-failed": "Možnosti prijave ni bilo mogoče naložiti. prosim poskusite ponovno",
+    "sign-in-initiate-failed": "Začetek prijave ni uspel. prosim poskusite ponovno",
+    "sign-up-failed": "Prijava ni uspela"
   }
 }

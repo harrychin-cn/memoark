@@ -40,6 +40,12 @@ describe("CalendarCell empty-day clickability", () => {
     expect(onClick).toHaveBeenCalledWith("2025-05-01");
   });
 
+  it("localizes the selected state in the accessible label", () => {
+    render(<CalendarCell day={makeDay({ isSelected: true })} maxCount={5} tooltipText="May 1, 2025" onClick={() => {}} />);
+
+    expect(screen.getByRole("button", { name: "May 1, 2025, selected" })).toBeInTheDocument();
+  });
+
   it("does not render out-of-month days as interactive (no role=button)", () => {
     render(
       <CalendarCell day={makeDay({ isCurrentMonth: false })} maxCount={5} tooltipText="May 1, 2025" onClick={() => {}} />,

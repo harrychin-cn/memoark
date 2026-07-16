@@ -102,7 +102,8 @@ const AttachmentItemCard: FC<{
   const { category, filename, thumbnailUrl, mimeType, size, sourceUrl, isVoiceNote, audioMeta } = item;
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const fileTypeLabel = item.category === "motion" ? "Live Photo" : getFileTypeLabel(mimeType);
+  const fileTypeLabel =
+    item.category === "motion" ? t("attachment-library.labels.live-photo") : getFileTypeLabel(mimeType, t("common.file"));
   const isPreviewable = category === "image" || category === "video" || category === "motion";
   const recordingTimeLabel = isVoiceNote ? getAudioRecordingTimeLabel(filename) : undefined;
   const titleLabel =
@@ -181,7 +182,7 @@ const AttachmentItemCard: FC<{
                 onPreview?.();
               }}
               className="flex size-full items-center justify-center rounded bg-muted/40 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-              aria-label={`Preview ${filename}`}
+              aria-label={t("ui.preview-attachment", { filename })}
             >
               <PlayIcon className="h-3.5 w-3.5 translate-x-[0.5px]" />
             </button>

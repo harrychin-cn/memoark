@@ -154,7 +154,8 @@
     "username": "Felhasználónév",
     "version": "Verzió",
     "visibility": "Láthatóság",
-    "yourself": "Magad"
+    "yourself": "Magad",
+    "loading": "Betöltés..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "A jelszavas hitelesítés nem engedélyezett.",
     "password-sign-up-disabled": "A jelszó regisztráció nem engedélyezett.",
     "sign-up-disabled": "A regisztráció nem megengedett.",
-    "identity-provider-id-placeholder": "például github, okta-corp"
+    "identity-provider-id-placeholder": "például github, okta-corp",
+    "selected-label": "{{label}}, kiválasztva",
+    "calendar-for": "{{month}} naptár",
+    "year-calendar": "Év {{year}} naptár",
+    "days-count": "{{count}} nap",
+    "pinned-location": "Rögzített hely",
+    "selected-location": "Kiválasztott hely",
+    "choose-location": "Válasszon egy helyet",
+    "generic-error": "Hiba történt",
+    "cannot-save": "Nem menthető",
+    "download-attachment": "Töltse le a {{filename}}",
+    "seek-audio": "Keresse meg a {{filename}}-t",
+    "pause-audio": "Szünet {{title}}",
+    "play-audio": "Játssz {{title}}",
+    "playback-speed": "Lejátszási sebesség {{rate}}x a {{title}} számára",
+    "inbox-unread-count": "{{inbox}}, {{count}} olvasatlan",
+    "failed-sign-in": "Nem sikerült bejelentkezni.",
+    "failed-link-identity": "Nem sikerült elindítani a fiók összekapcsolását. Kérjük, próbálja újra.",
+    "failed-unlink-identity": "Nem sikerült leválasztani az identitásszolgáltatót.",
+    "failed-update-profile": "Nem sikerült frissíteni a profilt",
+    "oauth-error": "OAuth hiba: {{error}}",
+    "more-info": "További információ: {{uri}}",
+    "auth-missing-parameters": "Nem sikerült engedélyezni. Hiányzó engedélyezési kód vagy állapotparaméter.",
+    "auth-invalid-state": "Nem sikerült engedélyezni. Érvénytelen vagy lejárt állapotparaméter.",
+    "auth-link-sign-in-required": "Nem sikerült összekapcsolni a fiókot. Kérjük, jelentkezzen be újra a MemoArkba, és próbálja újra.",
+    "auth-user-changed": "A bejelentkezett felhasználó az OAuth visszahívás befejezése előtt megváltozott. Kérjük, próbálja újra az összekapcsolást a fiókbeállításokból.",
+    "failed-authenticate": "Nem sikerült hitelesíteni.",
+    "sign-in-options-load-failed": "Nem sikerült betölteni a bejelentkezési lehetőségeket. Kérjük, próbálja újra.",
+    "sign-in-initiate-failed": "Nem sikerült elindítani a bejelentkezést. Kérjük, próbálja újra.",
+    "sign-up-failed": "A regisztráció sikertelen"
   }
 }

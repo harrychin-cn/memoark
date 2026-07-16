@@ -154,7 +154,8 @@
     "username": "اسم المستخدم",
     "version": "الإصدار",
     "visibility": "الرؤية",
-    "yourself": "نفسك"
+    "yourself": "نفسك",
+    "loading": "جار التحميل..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "غير مسموح بمصادقة كلمة المرور.",
     "password-sign-up-disabled": "غير مسموح بالتسجيل بكلمة مرور.",
     "sign-up-disabled": "لا يسمح بالتسجيل.",
-    "identity-provider-id-placeholder": "على سبيل المثال github، okta-corp"
+    "identity-provider-id-placeholder": "على سبيل المثال github، okta-corp",
+    "selected-label": "{{label}}، محدد",
+    "calendar-for": "التقويم ل{{month}}",
+    "year-calendar": "تقويم سنة {{year}}",
+    "days-count": "{{count}} أيام",
+    "pinned-location": "الموقع المثبت",
+    "selected-location": "الموقع المحدد",
+    "choose-location": "اختر موقعًا",
+    "generic-error": "حدث خطأ",
+    "cannot-save": "لا يمكن الحفظ",
+    "download-attachment": "تحميل {{filename}}",
+    "seek-audio": "ابحث عن {{filename}}",
+    "pause-audio": "إيقاف مؤقت {{title}}",
+    "play-audio": "العب {{title}}",
+    "playback-speed": "سرعة التشغيل {{rate}}x لـ {{title}}",
+    "inbox-unread-count": "{{inbox}}، {{count}} غير مقروءة",
+    "failed-sign-in": "فشل تسجيل الدخول.",
+    "failed-link-identity": "فشل بدء ربط الحساب. يرجى المحاولة مرة أخرى.",
+    "failed-unlink-identity": "فشل إلغاء ربط موفر الهوية.",
+    "failed-update-profile": "فشل في تحديث الملف الشخصي",
+    "oauth-error": "خطأ OAuth: {{error}}",
+    "more-info": "مزيد من المعلومات: {{uri}}",
+    "auth-missing-parameters": "فشل في التفويض. رمز التفويض أو معلمة الحالة مفقود.",
+    "auth-invalid-state": "فشل في التفويض. معلمة الحالة غير صالحة أو منتهية الصلاحية.",
+    "auth-link-sign-in-required": "فشل ربط الحساب. الرجاء تسجيل الدخول إلى MemoArk مرة أخرى وإعادة المحاولة.",
+    "auth-user-changed": "تم تغيير المستخدم الذي قام بتسجيل الدخول قبل اكتمال رد اتصال OAuth. يرجى إعادة محاولة الربط من إعدادات الحساب.",
+    "failed-authenticate": "فشلت المصادقة.",
+    "sign-in-options-load-failed": "فشل تحميل خيارات تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+    "sign-in-initiate-failed": "فشل بدء تسجيل الدخول. يرجى المحاولة مرة أخرى.",
+    "sign-up-failed": "فشل الاشتراك"
   }
 }

@@ -154,7 +154,8 @@
     "username": "Username",
     "version": "Version",
     "visibility": "Visibility",
-    "yourself": "Yourself"
+    "yourself": "Yourself",
+    "loading": "Loading..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Password authentication is not allowed.",
     "password-sign-up-disabled": "Password sign up is not allowed.",
     "sign-up-disabled": "Sign up is not allowed.",
-    "identity-provider-id-placeholder": "e.g. github, okta-corp"
+    "identity-provider-id-placeholder": "e.g. github, okta-corp",
+    "selected-label": "{{label}}, selected",
+    "calendar-for": "Calendar for {{month}}",
+    "year-calendar": "Year {{year}} calendar",
+    "days-count": "{{count}} days",
+    "pinned-location": "Pinned location",
+    "selected-location": "Selected location",
+    "choose-location": "Choose a location",
+    "generic-error": "An error occurred",
+    "cannot-save": "Cannot save",
+    "download-attachment": "Download {{filename}}",
+    "seek-audio": "Seek {{filename}}",
+    "pause-audio": "Pause {{title}}",
+    "play-audio": "Play {{title}}",
+    "playback-speed": "Playback speed {{rate}}x for {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} unread",
+    "failed-sign-in": "Failed to sign in.",
+    "failed-link-identity": "Failed to initiate account linking. Please try again.",
+    "failed-unlink-identity": "Failed to unlink identity provider.",
+    "failed-update-profile": "Failed to update profile",
+    "oauth-error": "OAuth error: {{error}}",
+    "more-info": "More info: {{uri}}",
+    "auth-missing-parameters": "Failed to authorize. Missing authorization code or state parameter.",
+    "auth-invalid-state": "Failed to authorize. Invalid or expired state parameter.",
+    "auth-link-sign-in-required": "Failed to link account. Please sign in to MemoArk again and retry.",
+    "auth-user-changed": "The signed-in user changed before the OAuth callback completed. Please retry linking from account settings.",
+    "failed-authenticate": "Failed to authenticate.",
+    "sign-in-options-load-failed": "Failed to load sign-in options. Please try again.",
+    "sign-in-initiate-failed": "Failed to initiate sign-in. Please try again.",
+    "sign-up-failed": "Sign up failed"
   }
 }

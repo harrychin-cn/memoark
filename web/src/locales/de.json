@@ -154,7 +154,8 @@
     "username": "Benutzername",
     "version": "Version",
     "visibility": "Sichtbarkeit",
-    "yourself": "Du selbst"
+    "yourself": "Du selbst",
+    "loading": "Laden..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Eine Passwortauthentifizierung ist nicht zulässig.",
     "password-sign-up-disabled": "Die Anmeldung mit Passwort ist nicht zulässig.",
     "sign-up-disabled": "Eine Anmeldung ist nicht möglich.",
-    "identity-provider-id-placeholder": "z.B. github, okta-corp"
+    "identity-provider-id-placeholder": "z.B. github, okta-corp",
+    "selected-label": "{{label}}, ausgewählt",
+    "calendar-for": "Kalender für {{month}}",
+    "year-calendar": "Jahr {{year}} Kalender",
+    "days-count": "{{count}} Tage",
+    "pinned-location": "Angepinnter Standort",
+    "selected-location": "Ausgewählter Ort",
+    "choose-location": "Wählen Sie einen Standort",
+    "generic-error": "Es ist ein Fehler aufgetreten",
+    "cannot-save": "Kann nicht gespeichert werden",
+    "download-attachment": "Laden Sie {{filename}} herunter",
+    "seek-audio": "Suchen Sie nach {{filename}}",
+    "pause-audio": "Pause {{title}}",
+    "play-audio": "Spielen Sie {{title}}",
+    "playback-speed": "Wiedergabegeschwindigkeit {{rate}}x für {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} ungelesen",
+    "failed-sign-in": "Anmeldung fehlgeschlagen.",
+    "failed-link-identity": "Die Kontoverknüpfung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
+    "failed-unlink-identity": "Die Verknüpfung mit dem Identitätsanbieter konnte nicht aufgehoben werden.",
+    "failed-update-profile": "Profil konnte nicht aktualisiert werden",
+    "oauth-error": "OAuth-Fehler: {{error}}",
+    "more-info": "Weitere Informationen: {{uri}}",
+    "auth-missing-parameters": "Autorisierung fehlgeschlagen. Fehlender Autorisierungscode oder Statusparameter.",
+    "auth-invalid-state": "Autorisierung fehlgeschlagen. Ungültiger oder abgelaufener Statusparameter.",
+    "auth-link-sign-in-required": "Konto konnte nicht verknüpft werden. Bitte melden Sie sich erneut bei MemoArk an und versuchen Sie es erneut.",
+    "auth-user-changed": "Der angemeldete Benutzer hat sich geändert, bevor der OAuth-Rückruf abgeschlossen wurde. Bitte versuchen Sie die Verknüpfung über die Kontoeinstellungen erneut.",
+    "failed-authenticate": "Authentifizierung fehlgeschlagen.",
+    "sign-in-options-load-failed": "Anmeldeoptionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "sign-in-initiate-failed": "Die Anmeldung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.",
+    "sign-up-failed": "Die Anmeldung ist fehlgeschlagen"
   }
 }

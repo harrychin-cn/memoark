@@ -78,7 +78,7 @@ const Navigation = (props: Props) => {
   const primaryNavLinks: NavLinkItem[] = currentUser
     ? [homeNavLink, exploreNavLink, attachmentsNavLink, inboxNavLink]
     : [exploreNavLink, aboutNavLink, signInNavLink];
-  const inboxAriaLabel = unreadCount > 0 ? `${t("common.inbox")}, ${unreadCount} unread` : t("common.inbox");
+  const inboxAriaLabel = unreadCount > 0 ? t("ui.inbox-unread-count", { inbox: t("common.inbox"), count: unreadCount }) : t("common.inbox");
 
   return (
     <header className={cn("w-full h-full overflow-auto flex flex-col justify-between items-start gap-4", className)}>

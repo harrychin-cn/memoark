@@ -154,7 +154,8 @@
     "username": "用户名",
     "version": "版本",
     "visibility": "可见性",
-    "yourself": "您自己"
+    "yourself": "您自己",
+    "loading": "加载中..."
   },
   "editor": {
     "draft-recovery": {
@@ -246,8 +247,8 @@
     },
     "copy-content": "复制内容",
     "copy-link": "复制链接",
-    "count-memos-in-date": "{{count}} 有 {{memos}} 条 {{date}}",
-    "count-memos-updated-in-date": "{{count}} 更新了 {{memos}} 条{{date}}",
+    "count-memos-in-date": "{{date}} 有 {{count}} 条{{memos}}",
+    "count-memos-updated-in-date": "{{date}} 更新了 {{count}} 条{{memos}}",
     "delete-confirm": "您确定要删除此条备忘录吗？",
     "delete-confirm-description": "此操作是不可逆的，附件、链接和引用也会被删除。",
     "direction": "排序方式",
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "密码登录已禁用。",
     "password-sign-up-disabled": "密码注册已禁用。",
     "sign-up-disabled": "注册功能已禁用。",
-    "identity-provider-id-placeholder": "?? github?okta-corp"
+    "identity-provider-id-placeholder": "例如 github、okta-corp",
+    "selected-label": "{{label}}，已选择",
+    "calendar-for": "{{month}} 日历",
+    "year-calendar": "{{year}} 年日历",
+    "days-count": "{{count}} 天",
+    "pinned-location": "已固定的位置",
+    "selected-location": "已选择的位置",
+    "choose-location": "选择位置",
+    "generic-error": "发生错误",
+    "cannot-save": "无法保存",
+    "download-attachment": "下载 {{filename}}",
+    "seek-audio": "调整 {{filename}} 的播放进度",
+    "pause-audio": "暂停 {{title}}",
+    "play-audio": "播放 {{title}}",
+    "playback-speed": "{{title}} 的播放速度：{{rate}} 倍",
+    "inbox-unread-count": "{{inbox}}，{{count}} 条未读",
+    "failed-sign-in": "登录失败。",
+    "failed-link-identity": "关联账户失败，请重试。",
+    "failed-unlink-identity": "解除身份提供商关联失败。",
+    "failed-update-profile": "更新资料失败",
+    "oauth-error": "OAuth 错误：{{error}}",
+    "more-info": "更多信息：{{uri}}",
+    "auth-missing-parameters": "授权失败：缺少授权代码或状态参数。",
+    "auth-invalid-state": "授权失败：状态参数无效或已过期。",
+    "auth-link-sign-in-required": "账户关联失败，请重新登录 MemoArk 后再试。",
+    "auth-user-changed": "OAuth 回调完成前登录用户已发生变化，请从账户设置中重新关联。",
+    "failed-authenticate": "身份验证失败。",
+    "sign-in-options-load-failed": "加载登录选项失败，请重试。",
+    "sign-in-initiate-failed": "发起登录失败，请重试。",
+    "sign-up-failed": "注册失败"
   }
 }

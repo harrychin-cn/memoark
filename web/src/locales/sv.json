@@ -154,7 +154,8 @@
     "username": "Användarnamn",
     "version": "Version",
     "visibility": "Synlighet",
-    "yourself": "Själv"
+    "yourself": "Själv",
+    "loading": "Laddar..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Lösenordsautentisering är inte tillåten.",
     "password-sign-up-disabled": "Lösenordsregistrering är inte tillåten.",
     "sign-up-disabled": "Registrering är inte tillåtet.",
-    "identity-provider-id-placeholder": "till exempel github, okta-corp"
+    "identity-provider-id-placeholder": "till exempel github, okta-corp",
+    "selected-label": "{{label}}, vald",
+    "calendar-for": "Kalender för {{month}}",
+    "year-calendar": "År {{year}} kalender",
+    "days-count": "{{count}} dagar",
+    "pinned-location": "Fäst plats",
+    "selected-location": "Vald plats",
+    "choose-location": "Välj en plats",
+    "generic-error": "Ett fel uppstod",
+    "cannot-save": "Kan inte spara",
+    "download-attachment": "Ladda ner {{filename}}",
+    "seek-audio": "Sök {{filename}}",
+    "pause-audio": "Pausa {{title}}",
+    "play-audio": "Spela {{title}}",
+    "playback-speed": "Uppspelningshastighet {{rate}}x för {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} olästa",
+    "failed-sign-in": "Det gick inte att logga in.",
+    "failed-link-identity": "Det gick inte att initiera kontolänkning. Försök igen.",
+    "failed-unlink-identity": "Det gick inte att ta bort länken till identitetsleverantören.",
+    "failed-update-profile": "Det gick inte att uppdatera profilen",
+    "oauth-error": "OAuth-fel: {{error}}",
+    "more-info": "Mer info: {{uri}}",
+    "auth-missing-parameters": "Det gick inte att auktorisera. Saknar behörighetskod eller tillståndsparameter.",
+    "auth-invalid-state": "Det gick inte att auktorisera. Ogiltig eller utgången tillståndsparameter.",
+    "auth-link-sign-in-required": "Det gick inte att länka kontot. Logga in på MemoArk igen och försök igen.",
+    "auth-user-changed": "Den inloggade användaren ändrades innan OAuth-återuppringningen slutfördes. Försök att länka igen från kontoinställningarna.",
+    "failed-authenticate": "Det gick inte att autentisera.",
+    "sign-in-options-load-failed": "Det gick inte att läsa in inloggningsalternativ. Försök igen.",
+    "sign-in-initiate-failed": "Det gick inte att starta inloggningen. Försök igen.",
+    "sign-up-failed": "Registreringen misslyckades"
   }
 }

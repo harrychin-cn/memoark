@@ -154,7 +154,8 @@
     "username": "Usuario",
     "version": "Versión",
     "visibility": "Visibilidad",
-    "yourself": "Tú mismo"
+    "yourself": "Tú mismo",
+    "loading": "Cargando..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "No se permite la autenticación de contraseña.",
     "password-sign-up-disabled": "No se permite el registro con contraseña.",
     "sign-up-disabled": "No se permite registrarse.",
-    "identity-provider-id-placeholder": "p.ej. github, okta-corp"
+    "identity-provider-id-placeholder": "p.ej. github, okta-corp",
+    "selected-label": "{{label}}, seleccionado",
+    "calendar-for": "Calendario para {{month}}",
+    "year-calendar": "Año calendario {{year}}",
+    "days-count": "{{count}} días",
+    "pinned-location": "Ubicación fijada",
+    "selected-location": "Ubicación seleccionada",
+    "choose-location": "Elige una ubicación",
+    "generic-error": "Se produjo un error",
+    "cannot-save": "No se puede guardar",
+    "download-attachment": "Descargar {{filename}}",
+    "seek-audio": "Buscar {{filename}}",
+    "pause-audio": "Pausa {{title}}",
+    "play-audio": "Reproducir {{title}}",
+    "playback-speed": "Velocidad de reproducción {{rate}}x para {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} no leídos",
+    "failed-sign-in": "No se pudo iniciar sesión.",
+    "failed-link-identity": "No se pudo iniciar la vinculación de la cuenta. Por favor inténtalo de nuevo.",
+    "failed-unlink-identity": "No se pudo desvincular el proveedor de identidad.",
+    "failed-update-profile": "No se pudo actualizar el perfil",
+    "oauth-error": "Error de OAuth: {{error}}",
+    "more-info": "Más información: {{uri}}",
+    "auth-missing-parameters": "No se pudo autorizar. Falta código de autorización o parámetro de estado.",
+    "auth-invalid-state": "No se pudo autorizar. Parámetro de estado no válido o caducado.",
+    "auth-link-sign-in-required": "No se pudo vincular la cuenta. Inicie sesión en MemoArk nuevamente y vuelva a intentarlo.",
+    "auth-user-changed": "El usuario que inició sesión cambió antes de que se completara la devolución de llamada de OAuth. Vuelva a intentar vincular desde la configuración de la cuenta.",
+    "failed-authenticate": "No se pudo autenticar.",
+    "sign-in-options-load-failed": "No se pudieron cargar las opciones de inicio de sesión. Por favor inténtalo de nuevo.",
+    "sign-in-initiate-failed": "No se pudo iniciar el inicio de sesión. Por favor inténtalo de nuevo.",
+    "sign-up-failed": "Error al registrarse"
   }
 }

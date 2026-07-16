@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getTooltipText } from "@/components/ActivityCalendar/utils";
+import { getMonthLabel, getTooltipText } from "@/components/ActivityCalendar/utils";
 
 // Minimal stub for the i18n translate fn — returns a deterministic string we can assert on.
 const t = ((key: string, vars?: Record<string, unknown>) => {
@@ -22,5 +22,10 @@ describe("getTooltipText", () => {
   it("uses the updated-tooltip key for update_time basis", () => {
     const out = getTooltipText(3, "2026-05-02", t, "update_time");
     expect(out.toLowerCase()).toContain("memo.count-memos-updated-in-date");
+  });
+
+  it("formats month headings with the active locale", () => {
+    expect(getMonthLabel("2026-01", "en")).toBe("Jan");
+    expect(getMonthLabel("2026-01", "zh-CN")).toBe("1月");
   });
 });

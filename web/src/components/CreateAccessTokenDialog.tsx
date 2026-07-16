@@ -42,7 +42,7 @@ function CreateAccessTokenDialog({ open, onOpenChange, onSuccess }: Props) {
       value: 30,
     },
     {
-      label: "90 Days",
+      label: t("ui.days-count", { count: 90 }),
       value: 90,
     },
     {

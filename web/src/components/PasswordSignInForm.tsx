@@ -67,7 +67,7 @@ function PasswordSignInForm({ redirectPath }: PasswordSignInFormProps) {
       navigateTo(redirectPath || ROUTES.HOME, { replace: true });
     } catch (error: unknown) {
       handleError(error, toast.error, {
-        fallbackMessage: "Failed to sign in.",
+        fallbackMessage: t("ui.failed-sign-in"),
       });
     }
     actionBtnLoadingState.setFinish();

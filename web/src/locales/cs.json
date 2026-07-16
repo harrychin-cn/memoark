@@ -154,7 +154,8 @@
     "username": "Uživatelské jméno",
     "version": "Verze",
     "visibility": "Viditelnost",
-    "yourself": "Vy sami"
+    "yourself": "Vy sami",
+    "loading": "Načítání..."
   },
   "editor": {
     "draft-recovery": {
@@ -1017,6 +1018,35 @@
     "password-auth-disabled": "Ověřování heslem není povoleno.",
     "password-sign-up-disabled": "Registrace heslem není povolena.",
     "sign-up-disabled": "Registrace není povolena.",
-    "identity-provider-id-placeholder": "např. github, okta-corp"
+    "identity-provider-id-placeholder": "např. github, okta-corp",
+    "selected-label": "{{label}}, vybráno",
+    "calendar-for": "Kalendář pro {{month}}",
+    "year-calendar": "Kalendář na rok {{year}}",
+    "days-count": "{{count}} dní",
+    "pinned-location": "Připnuté místo",
+    "selected-location": "Vybrané umístění",
+    "choose-location": "Vyberte umístění",
+    "generic-error": "Došlo k chybě",
+    "cannot-save": "Nelze uložit",
+    "download-attachment": "Stáhnout {{filename}}",
+    "seek-audio": "Hledejte {{filename}}",
+    "pause-audio": "Pauza {{title}}",
+    "play-audio": "Zahrajte si {{title}}",
+    "playback-speed": "Rychlost přehrávání {{rate}}x pro {{title}}",
+    "inbox-unread-count": "{{inbox}}, {{count}} nepřečtené",
+    "failed-sign-in": "Přihlášení se nezdařilo.",
+    "failed-link-identity": "Nepodařilo se zahájit propojení účtu. Zkuste to prosím znovu.",
+    "failed-unlink-identity": "Odpojení poskytovatele identity se nezdařilo.",
+    "failed-update-profile": "Aktualizace profilu se nezdařila",
+    "oauth-error": "Chyba OAuth: {{error}}",
+    "more-info": "Další informace: {{uri}}",
+    "auth-missing-parameters": "Autorizace se nezdařila. Chybí autorizační kód nebo parametr stavu.",
+    "auth-invalid-state": "Autorizace se nezdařila. Neplatný nebo prošlý parametr stavu.",
+    "auth-link-sign-in-required": "Účet se nepodařilo propojit. Přihlaste se prosím znovu do MemoArk a zkuste to znovu.",
+    "auth-user-changed": "Přihlášený uživatel se před dokončením zpětného volání OAuth změnil. Opakujte propojení z nastavení účtu.",
+    "failed-authenticate": "Ověření se nezdařilo.",
+    "sign-in-options-load-failed": "Nepodařilo se načíst možnosti přihlášení. Zkuste to prosím znovu.",
+    "sign-in-initiate-failed": "Nepodařilo se zahájit přihlášení. Zkuste to prosím znovu.",
+    "sign-up-failed": "Registrace se nezdařila"
   }
 }
